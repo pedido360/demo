@@ -78,7 +78,7 @@ export const products: Product[] = [
         name: "Perro Especial",
         description: "Salchicha premium y queso",
         price: 18000,
-        image: "🌭",
+        image: "/images/products/hotdog.jpg",
         featured: true,
 
         ingredients: [

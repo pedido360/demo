@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Product } from "@/types/product";
 
 interface ProductCardProps {
@@ -12,8 +14,22 @@ export default function ProductCard({
     return (
         <article className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3">
 
-            <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-3xl flex-shrink-0">
-                {product.image}
+            <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+
+                {product.image.startsWith("/") ? (
+                    <Image
+                        src={product.image}
+                        alt={product.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <span className="text-3xl">
+                        {product.image}
+                    </span>
+                )}
+
             </div>
 
             <div className="flex-1 min-w-0">
@@ -36,7 +52,7 @@ export default function ProductCard({
 
                 <button
                     onClick={() => onSelect(product)}
-                    className="w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 text-white text-xl font-bold transition"
+                    className="w-9 h-9 rounded-full bg-red-600 text-white text-xl font-bold transition hover:bg-red-700"
                 >
                     +
                 </button>

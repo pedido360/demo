@@ -6,6 +6,7 @@ import Hero from "@/components/landing/Hero";
 import FeaturedProducts from "@/components/landing/FeaturedProducts";
 import Categories from "@/components/landing/Categories";
 import ProductGrid from "@/components/products/ProductGrid";
+import FloatingCartButton from "@/components/cart/FloatingCartButton";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("1");
@@ -25,6 +26,12 @@ export default function Home() {
 
         <ProductGrid
           selectedCategory={selectedCategory}
+        />
+
+        <FloatingCartButton
+          onClick={() => {
+            console.log("Abrir carrito");
+          }}
         />
 
       </div>

@@ -7,6 +7,7 @@ import { Product } from "@/types/product";
 
 import ProductCard from "./ProductCard";
 import ProductDrawer from "@/components/product/ProductDrawer";
+import { useCart } from "@/hooks/useCart";
 
 interface ProductGridProps {
     selectedCategory: string;
@@ -18,6 +19,7 @@ export default function ProductGrid({
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const { addToCart } = useCart();
 
     const filteredProducts = products.filter(
         (product) => product.categoryId === selectedCategory
@@ -55,7 +57,8 @@ export default function ProductGrid({
                 open={drawerOpen}
                 onClose={() => setDrawerOpen(false)}
                 onAdd={(selection) => {
-                    console.log(selection);
+                    addToCart(selection);
+                    setDrawerOpen(false);
                 }}
             />
 

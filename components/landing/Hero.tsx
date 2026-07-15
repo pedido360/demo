@@ -2,13 +2,13 @@ import { restaurant } from "@/data/restaurant";
 
 export default function Hero() {
     return (
-        <section className="min-h-screen bg-gray-100">
+        <section className="bg-gray-100">
             {/* Banner */}
             <div className="h-56 bg-gradient-to-r from-red-600 to-red-700"></div>
 
             {/* Card principal */}
             <div className="-mt-16 px-5">
-                <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl p-6">
+                <div className="bg-white rounded-3xl shadow-xl p-6">
 
                     {/* Logo */}
                     <div className="flex justify-center">

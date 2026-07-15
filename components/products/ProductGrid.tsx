@@ -1,5 +1,12 @@
+"use client";
+
+import { useState } from "react";
+
 import { products } from "@/data/products";
+import { Product } from "@/types/product";
+
 import ProductCard from "./ProductCard";
+import ProductDrawer from "@/components/product/ProductDrawer";
 
 interface ProductGridProps {
     selectedCategory: string;
@@ -8,28 +15,50 @@ interface ProductGridProps {
 export default function ProductGrid({
     selectedCategory,
 }: ProductGridProps) {
+
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
     const filteredProducts = products.filter(
         (product) => product.categoryId === selectedCategory
     );
 
+    function handleSelectProduct(product: Product) {
+        setSelectedProduct(product);
+        setDrawerOpen(true);
+    }
+
     return (
-        <section className="max-w-md mx-auto px-5 py-6">
+        <>
+            <section className="max-w-md mx-auto px-5 py-6">
 
-            <h2 className="text-2xl font-bold mb-6">
-                Productos
-            </h2>
+                <h2 className="text-2xl font-bold mb-6">
+                    Productos
+                </h2>
 
-            <div className="space-y-4">
+                <div className="space-y-4">
 
-                {filteredProducts.map((product) => (
-                    <ProductCard
-                        key={product.id}
-                        product={product}
-                    />
-                ))}
+                    {filteredProducts.map((product) => (
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                            onSelect={handleSelectProduct}
+                        />
+                    ))}
 
-            </div>
+                </div>
 
-        </section>
+            </section>
+
+            <ProductDrawer
+                product={selectedProduct}
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                onAdd={(selection) => {
+                    console.log(selection);
+                }}
+            />
+
+        </>
     );
 }

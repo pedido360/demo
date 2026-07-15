@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import Hero from "@/components/landing/Hero";
+import FeaturedProducts from "@/components/landing/FeaturedProducts";
 import Categories from "@/components/landing/Categories";
 import ProductGrid from "@/components/products/ProductGrid";
 
@@ -10,17 +11,23 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("1");
 
   return (
-    <>
-      <Hero />
+    <main className="min-h-screen bg-gray-100">
+      <div className="max-w-md mx-auto bg-white min-h-screen relative overflow-hidden">
 
-      <Categories
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-      />
+        <Hero />
 
-      <ProductGrid
-        selectedCategory={selectedCategory}
-      />
-    </>
+        <FeaturedProducts />
+
+        <Categories
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
+
+        <ProductGrid
+          selectedCategory={selectedCategory}
+        />
+
+      </div>
+    </main>
   );
 }

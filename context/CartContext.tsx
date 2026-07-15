@@ -12,10 +12,13 @@ import { ProductSelection } from "@/types/product";
 
 interface CartContextType {
     items: ProductSelection[];
+
     addToCart: (item: ProductSelection) => void;
     removeFromCart: (index: number) => void;
     clearCart: () => void;
+
     totalItems: number;
+    totalPrice: number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -25,6 +28,7 @@ interface CartProviderProps {
 }
 
 export function CartProvider({ children }: CartProviderProps) {
+
     const [items, setItems] = useState<ProductSelection[]>([]);
 
     function addToCart(item: ProductSelection) {
@@ -41,7 +45,20 @@ export function CartProvider({ children }: CartProviderProps) {
 
     const totalItems = useMemo(
         () =>
-            items.reduce((total, item) => total + item.quantity, 0),
+            items.reduce(
+                (total, item) => total + item.quantity,
+                0
+            ),
+        [items]
+    );
+
+    const totalPrice = useMemo(
+        () =>
+            items.reduce(
+                (total, item) =>
+                    total + item.product.price * item.quantity,
+                0
+            ),
         [items]
     );
 
@@ -53,6 +70,7 @@ export function CartProvider({ children }: CartProviderProps) {
                 removeFromCart,
                 clearCart,
                 totalItems,
+                totalPrice,
             }}
         >
             {children}
@@ -61,6 +79,7 @@ export function CartProvider({ children }: CartProviderProps) {
 }
 
 export function useCartContext() {
+
     const context = useContext(CartContext);
 
     if (!context) {

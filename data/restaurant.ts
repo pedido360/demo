@@ -13,7 +13,7 @@ export const restaurant: Restaurant = {
 
     banner: "/banner.jpg",
 
-    whatsapp: "573001112233",
+    whatsapp: "573184377576",
 
     address: "Bucaramanga",
 

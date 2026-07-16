@@ -2,6 +2,9 @@
 
 import { X } from "lucide-react";
 
+import { restaurant } from "@/data/restaurant";
+import { buildWhatsAppMessage } from "@/lib/whatsapp";
+
 import { useCart } from "@/hooks/useCart";
 
 import CartItem from "./CartItem";
@@ -21,6 +24,18 @@ export default function CartDrawer({
         totalPrice,
         removeFromCart,
     } = useCart();
+    function handleWhatsApp() {
+
+        const message = buildWhatsAppMessage(
+            items,
+            totalPrice
+        );
+
+        const url =
+            `https://wa.me/${restaurant.whatsapp}?text=${encodeURIComponent(message)}`;
+
+        window.open(url, "_blank");
+    }
 
     if (!open) return null;
 
@@ -99,7 +114,9 @@ export default function CartDrawer({
                     </div>
 
                     <button
-                        className="w-full rounded-2xl bg-green-600 py-4 font-bold text-white transition hover:bg-green-700"
+                        onClick={handleWhatsApp}
+                        disabled={items.length === 0}
+                        className="w-full rounded-2xl bg-green-600 py-4 font-bold text-white transition hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
                         Continuar por WhatsApp
                     </button>

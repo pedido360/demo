@@ -49,10 +49,8 @@ export default function ProductDrawer({
 
     function handleAdd() {
 
-        if (!product) return;
-
         onAdd({
-            product,
+            product: product!,
             quantity,
             ingredients: [],
             extras: [],

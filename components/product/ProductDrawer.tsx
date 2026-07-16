@@ -48,6 +48,9 @@ export default function ProductDrawer({
     const total = product.price * quantity;
 
     function handleAdd() {
+
+        if (!product) return;
+
         onAdd({
             product,
             quantity,

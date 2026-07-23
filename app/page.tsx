@@ -6,18 +6,17 @@ import Hero from "@/components/landing/Hero";
 import FeaturedProducts from "@/components/landing/FeaturedProducts";
 import Categories from "@/components/landing/Categories";
 import ProductGrid from "@/components/products/ProductGrid";
+import CallToAction from "@/components/landing/CallToAction";
 
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
 import CartDrawer from "@/components/cart/CartDrawer";
 
 export default function Home() {
-
   const [selectedCategory, setSelectedCategory] = useState("1");
   const [cartOpen, setCartOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-gray-100">
-
       <div className="max-w-md mx-auto bg-white min-h-screen relative overflow-hidden">
 
         <Hero />
@@ -33,6 +32,9 @@ export default function Home() {
           selectedCategory={selectedCategory}
         />
 
+        {/* Sección comercial de Pedidos360 */}
+        <CallToAction />
+
         <FloatingCartButton
           onClick={() => setCartOpen(true)}
         />
@@ -43,7 +45,6 @@ export default function Home() {
         />
 
       </div>
-
     </main>
   );
 }

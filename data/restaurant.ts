@@ -3,25 +3,25 @@ import { Restaurant } from "@/types/restaurant";
 export const restaurant: Restaurant = {
     id: "1",
 
-    slug: "tatis",
+    slug: "demo",
 
-    name: "D' Tatis La 10",
+    name: "Tu Negocio Acá",
 
-    description: "Comidas rápidas",
+    description: "Así podría verse el menú digital de tu restaurante.",
 
     logo: "/logo.png",
 
     banner: "/banner.jpg",
 
-    whatsapp: "573184377576",
+    whatsapp: "573184377576", // tu número
 
-    address: "Bucaramanga",
+    address: "Colombia",
 
-    city: "Bucaramanga",
+    city: "Disponible para cualquier ciudad",
 
     isOpen: true,
 
-    rating: 4.9,
+    rating: 5.0,
 
     categories: [
         "Hamburguesas",

@@ -1,50 +1,33 @@
-"use client";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
-import { useState } from "react";
-
-import Hero from "@/components/landing/Hero";
-import FeaturedProducts from "@/components/landing/FeaturedProducts";
-import Categories from "@/components/landing/Categories";
-import ProductGrid from "@/components/products/ProductGrid";
-import CallToAction from "@/components/landing/CallToAction";
-
-import FloatingCartButton from "@/components/cart/FloatingCartButton";
-import CartDrawer from "@/components/cart/CartDrawer";
+import LandingHero from "@/components/landing/hero/LandingHero";
+import Problem from "@/components/landing/Problem";
+import Features from "@/components/landing/Features";
+import HowItWorks from "@/components/landing/HowItWorks";
+import Screenshots from "@/components/landing/Screenshots";
+import Pricing from "@/components/landing/Pricing";
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState("1");
-  const [cartOpen, setCartOpen] = useState(false);
+    return (
+        <>
+            <Navbar />
 
-  return (
-    <main className="min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto bg-white min-h-screen relative overflow-hidden">
+            <main className="overflow-x-hidden">
+                <LandingHero />
 
-        <Hero />
+                <Problem />
 
-        <FeaturedProducts />
+                <Features />
 
-        <Categories
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+                <HowItWorks />
 
-        <ProductGrid
-          selectedCategory={selectedCategory}
-        />
+                <Screenshots />
 
-        {/* Sección comercial de Pedidos360 */}
-        <CallToAction />
+                <Pricing />
+            </main>
 
-        <FloatingCartButton
-          onClick={() => setCartOpen(true)}
-        />
-
-        <CartDrawer
-          open={cartOpen}
-          onClose={() => setCartOpen(false)}
-        />
-
-      </div>
-    </main>
-  );
+            <Footer />
+        </>
+    );
 }

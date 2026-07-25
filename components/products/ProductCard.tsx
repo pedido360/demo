@@ -12,47 +12,46 @@ export default function ProductCard({
     onSelect,
 }: ProductCardProps) {
     return (
-        <article className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+        <article className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
 
-            <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
-
+            {/* Imagen */}
+            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
                 {product.image.startsWith("/") ? (
                     <Image
                         src={product.image}
                         alt={product.name}
                         width={64}
                         height={64}
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                     />
                 ) : (
-                    <span className="text-3xl">
+                    <div className="flex h-full w-full items-center justify-center text-3xl">
                         {product.image}
-                    </span>
+                    </div>
                 )}
-
             </div>
 
-            <div className="flex-1 min-w-0">
-
-                <h3 className="font-semibold truncate">
+            {/* Información */}
+            <div className="min-w-0 flex-1">
+                <h3 className="truncate text-[15px] font-semibold text-gray-900">
                     {product.name}
                 </h3>
 
-                <p className="text-sm text-gray-600 line-clamp-1">
+                <p className="mt-1 line-clamp-2 text-xs leading-4 text-gray-500">
                     {product.description}
                 </p>
-
             </div>
 
-            <div className="flex flex-col items-end justify-between h-16">
+            {/* Precio y botón */}
+            <div className="ml-2 flex flex-col items-end justify-between self-stretch">
 
-                <span className="font-bold text-red-600 whitespace-nowrap">
+                <span className="text-base font-bold text-red-600 whitespace-nowrap">
                     ${product.price.toLocaleString("es-CO")}
                 </span>
 
                 <button
                     onClick={() => onSelect(product)}
-                    className="w-9 h-9 rounded-full bg-red-600 text-white text-xl font-bold transition hover:bg-red-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-xl font-bold text-white transition-all hover:scale-105 hover:bg-red-700"
                 >
                     +
                 </button>

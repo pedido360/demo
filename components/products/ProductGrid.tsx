@@ -16,9 +16,9 @@ interface ProductGridProps {
 export default function ProductGrid({
     selectedCategory,
 }: ProductGridProps) {
-
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+
     const { addToCart } = useCart();
 
     const filteredProducts = products.filter(
@@ -32,13 +32,13 @@ export default function ProductGrid({
 
     return (
         <>
-            <section className="max-w-md mx-auto px-5 py-6">
+            <section className="w-full px-4 py-6">
 
-                <h2 className="text-2xl font-bold mb-6">
+                <h2 className="mb-5 text-2xl font-bold text-gray-900">
                     Productos
                 </h2>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
 
                     {filteredProducts.map((product) => (
                         <ProductCard
@@ -52,16 +52,17 @@ export default function ProductGrid({
 
             </section>
 
-            <ProductDrawer
-                product={selectedProduct}
-                open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-                onAdd={(selection) => {
-                    addToCart(selection);
-                    setDrawerOpen(false);
-                }}
-            />
-
+            {/*
+<ProductDrawer
+    product={selectedProduct}
+    open={drawerOpen}
+    onClose={() => setDrawerOpen(false)}
+    onAdd={(selection) => {
+        addToCart(selection);
+        setDrawerOpen(false);
+    }}
+/>
+*/}
         </>
     );
 }

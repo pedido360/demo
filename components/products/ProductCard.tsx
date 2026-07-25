@@ -13,7 +13,6 @@ export default function ProductCard({
 }: ProductCardProps) {
     return (
         <article className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
-
             {/* Imagen */}
             <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
                 {product.image.startsWith("/") ? (
@@ -44,20 +43,23 @@ export default function ProductCard({
 
             {/* Precio y botón */}
             <div className="ml-2 flex flex-col items-end justify-between self-stretch">
-
-                <span className="text-base font-bold text-red-600 whitespace-nowrap">
+                <span className="whitespace-nowrap text-base font-bold text-red-600">
                     ${product.price.toLocaleString("es-CO")}
                 </span>
 
                 <button
                     onClick={() => onSelect(product)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-xl font-bold text-white transition-all hover:scale-105 hover:bg-red-700"
+                    className="flex flex-col items-center justify-center text-red-600 transition-transform hover:scale-105"
                 >
-                    +
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-xl font-bold text-white hover:bg-red-700">
+                        +
+                    </div>
+
+                    <span className="mt-1 text-[11px] font-medium leading-none">
+                        Pedir
+                    </span>
                 </button>
-
             </div>
-
         </article>
     );
 }

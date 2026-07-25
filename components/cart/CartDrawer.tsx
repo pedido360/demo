@@ -31,6 +31,7 @@ export default function CartDrawer({
             totalPrice
         );
 
+
         const url =
             `https://wa.me/${restaurant.whatsapp}?text=${encodeURIComponent(message)}`;
 

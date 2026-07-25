@@ -33,13 +33,11 @@ export default function ProductGrid({
     return (
         <>
             <section className="w-full px-4 py-6">
-
                 <h2 className="mb-5 text-2xl font-bold text-gray-900">
                     Productos
                 </h2>
 
                 <div className="space-y-3">
-
                     {filteredProducts.map((product) => (
                         <ProductCard
                             key={product.id}
@@ -47,22 +45,18 @@ export default function ProductGrid({
                             onSelect={handleSelectProduct}
                         />
                     ))}
-
                 </div>
-
             </section>
 
-            {/*
-<ProductDrawer
-    product={selectedProduct}
-    open={drawerOpen}
-    onClose={() => setDrawerOpen(false)}
-    onAdd={(selection) => {
-        addToCart(selection);
-        setDrawerOpen(false);
-    }}
-/>
-*/}
+            <ProductDrawer
+                product={selectedProduct}
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                onAdd={(selection) => {
+                    addToCart(selection);
+                    setDrawerOpen(false);
+                }}
+            />
         </>
     );
 }

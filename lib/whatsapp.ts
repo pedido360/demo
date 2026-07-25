@@ -5,7 +5,6 @@ export function buildWhatsAppMessage(
     items: ProductSelection[],
     totalPrice: number
 ) {
-
     const lines: string[] = [];
 
     lines.push("🍔 *NUEVO PEDIDO*");
@@ -19,7 +18,6 @@ export function buildWhatsAppMessage(
     lines.push("━━━━━━━━━━━━━━━━━━━━");
 
     items.forEach((item, index) => {
-
         lines.push(`🍽️ *${index + 1}. ${item.product.name}*`);
 
         lines.push(`   Cantidad: ${item.quantity}`);
@@ -35,7 +33,6 @@ export function buildWhatsAppMessage(
         );
 
         lines.push("");
-
     });
 
     lines.push("━━━━━━━━━━━━━━━━━━━━");

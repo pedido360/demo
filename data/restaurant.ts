@@ -9,7 +9,7 @@ export const restaurant: Restaurant = {
 
     description: "Así podría verse el menú digital de tu restaurante.",
 
-    logo: "/logo.png",
+    logo: "/logo-demo.png",
 
     banner: "/banner.jpg",
 

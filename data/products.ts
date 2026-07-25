@@ -109,7 +109,7 @@ export const products: Product[] = [
         description: "Doble carne, pollo, queso y tocineta.",
         price: 25000,
         image: "/images/products/hamburger.jpg",
-        featured: false,
+        featured: true,
 
         ingredients: [
             { id: "1", name: "Pan" },
@@ -194,7 +194,7 @@ export const products: Product[] = [
         description: "Chorizo artesanal, queso y papa ripio.",
         price: 14000,
         image: "/images/products/hotdog.jpg",
-        featured: false,
+        featured: true,
 
         ingredients: [
             { id: "1", name: "Pan" },

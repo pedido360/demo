@@ -27,7 +27,9 @@ export default function RestaurantContent() {
                 onSelectCategory={setSelectedCategory}
             />
 
-            {/* <ProductGrid selectedCategory={selectedCategory} /> */}
+            <ProductGrid
+                selectedCategory={selectedCategory}
+            />
 
             <CallToAction />
 

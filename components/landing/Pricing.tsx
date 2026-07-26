@@ -11,7 +11,7 @@ const benefits = [
 ];
 
 const whatsappUrl =
-    "https://wa.me/573180972943?text=Hola%20👋%0A%0AQuiero%20iniciar%20con%20Pedidos360%20para%20mi%20restaurante.%0A%0AMe%20gustaría%20coordinar%20la%20contratación%20del%20servicio%20y%20comenzar%20la%20personalización%20de%20mi%20menú%20digital.%0A%0AQuedo%20atento%20para%20iniciar%20el%20proceso.";
+    "https://wa.me/573184377576?text=Hola%20👋%0A%0AQuiero%20iniciar%20con%20Pedidos360%20para%20mi%20restaurante.%0A%0AMe%20gustaría%20coordinar%20la%20contratación%20del%20servicio%20y%20comenzar%20la%20personalización%20de%20mi%20menú%20digital.%0A%0AQuedo%20atento%20para%20iniciar%20el%20proceso.";
 
 export default function Pricing() {
     const [starting, setStarting] = useState(false);

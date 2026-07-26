@@ -54,6 +54,7 @@ export default function Features() {
         >
             <div className="mx-auto max-w-7xl px-6">
 
+                {/* Header */}
                 <div className="mx-auto max-w-3xl text-center">
 
                     <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
@@ -71,6 +72,7 @@ export default function Features() {
 
                 </div>
 
+                {/* Cards */}
                 <div className="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
                     {features.map((feature) => {
@@ -79,9 +81,9 @@ export default function Features() {
                         return (
                             <div
                                 key={feature.title}
-                                className="group rounded-3xl bg-white p-8 shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:ring-orange-200"
+                                className="group rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:ring-orange-200 lg:text-left"
                             >
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition-all duration-300 group-hover:bg-orange-500 group-hover:text-white">
+                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition-all duration-300 group-hover:bg-orange-500 group-hover:text-white lg:mx-0">
                                     <Icon className="h-8 w-8" />
                                 </div>
 

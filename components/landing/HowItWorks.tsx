@@ -34,6 +34,7 @@ export default function HowItWorks() {
         >
             <div className="mx-auto max-w-7xl px-6">
 
+                {/* Header */}
                 <div className="mx-auto max-w-3xl text-center">
 
                     <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
@@ -51,6 +52,7 @@ export default function HowItWorks() {
 
                 </div>
 
+                {/* Steps */}
                 <div className="mt-20 grid gap-8 lg:grid-cols-3">
 
                     {steps.map((step, index) => {
@@ -59,14 +61,14 @@ export default function HowItWorks() {
                         return (
                             <div
                                 key={step.title}
-                                className="relative rounded-3xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                                className="relative rounded-3xl border border-gray-100 bg-white p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl lg:text-left"
                             >
 
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg">
+                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg lg:mx-0">
                                     <Icon className="h-8 w-8" />
                                 </div>
 
-                                <div className="mt-8 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-600">
+                                <div className="mx-auto mt-8 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-600 lg:mx-0">
                                     {index + 1}
                                 </div>
 

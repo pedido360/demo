@@ -23,13 +23,14 @@ export default function Screenshots() {
                     </span>
 
                     <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
-                        Desde el pedido hasta WhatsApp.
+                        Los pedidos, directo a tu WhatsApp.
                     </h2>
 
                     <p className="mt-6 text-lg leading-8 text-gray-600">
-                        Todo el proceso está pensado para que el cliente compre
-                        fácilmente y el restaurante reciba pedidos claros, organizados
-                        y listos para confirmar.
+                        Tus clientes hacen su pedido desde el menú digital y tú lo
+                        recibes organizado en WhatsApp, listo para confirmar. Todo
+                        ocurre de forma automática para que puedas atender más rápido
+                        y con menos errores.
                     </p>
 
                 </div>
@@ -89,11 +90,35 @@ export default function Screenshots() {
 
                     <div className="flex flex-col items-center justify-center text-center">
 
+                        {/* Flecha escritorio */}
+
                         <ArrowRight className="hidden h-16 w-16 text-orange-400 lg:block" />
 
-                        <div className="mt-6 rounded-full bg-orange-100 px-6 py-3 font-semibold text-orange-600">
-                            Envío automático
+                        {/* Flecha móvil superior */}
+
+                        <ArrowRight className="h-12 w-12 rotate-90 text-orange-400 lg:hidden" />
+
+                        <div className="mt-6 rounded-3xl border border-orange-200 bg-orange-50 px-8 py-6 shadow-sm">
+
+                            <div className="text-4xl">
+                                ⚡
+                            </div>
+
+                            <h3 className="mt-4 text-xl font-bold text-orange-700">
+                                Pedido enviado
+                                <br />
+                                automáticamente
+                            </h3>
+
+                            <p className="mt-3 text-sm text-orange-600">
+                                Sin hacer nada.
+                            </p>
+
                         </div>
+
+                        {/* Flecha móvil inferior */}
+
+                        <ArrowRight className="mt-6 h-12 w-12 rotate-90 text-orange-400 lg:hidden" />
 
                     </div>
 

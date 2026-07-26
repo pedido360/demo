@@ -76,9 +76,9 @@ export default function Problem() {
                         return (
                             <div
                                 key={item.title}
-                                className="group rounded-3xl border border-gray-100 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-orange-200 hover:shadow-xl"
+                                className="group rounded-3xl border border-gray-100 bg-white p-7 text-center shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-orange-200 hover:shadow-xl lg:text-left"
                             >
-                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition-colors group-hover:bg-orange-500 group-hover:text-white">
+                                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition-colors group-hover:bg-orange-500 group-hover:text-white lg:mx-0">
                                     <Icon className="h-7 w-7" />
                                 </div>
 
@@ -100,7 +100,7 @@ export default function Problem() {
 
                     <div className="grid items-center gap-10 lg:grid-cols-2">
 
-                        <div>
+                        <div className="text-center lg:text-left">
 
                             <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold">
                                 La solución
@@ -123,7 +123,7 @@ export default function Problem() {
                             {solutions.map((item) => (
                                 <div
                                     key={item}
-                                    className="flex items-center gap-4 rounded-2xl bg-white/10 px-5 py-4 backdrop-blur"
+                                    className="flex items-center justify-center gap-4 rounded-2xl bg-white/10 px-5 py-4 text-center backdrop-blur lg:justify-start lg:text-left"
                                 >
                                     <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-white" />
 

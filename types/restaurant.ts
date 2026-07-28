@@ -1,3 +1,5 @@
+export type RestaurantStatus = "active" | "paused";
+
 export interface Restaurant {
     id: string;
     slug: string;
@@ -19,4 +21,13 @@ export interface Restaurant {
     rating: number;
 
     categories: string[];
+
+    // Estado administrativo de la cuenta
+    status: RestaurantStatus;
+
+    // Motivo de la suspensión (opcional)
+    pauseReason: string | null;
+
+    // Fecha de suspensión (opcional)
+    pausedAt: string | null;
 }

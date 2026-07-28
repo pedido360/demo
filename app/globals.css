@@ -1,20 +1,24 @@
 @import "tailwindcss";
 
 :root {
+    /* Fondo y texto */
     --background: #f8f9fa;
     --foreground: #1f2937;
 
-    --primary: #dc2626;
-    --primary-dark: #b91c1c;
+    /* Marca Pedidos360 */
+    --primary: #f97316;
+    --primary-dark: #ea580c;
 
+    /* Colores de apoyo */
     --secondary: #111827;
 
+    /* Estados */
     --success: #16a34a;
-
     --warning: #f59e0b;
+    --danger: #dc2626;
 
+    /* UI */
     --card: #ffffff;
-
     --border: #e5e7eb;
 }
 

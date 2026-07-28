@@ -1,7 +1,7 @@
 import { CheckCircle2 } from "lucide-react";
 
 import Badge from "@/components/ui/Badge";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/LinkButton";
 import Container from "@/components/ui/Container";
 
 import HeroBackground from "./HeroBackground";

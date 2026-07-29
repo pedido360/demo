@@ -1,3 +1,17 @@
+export interface Ingredient {
+    id: string;
+
+    name: string;
+}
+
+export interface Extra {
+    id: string;
+
+    name: string;
+
+    price: number;
+}
+
 export interface Product {
     id: string;
 
@@ -15,7 +29,7 @@ export interface Product {
 
     isAvailable: boolean;
 
-    ingredients?: Ingredient[];
+    ingredients: Ingredient[];
 
-    extras?: Extra[];
+    extras: Extra[];
 }

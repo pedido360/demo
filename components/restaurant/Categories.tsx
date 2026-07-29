@@ -67,17 +67,17 @@ export default function Categories({
                         >
                             <div
                                 className={`flex h-16 w-16 items-center justify-center rounded-full text-2xl shadow transition-all duration-300 ${active
-                                        ? "bg-red-600 text-white"
-                                        : "bg-white hover:shadow-lg"
+                                    ? "bg-red-600 text-white"
+                                    : "bg-white hover:shadow-lg"
                                     }`}
                             >
-                                {category.icon}
+                                {category.emoji}
                             </div>
 
                             <span
                                 className={`mt-2 text-sm ${active
-                                        ? "font-semibold text-red-600"
-                                        : "text-gray-700"
+                                    ? "font-semibold text-red-600"
+                                    : "text-gray-700"
                                     }`}
                             >
                                 {category.name}

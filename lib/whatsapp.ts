@@ -22,7 +22,7 @@ export function buildWhatsAppMessage(
 
         lines.push(`   Cantidad: ${item.quantity}`);
 
-        if (item.notes.trim()) {
+        if (item.notes?.trim()) {
             lines.push(`   📝 ${item.notes}`);
         }
 

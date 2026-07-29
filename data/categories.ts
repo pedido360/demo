@@ -1,10 +1,46 @@
 import { Category } from "@/types/category";
 
 export const categories: Category[] = [
-    { id: "1", name: "Hamburguesas", icon: "🍔" },
-    { id: "2", name: "Perros", icon: "🌭" },
-    { id: "3", name: "Burritos", icon: "🌯" },
-    { id: "4", name: "Papas", icon: "🍟" },
-    { id: "5", name: "Carnes", icon: "🥩" },
-    { id: "6", name: "Bebidas", icon: "🥤" },
+    {
+        id: "1",
+        name: "Hamburguesas",
+        description: "",
+        emoji: "🍔",
+        isActive: true,
+    },
+    {
+        id: "2",
+        name: "Perros",
+        description: "",
+        emoji: "🌭",
+        isActive: true,
+    },
+    {
+        id: "3",
+        name: "Burritos",
+        description: "",
+        emoji: "🌯",
+        isActive: true,
+    },
+    {
+        id: "4",
+        name: "Papas",
+        description: "",
+        emoji: "🍟",
+        isActive: true,
+    },
+    {
+        id: "5",
+        name: "Carnes",
+        description: "",
+        emoji: "🥩",
+        isActive: true,
+    },
+    {
+        id: "6",
+        name: "Bebidas",
+        description: "",
+        emoji: "🥤",
+        isActive: true,
+    },
 ];

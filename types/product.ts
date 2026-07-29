@@ -1,14 +1,11 @@
 export interface Ingredient {
     id: string;
-
     name: string;
 }
 
 export interface Extra {
     id: string;
-
     name: string;
-
     price: number;
 }
 
@@ -27,9 +24,21 @@ export interface Product {
 
     featured: boolean;
 
-    isAvailable: boolean;
+    isAvailable?: boolean;
+
+    ingredients?: Ingredient[];
+
+    extras?: Extra[];
+}
+
+export interface ProductSelection {
+    product: Product;
+
+    quantity: number;
 
     ingredients: Ingredient[];
 
     extras: Extra[];
+
+    notes?: string;
 }

@@ -171,7 +171,10 @@ export default function RestaurantEditor({
     if (loadingData) {
 
         return (
-            <Loading message="Cargando restaurante..." />
+            <Loading
+                title="Cargando restaurante..."
+                description="Espera un momento mientras obtenemos la información."
+            />
         );
 
     }

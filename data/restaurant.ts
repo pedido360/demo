@@ -5,30 +5,36 @@ export const restaurant: Restaurant = {
 
     slug: "demo",
 
-    name: "Tu Negocio Acá",
+    name: "Pedidos360 Demo",
 
-    description: "Así podría verse el menú digital de tu restaurante.",
+    description: "Los mejores productos de la ciudad.",
 
-    logo: "/logo-demo.png",
+    logo: "/images/logo.png",
 
-    banner: "/banner.jpg",
+    banner: "/images/banner.jpg",
 
-    whatsapp: "573184377576", // tu número
+    whatsapp: "573001234567",
 
-    address: "Colombia",
+    address: "Calle Principal #123",
 
-    city: "Disponible para cualquier ciudad",
+    city: "Bogotá",
 
     isOpen: true,
 
-    rating: 5.0,
+    rating: 4.8,
 
     categories: [
-        "Hamburguesas",
-        "Perros",
-        "Burritos",
-        "Patacones",
-        "Carnes",
-        "Bebidas",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
     ],
+
+    status: "active",
+
+    pauseReason: null,
+
+    pausedAt: null,
 };

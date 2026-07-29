@@ -1,241 +1,183 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import Loading from "@/components/ui/feedback/Loading";
 
-import RestaurantInfoForm from "./RestaurantInfoForm";
-import RestaurantHoursEditor from "./RestaurantHoursEditor";
-
-// import CategoryEditor from "@/components/admin/categories/CategoryEditor";
-import ProductEditor from "@/components/admin/products/ProductEditor";
-
-import { Category } from "@/types/category";
-import { Product } from "@/types/product";
-import { Restaurant } from "@/types/restaurant";
 import { RestaurantHour } from "@/types/restaurant-hour";
 
-import {
-    createRestaurant,
-    getRestaurantById,
-    updateRestaurant,
-} from "@/lib/repositories/restaurant.repository";
-
-import {
-    createRestaurantHours,
-    getRestaurantHours,
-    updateRestaurantHours,
-} from "@/lib/repositories/restaurant-hours.repository";
-
-interface RestaurantEditorProps {
-    restaurantId?: string;
+interface Props {
+    hours: RestaurantHour[];
+    setHours: React.Dispatch<React.SetStateAction<RestaurantHour[]>>;
 }
 
-const defaultHours: RestaurantHour[] = [
-    {
-        dayOfWeek: 1,
-        isOpen: true,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
-    {
-        dayOfWeek: 2,
-        isOpen: true,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
-    {
-        dayOfWeek: 3,
-        isOpen: true,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
-    {
-        dayOfWeek: 4,
-        isOpen: true,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
-    {
-        dayOfWeek: 5,
-        isOpen: true,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
-    {
-        dayOfWeek: 6,
-        isOpen: true,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
-    {
-        dayOfWeek: 0,
-        isOpen: false,
-        openTime: "08:00",
-        closeTime: "22:00",
-    },
+const DAYS = [
+    { value: 1, label: "Lunes" },
+    { value: 2, label: "Martes" },
+    { value: 3, label: "Miércoles" },
+    { value: 4, label: "Jueves" },
+    { value: 5, label: "Viernes" },
+    { value: 6, label: "Sábado" },
+    { value: 0, label: "Domingo" },
 ];
 
-export default function RestaurantEditor({
-    restaurantId,
-}: RestaurantEditorProps) {
-    const isEditMode = Boolean(restaurantId);
+export default function RestaurantHoursEditor({
+    hours,
+    setHours,
+}: Props) {
 
-    const [loading, setLoading] = useState(false);
-    const [loadingData, setLoadingData] = useState(isEditMode);
-
-    const [restaurant, setRestaurant] = useState<Restaurant>({
-        id: "",
-        slug: "",
-        name: "",
-        description: "",
-        logo: "",
-        banner: "",
-        whatsapp: "",
-        address: "",
-        city: "",
-        isOpen: true,
-        rating: 5,
-        categories: [],
-        status: "active",
-        pauseReason: null,
-        pausedAt: null,
-    });
-
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
-    const [hours, setHours] = useState<RestaurantHour[]>(defaultHours);
-
-    useEffect(() => {
-        if (!restaurantId) return;
-
-        loadRestaurant();
-    }, [restaurantId]);
-
-    async function loadRestaurant() {
-        try {
-            setLoadingData(true);
-
-            const restaurantData =
-                await getRestaurantById(restaurantId!);
-
-            const hoursData =
-                await getRestaurantHours(restaurantId!);
-
-            setRestaurant(restaurantData);
-
-            if (hoursData.length > 0) {
-                setHours(
-                    hoursData.map((hour) => ({
-                        dayOfWeek: hour.day_of_week,
-                        isOpen: hour.is_open,
-                        openTime: hour.open_time ?? "08:00",
-                        closeTime: hour.close_time ?? "22:00",
-                    }))
-                );
-            }
-        } catch (error) {
-            console.error(error);
-            alert("No fue posible cargar el restaurante.");
-        } finally {
-            setLoadingData(false);
-        }
+    function updateHour(
+        dayOfWeek: number,
+        field: keyof RestaurantHour,
+        value: string | boolean
+    ) {
+        setHours((current) =>
+            current.map((hour) =>
+                hour.dayOfWeek === dayOfWeek
+                    ? {
+                        ...hour,
+                        [field]: value,
+                    }
+                    : hour
+            )
+        );
     }
 
-    async function handleSave() {
-        try {
-            setLoading(true);
+    function copyMondayToAllDays() {
+        const monday = hours.find(
+            (hour) => hour.dayOfWeek === 1
+        );
 
-            if (isEditMode) {
-                await updateRestaurant(
-                    restaurant.id,
-                    restaurant
-                );
+        if (!monday) return;
 
-                await updateRestaurantHours(
-                    restaurant.id,
-                    hours
-                );
-
-                alert("✅ Restaurante actualizado correctamente.");
-            } else {
-                const savedRestaurant =
-                    await createRestaurant(restaurant);
-
-                await createRestaurantHours(
-                    savedRestaurant.id,
-                    hours
-                );
-
-                alert("✅ Restaurante creado correctamente.");
-            }
-        } catch (error) {
-            console.error(error);
-
-            if (error instanceof Error) {
-                alert(error.message);
-            } else {
-                alert("Error desconocido");
-            }
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    if (loadingData) {
-        return (
-            <Loading
-                title="Cargando restaurante..."
-                description="Espera un momento mientras obtenemos la información."
-            />
+        setHours((current) =>
+            current.map((hour) => ({
+                ...hour,
+                isOpen: monday.isOpen,
+                openTime: monday.openTime,
+                closeTime: monday.closeTime,
+            }))
         );
     }
 
     return (
-        <div className="space-y-6">
-            <RestaurantInfoForm
-                restaurant={restaurant}
-                setRestaurant={setRestaurant}
-            />
+        <Card
+            title="Horario de Atención"
+            description="Configura los días y horarios en los que el restaurante recibirá pedidos."
+        >
+            <div className="mb-6 flex justify-end">
 
-            <RestaurantHoursEditor
-                hours={hours}
-                setHours={setHours}
-            />
-
-            {/* CategoryEditor deshabilitado temporalmente */}
-
-            <ProductEditor
-                categories={categories}
-                products={products}
-                setProducts={setProducts}
-            />
-
-            <Card
-                title="Configuración"
-                description="Opciones adicionales del restaurante"
-            >
-                <p className="text-sm text-gray-500">
-                    Próximamente...
-                </p>
-            </Card>
-
-            <div className="flex justify-end">
-                <Button
-                    onClick={handleSave}
-                    disabled={loading}
+                <button
+                    type="button"
+                    onClick={copyMondayToAllDays}
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
                 >
-                    {loading
-                        ? isEditMode
-                            ? "Actualizando..."
-                            : "Guardando..."
-                        : isEditMode
-                            ? "Actualizar restaurante"
-                            : "Guardar restaurante"}
-                </Button>
+                    Copiar horario de lunes a todos los días
+                </button>
+
             </div>
-        </div>
+
+            <div className="space-y-4">
+
+                {DAYS.map((day) => {
+
+                    const hour = hours.find(
+                        (h) => h.dayOfWeek === day.value
+                    );
+
+                    if (!hour) return null;
+
+                    return (
+                        <div
+                            key={day.value}
+                            className="rounded-xl border p-4"
+                        >
+
+                            <div className="flex items-center justify-between">
+
+                                <h3 className="font-medium">
+                                    {day.label}
+                                </h3>
+
+                                <label className="flex items-center gap-2 text-sm">
+
+                                    <input
+                                        type="checkbox"
+                                        checked={hour.isOpen}
+                                        onChange={(e) =>
+                                            updateHour(
+                                                day.value,
+                                                "isOpen",
+                                                e.target.checked
+                                            )
+                                        }
+                                    />
+
+                                    Abierto
+
+                                </label>
+
+                            </div>
+
+                            {hour.isOpen ? (<div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                                <div>
+
+                                    <label className="mb-1 block text-sm font-medium">
+                                        Hora de apertura
+                                    </label>
+
+                                    <input
+                                        type="time"
+                                        value={hour.openTime}
+                                        onChange={(e) =>
+                                            updateHour(
+                                                day.value,
+                                                "openTime",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full rounded-lg border px-3 py-2"
+                                    />
+
+                                </div>
+
+                                <div>
+
+                                    <label className="mb-1 block text-sm font-medium">
+                                        Hora de cierre
+                                    </label>
+
+                                    <input
+                                        type="time"
+                                        value={hour.closeTime}
+                                        onChange={(e) =>
+                                            updateHour(
+                                                day.value,
+                                                "closeTime",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full rounded-lg border px-3 py-2"
+                                    />
+
+                                </div>
+
+                            </div>
+
+                            ) : (
+
+                                <p className="mt-3 text-sm text-gray-500">
+                                    El restaurante permanecerá cerrado este día.
+                                </p>
+
+                            )}
+
+                        </div>
+                    );
+
+                })}
+
+            </div>
+
+        </Card>
     );
 }

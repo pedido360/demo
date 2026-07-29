@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import Loading from "@/components/ui/feedback/Loading";
 
 import RestaurantInfoForm from "./RestaurantInfoForm";
 import RestaurantHoursEditor from "./RestaurantHoursEditor";
@@ -16,12 +17,75 @@ import { Product } from "@/types/product";
 import { Restaurant } from "@/types/restaurant";
 import { RestaurantHour } from "@/types/restaurant-hour";
 
-import { createRestaurant } from "@/lib/repositories/restaurant.repository";
-import { createRestaurantHours } from "@/lib/repositories/restaurant-hours.repository";
+import {
+    createRestaurant,
+    getRestaurantById,
+    updateRestaurant,
+} from "@/lib/repositories/restaurant.repository";
 
-export default function RestaurantEditor() {
+import {
+    createRestaurantHours,
+    getRestaurantHours,
+    updateRestaurantHours,
+} from "@/lib/repositories/restaurant-hours.repository";
+
+interface RestaurantEditorProps {
+    restaurantId?: string;
+}
+
+const defaultHours: RestaurantHour[] = [
+    {
+        dayOfWeek: 1,
+        isOpen: true,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+    {
+        dayOfWeek: 2,
+        isOpen: true,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+    {
+        dayOfWeek: 3,
+        isOpen: true,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+    {
+        dayOfWeek: 4,
+        isOpen: true,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+    {
+        dayOfWeek: 5,
+        isOpen: true,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+    {
+        dayOfWeek: 6,
+        isOpen: true,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+    {
+        dayOfWeek: 0,
+        isOpen: false,
+        openTime: "08:00",
+        closeTime: "22:00",
+    },
+];
+
+export default function RestaurantEditor({
+    restaurantId,
+}: RestaurantEditorProps) {
+
+    const isEditMode = Boolean(restaurantId);
 
     const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(isEditMode);
 
     const [restaurant, setRestaurant] = useState<Restaurant>({
         id: "",
@@ -44,55 +108,74 @@ export default function RestaurantEditor() {
         rating: 5,
 
         categories: [],
+
+        status: "active",
+        pauseReason: null,
+        pausedAt: null,
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
+    const [hours, setHours] = useState<RestaurantHour[]>(defaultHours);
 
-    const [hours, setHours] = useState<RestaurantHour[]>([
-        {
-            dayOfWeek: 1,
-            isOpen: true,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-        {
-            dayOfWeek: 2,
-            isOpen: true,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-        {
-            dayOfWeek: 3,
-            isOpen: true,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-        {
-            dayOfWeek: 4,
-            isOpen: true,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-        {
-            dayOfWeek: 5,
-            isOpen: true,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-        {
-            dayOfWeek: 6,
-            isOpen: true,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-        {
-            dayOfWeek: 0,
-            isOpen: false,
-            openTime: "08:00",
-            closeTime: "22:00",
-        },
-    ]);
+    useEffect(() => {
+
+        if (!restaurantId) {
+            return;
+        }
+
+        loadRestaurant();
+
+    }, [restaurantId]);
+
+    async function loadRestaurant() {
+
+        try {
+
+            setLoadingData(true);
+
+            const restaurantData =
+                await getRestaurantById(restaurantId!);
+
+            const hoursData =
+                await getRestaurantHours(restaurantId!);
+
+            setRestaurant(restaurantData);
+
+            if (hoursData.length > 0) {
+
+                setHours(
+                    hoursData.map((hour) => ({
+                        dayOfWeek: hour.day_of_week,
+                        isOpen: hour.is_open,
+                        openTime: hour.open_time ?? "08:00",
+                        closeTime: hour.close_time ?? "22:00",
+                    }))
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+            alert("No fue posible cargar el restaurante.");
+
+        } finally {
+
+            setLoadingData(false);
+
+        }
+
+    }
+
+    if (loadingData) {
+
+        return (
+            <Loading message="Cargando restaurante..." />
+        );
+
+    }
+
 
     async function handleSave() {
 
@@ -100,20 +183,37 @@ export default function RestaurantEditor() {
 
             setLoading(true);
 
-            const savedRestaurant = await createRestaurant(restaurant);
+            if (isEditMode) {
 
-            await createRestaurantHours(
-                savedRestaurant.id,
-                hours
-            );
+                await updateRestaurant(
+                    restaurant.id,
+                    restaurant
+                );
 
-            console.log("Restaurante creado:", savedRestaurant);
+                await updateRestaurantHours(
+                    restaurant.id,
+                    hours
+                );
 
-            alert("✅ Restaurante creado correctamente.");
+                alert("✅ Restaurante actualizado correctamente.");
+
+            } else {
+
+                const savedRestaurant =
+                    await createRestaurant(restaurant);
+
+                await createRestaurantHours(
+                    savedRestaurant.id,
+                    hours
+                );
+
+                alert("✅ Restaurante creado correctamente.");
+
+            }
 
         } catch (error) {
 
-            console.error("ERROR:", error);
+            console.error(error);
 
             if (error instanceof Error) {
                 alert(error.message);
@@ -170,8 +270,12 @@ export default function RestaurantEditor() {
                     disabled={loading}
                 >
                     {loading
-                        ? "Guardando..."
-                        : "Guardar restaurante"}
+                        ? isEditMode
+                            ? "Actualizando..."
+                            : "Guardando..."
+                        : isEditMode
+                            ? "Actualizar restaurante"
+                            : "Guardar restaurante"}
                 </Button>
 
             </div>

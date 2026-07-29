@@ -1,21 +1,11 @@
-export interface Product {
+export interface Category {
     id: string;
-
-    categoryId: string;
 
     name: string;
 
     description: string;
 
-    price: number;
+    emoji: string;
 
-    image: string;
-
-    featured: boolean;
-
-    isAvailable: boolean;
-
-    ingredients?: Ingredient[];
-
-    extras?: Extra[];
+    isActive: boolean;
 }

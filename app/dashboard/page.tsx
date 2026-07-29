@@ -1,13 +1,11 @@
-import Link from "next/link";
 import { Store, Plus } from "lucide-react";
 
 import Card from "@/components/ui/Card";
-import Button from "@/components/ui/LinkButton";
+import LinkButton from "@/components/ui/LinkButton";
 
 export default function DashboardPage() {
     return (
         <div className="space-y-8">
-
             <div>
                 <h1 className="text-3xl font-bold">
                     Dashboard
@@ -23,9 +21,7 @@ export default function DashboardPage() {
                 description="Administra los restaurantes registrados."
             >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
                     <div className="flex items-center gap-3">
-
                         <div className="rounded-xl bg-orange-100 p-3">
                             <Store
                                 className="text-orange-600"
@@ -34,7 +30,6 @@ export default function DashboardPage() {
                         </div>
 
                         <div>
-
                             <h2 className="font-semibold">
                                 Restaurantes
                             </h2>
@@ -42,33 +37,23 @@ export default function DashboardPage() {
                             <p className="text-sm text-gray-500">
                                 Crear, editar y administrar restaurantes.
                             </p>
-
                         </div>
-
                     </div>
 
                     <div className="flex gap-3">
+                        <LinkButton href="/dashboard/restaurants">
+                            Ver restaurantes
+                        </LinkButton>
 
-                        <Link href="/dashboard/restaurants">
-                            <Button>
-                                Ver restaurantes
-                            </Button>
-                        </Link>
-
-                        <Link href="/dashboard/restaurants/new">
-                            <Button
-                                leftIcon={<Plus size={18} />}
-                            >
-                                Nuevo
-                            </Button>
-                        </Link>
-
+                        <LinkButton
+                            href="/dashboard/restaurants/new"
+                            leftIcon={<Plus size={18} />}
+                        >
+                            Nuevo
+                        </LinkButton>
                     </div>
-
                 </div>
-
             </Card>
-
         </div>
     );
 }

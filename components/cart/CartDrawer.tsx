@@ -1,49 +1,131 @@
-import { ProductSelection } from "@/types/product";
+"use client";
+
+import { X } from "lucide-react";
+
 import { restaurant } from "@/data/restaurant";
+import { buildWhatsAppMessage } from "@/lib/whatsapp";
 
-export function buildWhatsAppMessage(
-    items: ProductSelection[],
-    totalPrice: number
-) {
-    const lines: string[] = [];
+import { useCart } from "@/hooks/useCart";
 
-    lines.push("🍔 *NUEVO PEDIDO*");
-    lines.push(`📍 *${restaurant.name}*`);
-    lines.push("");
+import CartItem from "./CartItem";
 
-    lines.push("Hola 👋");
-    lines.push("Quiero realizar el siguiente pedido:");
-    lines.push("");
+interface CartDrawerProps {
+    open: boolean;
+    onClose: () => void;
+}
 
-    lines.push("━━━━━━━━━━━━━━━━━━━━");
+export default function CartDrawer({
+    open,
+    onClose,
+}: CartDrawerProps) {
 
-    items.forEach((item, index) => {
-        lines.push(`🍽️ *${index + 1}. ${item.product.name}*`);
+    const {
+        items,
+        totalPrice,
+        removeFromCart,
+    } = useCart();
+    function handleWhatsApp() {
 
-        lines.push(`   Cantidad: ${item.quantity}`);
-
-        if (item.notes?.trim()) {
-            lines.push(`   📝 ${item.notes}`);
-        }
-
-        lines.push(
-            `   💲 $${(
-                item.product.price * item.quantity
-            ).toLocaleString("es-CO")}`
+        const message = buildWhatsAppMessage(
+            items,
+            totalPrice
         );
 
-        lines.push("");
-    });
 
-    lines.push("━━━━━━━━━━━━━━━━━━━━");
-    lines.push("");
+        const url =
+            `https://wa.me/${restaurant.whatsapp}?text=${encodeURIComponent(message)}`;
 
-    lines.push(
-        `💰 *TOTAL: $${totalPrice.toLocaleString("es-CO")}*`
+        window.open(url, "_blank");
+    }
+
+    if (!open) return null;
+
+    return (
+        <div className="fixed inset-0 z-50">
+
+            {/* Overlay */}
+
+            <div
+                className="absolute inset-0 bg-black/50"
+                onClick={onClose}
+            />
+
+            {/* Drawer */}
+
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+
+                <header className="flex items-center justify-between border-b p-5">
+
+                    <h2 className="text-2xl font-bold">
+                        🛒 Mi Pedido
+                    </h2>
+
+                    <button
+                        onClick={onClose}
+                        className="rounded-full p-2 hover:bg-gray-100"
+                    >
+                        <X size={24} />
+                    </button>
+
+                </header>
+
+                <div className="flex-1 overflow-y-auto p-5">
+
+                    {items.length === 0 ? (
+
+                        <div className="text-center text-gray-500 mt-20">
+
+                            <p className="text-lg font-medium">
+                                Tu carrito está vacío.
+                            </p>
+
+                        </div>
+
+                    ) : (
+
+                        <div className="space-y-4">
+
+                            {items.map((item, index) => (
+
+                                <CartItem
+                                    key={index}
+                                    item={item}
+                                    index={index}
+                                    onRemove={removeFromCart}
+                                />
+
+                            ))}
+
+                        </div>
+
+                    )}
+
+                </div>
+
+                <footer className="border-t p-5">
+
+                    <div className="flex justify-between text-lg font-bold mb-4">
+
+                        <span>Total</span>
+
+                        <span className="text-red-600">
+                            ${totalPrice.toLocaleString("es-CO")}
+                        </span>
+
+                    </div>
+
+                    <button
+                        onClick={handleWhatsApp}
+                        disabled={items.length === 0}
+                        className="w-full rounded-2xl bg-green-600 py-4 font-bold text-white transition hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                        Continuar por WhatsApp
+                    </button>
+
+                </footer>
+
+            </div>
+
+        </div>
     );
-
-    lines.push("");
-    lines.push("Gracias. Quedo atento a la confirmación del pedido. 🙌");
-
-    return lines.join("\n");
 }

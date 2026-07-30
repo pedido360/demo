@@ -5,23 +5,47 @@ import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
     Store,
+    Package,
+    Tags,
+    ShoppingCart,
+    Users,
     Settings,
 } from "lucide-react";
 
 const menuItems = [
     {
         title: "Dashboard",
-        href: "/admin",
+        href: "/dashboard",
         icon: LayoutDashboard,
     },
     {
         title: "Restaurantes",
-        href: "/admin/restaurants",
+        href: "/dashboard/restaurants",
         icon: Store,
     },
     {
+        title: "Categorías",
+        href: "/dashboard/categories",
+        icon: Tags,
+    },
+    {
+        title: "Productos",
+        href: "/dashboard/products",
+        icon: Package,
+    },
+    {
+        title: "Pedidos",
+        href: "/dashboard/orders",
+        icon: ShoppingCart,
+    },
+    {
+        title: "Usuarios",
+        href: "/dashboard/users",
+        icon: Users,
+    },
+    {
         title: "Configuración",
-        href: "/admin/settings",
+        href: "/dashboard/settings",
         icon: Settings,
     },
 ];
@@ -31,7 +55,6 @@ export default function Sidebar() {
 
     return (
         <aside className="flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
-            {/* Logo */}
             <div className="border-b border-gray-200 px-6 py-5">
                 <h1 className="text-2xl font-bold text-green-600">
                     Pedidos360
@@ -42,8 +65,7 @@ export default function Sidebar() {
                 </p>
             </div>
 
-            {/* Navegación */}
-            <nav className="flex-1 p-4">
+            <nav className="flex-1 overflow-y-auto p-4">
                 <ul className="space-y-2">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
@@ -73,14 +95,13 @@ export default function Sidebar() {
                 </ul>
             </nav>
 
-            {/* Footer */}
             <div className="border-t border-gray-200 p-5">
                 <p className="text-xs text-gray-500">
                     Pedidos360 Admin
                 </p>
 
                 <p className="text-xs text-gray-400">
-                    Versión 1.0
+                    v0.2.0
                 </p>
             </div>
         </aside>

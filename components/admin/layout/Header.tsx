@@ -7,6 +7,7 @@ interface HeaderProps {
     description?: string;
     profile: {
         full_name: string | null;
+        email: string;
         role: string;
     };
 }

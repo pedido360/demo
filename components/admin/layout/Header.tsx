@@ -2,16 +2,34 @@
 
 import { Bell, CircleUserRound } from "lucide-react";
 
-export default function Header() {
+interface HeaderProps {
+    title?: string;
+    description?: string;
+    profile: {
+        full_name: string | null;
+        role: string;
+    };
+}
+
+export default function Header({
+    title = "Dashboard",
+    description = "Bienvenido a Pedidos360.",
+    profile,
+}: HeaderProps) {
+    const roleName =
+        profile.role === "super_admin"
+            ? "Super Administrador"
+            : "Administrador del Restaurante";
+
     return (
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
             <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                    Restaurantes
+                    {title}
                 </h2>
 
                 <p className="text-sm text-gray-500">
-                    Administra los restaurantes de Pedidos360.
+                    {description}
                 </p>
             </div>
 
@@ -31,11 +49,11 @@ export default function Header() {
 
                     <div className="text-left">
                         <p className="text-sm font-medium text-gray-900">
-                            Administrador
+                            {profile.full_name ?? profile.email}
                         </p>
 
                         <p className="text-xs text-gray-500">
-                            Pedidos360
+                            {roleName}
                         </p>
                     </div>
                 </button>

@@ -3,9 +3,13 @@
 import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/Button";
+import IngredientSection from "./IngredientSection";
 
 import { Category } from "@/types/category";
-import { Product } from "@/types/product";
+import {
+    Ingredient,
+    Product,
+} from "@/types/product";
 
 interface ProductEditorProps {
     product: Product;
@@ -172,17 +176,35 @@ export default function ProductEditor({
 
                     </div>
 
-                </section>                 <section className="rounded-xl border border-gray-200 p-6">
-
-                    <h2 className="mb-4 text-lg font-semibold">
-                        🥬 Ingredientes
-                    </h2>
-
-                    <p className="text-sm text-gray-500">
-                        Próximamente podrás agregar, editar y eliminar ingredientes desde aquí.
-                    </p>
-
                 </section>
+
+                <IngredientSection
+                    ingredients={editableProduct.ingredients ?? []}
+                    onDelete={(id) => {
+
+                        updateField(
+                            "ingredients",
+                            editableProduct.ingredients?.filter(
+                                ingredient => ingredient.id !== id
+                            ) ?? []
+                        );
+
+                    }}
+                    onAdd={(name) => {
+
+                        updateField(
+                            "ingredients",
+                            [
+                                ...(editableProduct.ingredients ?? []),
+                                {
+                                    id: crypto.randomUUID(),
+                                    name,
+                                },
+                            ]
+                        );
+
+                    }}
+                />
 
                 <section className="rounded-xl border border-gray-200 p-6">
 
@@ -191,7 +213,7 @@ export default function ProductEditor({
                     </h2>
 
                     <p className="text-sm text-gray-500">
-                        Próximamente podrás administrar los extras del producto.
+                        Próximamente...
                     </p>
 
                 </section>
@@ -210,7 +232,7 @@ export default function ProductEditor({
 
                         <input
                             type="checkbox"
-                            checked={editableProduct.isAvailable}
+                            checked={editableProduct.isAvailable ?? true}
                             onChange={(event) =>
                                 updateField(
                                     "isAvailable",

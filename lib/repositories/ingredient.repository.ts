@@ -50,3 +50,37 @@ export async function createIngredient(
     }
 
 }
+
+export async function updateIngredient(
+    ingredient: Ingredient
+): Promise<void> {
+
+    const { error } = await supabase
+        .from("ingredients")
+        .update({
+            name: ingredient.name,
+        })
+        .eq("id", ingredient.id);
+
+    if (error) {
+        console.error(error);
+        throw new Error(error.message);
+    }
+
+}
+
+export async function deleteIngredient(
+    id: string
+): Promise<void> {
+
+    const { error } = await supabase
+        .from("ingredients")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error(error);
+        throw new Error(error.message);
+    }
+
+}

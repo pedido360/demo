@@ -55,8 +55,7 @@ export async function getProducts(
 
     for (const row of data ?? []) {
 
-        const product =
-            mapProduct(row);
+        const product = mapProduct(row);
 
         product.ingredients =
             await getIngredients(product.id);
@@ -105,7 +104,15 @@ export async function createProduct(
         throw new Error(error.message);
     }
 
-    return mapProduct(data);
+    const created = mapProduct(data);
+
+    created.ingredients =
+        product.ingredients ?? [];
+
+    created.extras =
+        product.extras ?? [];
+
+    return created;
 
 }
 
@@ -139,7 +146,15 @@ export async function updateProduct(
         throw new Error(error.message);
     }
 
-    return mapProduct(data);
+    const updated = mapProduct(data);
+
+    updated.ingredients =
+        product.ingredients ?? [];
+
+    updated.extras =
+        product.extras ?? [];
+
+    return updated;
 
 }
 

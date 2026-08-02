@@ -8,8 +8,8 @@ import { Product } from "@/types/product";
 import { buildMenu } from "@/lib/services/menu.service";
 
 import {
-    updateProduct,
-} from "@/lib/repositories/product.repository";
+    saveCompleteProduct,
+} from "@/lib/services/product.service";
 
 import SearchBar from "./SearchBar";
 import CategoryAccordion from "./CategoryAccordion";
@@ -71,7 +71,7 @@ export default function SmartMenu({
         try {
 
             const updated =
-                await updateProduct(product);
+                await saveCompleteProduct(product);
 
             setProductList(previous =>
                 previous.map(item =>

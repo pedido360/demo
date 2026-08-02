@@ -21,7 +21,11 @@ interface ProductFormProps {
 
 const emptyProduct: Product = {
     id: '',
+
+
+
     categoryId: '',
+
     name: '',
     description: '',
     price: 0,

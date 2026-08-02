@@ -18,6 +18,10 @@ import { Restaurant } from "@/types/restaurant";
 import { RestaurantHour } from "@/types/restaurant-hour";
 
 import {
+    createCompleteRestaurant,
+} from "@/lib/services/restaurant.service";
+
+import {
     createRestaurant,
     getRestaurantById,
     updateRestaurant,
@@ -28,6 +32,14 @@ import {
     getRestaurantHours,
     updateRestaurantHours,
 } from "@/lib/repositories/restaurant-hours.repository";
+
+import {
+    getCategories,
+} from "@/lib/repositories/category.repository";
+
+import {
+    getProducts,
+} from "@/lib/repositories/product.repository";
 
 interface RestaurantEditorProps {
     restaurantId?: string;
@@ -140,7 +152,17 @@ export default function RestaurantEditor({
             const hoursData =
                 await getRestaurantHours(restaurantId!);
 
+            const categoriesData =
+                await getCategories(restaurantId!);
+
+            const productsData =
+                await getProducts(restaurantId!);
+
             setRestaurant(restaurantData);
+
+            setCategories(categoriesData);
+
+            setProducts(productsData);
 
             if (hoursData.length > 0) {
 
@@ -181,9 +203,7 @@ export default function RestaurantEditor({
 
 
     async function handleSave() {
-
         try {
-
             setLoading(true);
 
             if (isEditMode) {
@@ -198,17 +218,19 @@ export default function RestaurantEditor({
                     hours
                 );
 
+                // En el siguiente sprint actualizaremos
+                // categorías y productos.
+
                 alert("✅ Restaurante actualizado correctamente.");
 
             } else {
 
-                const savedRestaurant =
-                    await createRestaurant(restaurant);
-
-                await createRestaurantHours(
-                    savedRestaurant.id,
-                    hours
-                );
+                await createCompleteRestaurant({
+                    restaurant,
+                    hours,
+                    categories,
+                    products,
+                });
 
                 alert("✅ Restaurante creado correctamente.");
 
@@ -229,7 +251,6 @@ export default function RestaurantEditor({
             setLoading(false);
 
         }
-
     }
 
     return (

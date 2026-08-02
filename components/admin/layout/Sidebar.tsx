@@ -12,7 +12,14 @@ import {
     Settings,
 } from "lucide-react";
 
-const menuItems = [
+interface MenuItem {
+    title: string;
+    href?: string;
+    icon: React.ElementType;
+    elite?: boolean;
+}
+
+const menuItems: MenuItem[] = [
     {
         title: "Dashboard",
         href: "/dashboard",
@@ -25,37 +32,49 @@ const menuItems = [
     },
     {
         title: "Categorías",
-        href: "/dashboard/categories",
+        href: "/dashboard/restaurants",
         icon: Tags,
     },
     {
         title: "Productos",
-        href: "/dashboard/products",
+        href: "/dashboard/restaurants",
         icon: Package,
     },
     {
         title: "Pedidos",
-        href: "/dashboard/orders",
         icon: ShoppingCart,
+        elite: true,
     },
     {
         title: "Usuarios",
-        href: "/dashboard/users",
         icon: Users,
+        elite: true,
     },
     {
         title: "Configuración",
-        href: "/dashboard/settings",
         icon: Settings,
+        elite: true,
     },
 ];
 
 export default function Sidebar() {
+
     const pathname = usePathname();
 
+    function handleEliteClick() {
+
+        alert(
+            "🚀 Esta funcionalidad estará disponible en la versión ELITE de Pedidos360."
+        );
+
+    }
+
     return (
+
         <aside className="flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
+
             <div className="border-b border-gray-200 px-6 py-5">
+
                 <h1 className="text-2xl font-bold text-green-600">
                     Pedidos360
                 </h1>
@@ -63,39 +82,79 @@ export default function Sidebar() {
                 <p className="mt-1 text-sm text-gray-500">
                     Panel Administrativo
                 </p>
+
             </div>
 
             <nav className="flex-1 overflow-y-auto p-4">
+
                 <ul className="space-y-2">
+
                     {menuItems.map((item) => {
+
                         const Icon = item.icon;
+
+                        if (item.elite) {
+
+                            return (
+
+                                <li key={item.title}>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleEliteClick}
+                                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-gray-500 transition-all hover:bg-gray-100"
+                                    >
+
+                                        <Icon size={20} />
+
+                                        <span className="font-medium">
+                                            {item.title}
+                                        </span>
+
+                                    </button>
+
+                                </li>
+
+                            );
+
+                        }
 
                         const active =
                             pathname === item.href ||
                             pathname.startsWith(item.href + "/");
 
                         return (
-                            <li key={item.href}>
+
+                            <li key={item.title}>
+
                                 <Link
-                                    href={item.href}
+                                    href={item.href!}
                                     className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all ${active
-                                            ? "bg-green-600 text-white"
-                                            : "text-gray-700 hover:bg-gray-100"
+                                        ? "bg-green-600 text-white"
+                                        : "text-gray-700 hover:bg-gray-100"
                                         }`}
                                 >
+
                                     <Icon size={20} />
 
                                     <span className="font-medium">
                                         {item.title}
                                     </span>
+
                                 </Link>
+
                             </li>
+
                         );
+
                     })}
+
                 </ul>
+
             </nav>
 
             <div className="border-t border-gray-200 p-5">
+
                 <p className="text-xs text-gray-500">
                     Pedidos360 Admin
                 </p>
@@ -103,7 +162,11 @@ export default function Sidebar() {
                 <p className="text-xs text-gray-400">
                     v0.2.0
                 </p>
+
             </div>
+
         </aside>
+
     );
+
 }

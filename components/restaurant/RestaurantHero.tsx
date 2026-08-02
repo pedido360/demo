@@ -14,7 +14,7 @@ export default function RestaurantHero() {
 
             {/* Banner */}
             <div
-                id="menu"
+
                 className="h-56 bg-cover bg-center"
                 style={{
                     backgroundImage: `url(${restaurant.banner})`,

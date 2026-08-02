@@ -24,7 +24,11 @@ export default function Categories({
     }
 
     return (
-        <section className="w-full px-4 py-5">
+
+        <section
+            id="menu"
+            className="w-full px-4 py-5"
+        >
 
             <div className="mb-4 flex items-center justify-between">
 

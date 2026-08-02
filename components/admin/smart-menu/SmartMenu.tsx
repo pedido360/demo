@@ -1,11 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Category } from "@/types/category";
 import { Product } from "@/types/product";
 
 import { buildMenu } from "@/lib/services/menu.service";
+
+import {
+    updateProduct,
+} from "@/lib/repositories/product.repository";
 
 import SearchBar from "./SearchBar";
 import CategoryAccordion from "./CategoryAccordion";
@@ -21,40 +25,89 @@ export default function SmartMenu({
     products,
 }: SmartMenuProps) {
 
+    const [productList, setProductList] =
+        useState<Product[]>(products);
+
     const [selectedProduct, setSelectedProduct] =
         useState<Product | null>(null);
 
-    const [search, setSearch] = useState("");
+    const [search, setSearch] =
+        useState("");
+
+    useEffect(() => {
+
+        setProductList(products);
+
+    }, [products]);
 
     const filteredProducts = useMemo(() => {
 
         if (!search.trim()) {
-            return products;
+            return productList;
         }
 
         const value = search.toLowerCase();
 
-        return products.filter(product =>
-            product.name.toLowerCase().includes(value)
+        return productList.filter(product =>
+            product.name
+                .toLowerCase()
+                .includes(value)
         );
 
-    }, [products, search]);
+    }, [productList, search]);
 
     const menu = useMemo(
-        () => buildMenu(categories, filteredProducts),
+        () => buildMenu(
+            categories,
+            filteredProducts
+        ),
         [categories, filteredProducts]
     );
+
+    async function handleSaveProduct(
+        product: Product
+    ) {
+
+        try {
+
+            const updated =
+                await updateProduct(product);
+
+            setProductList(previous =>
+                previous.map(item =>
+                    item.id === updated.id
+                        ? updated
+                        : item
+                )
+            );
+
+            setSelectedProduct(null);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "No fue posible guardar el producto."
+            );
+
+        }
+
+    }
 
     if (selectedProduct) {
 
         return (
+
             <ProductEditor
                 product={selectedProduct}
                 categories={categories}
-                onSave={() => { }}
-                onDelete={() => { }}
-                onClose={() => setSelectedProduct(null)}
+                onSave={handleSaveProduct} onDelete={() => { }}
+                onClose={() =>
+                    setSelectedProduct(null)
+                }
             />
+
         );
 
     }
@@ -80,7 +133,7 @@ export default function SmartMenu({
                     </span>
 
                     <span className="font-medium text-orange-700">
-                        🍽️ {products.length} productos
+                        🍽️ {productList.length} productos
                     </span>
 
                 </div>
@@ -94,15 +147,29 @@ export default function SmartMenu({
                     onChange={setSearch}
                 />
 
-                {menu.map(group => (
+                {menu.length === 0 ? (
 
-                    <CategoryAccordion
-                        key={group.category.id}
-                        group={group}
-                        onProductClick={setSelectedProduct}
-                    />
+                    <div className="rounded-xl border border-dashed border-orange-300 bg-white p-10 text-center">
 
-                ))}
+                        <p className="text-gray-500">
+                            No se encontraron productos.
+                        </p>
+
+                    </div>
+
+                ) : (
+
+                    menu.map(group => (
+
+                        <CategoryAccordion
+                            key={group.category.id}
+                            group={group}
+                            onProductClick={setSelectedProduct}
+                        />
+
+                    ))
+
+                )}
 
             </div>
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Button from "@/components/ui/Button";
 
 import { Category } from "@/types/category";
@@ -22,146 +24,233 @@ export default function ProductEditor({
     onClose,
 }: ProductEditorProps) {
 
+    const [editableProduct, setEditableProduct] =
+        useState<Product>(product);
+
+    useEffect(() => {
+
+        setEditableProduct(product);
+
+    }, [product]);
+
+    function updateField<K extends keyof Product>(
+        field: K,
+        value: Product[K]
+    ) {
+
+        setEditableProduct(previous => ({
+            ...previous,
+            [field]: value,
+        }));
+
+    }
+
     return (
 
-        <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-orange-200 bg-white">
 
-            <div className="border-b p-6">
+            <div className="border-b border-orange-200 bg-orange-50 p-6">
 
                 <button
                     type="button"
                     onClick={onClose}
-                    className="mb-4 text-sm font-medium text-green-600 hover:underline"
+                    className="mb-4 text-sm font-medium text-orange-700 hover:underline"
                 >
                     ← Volver al menú
                 </button>
 
-                <h1 className="text-2xl font-bold">
-                    {product.name || "Nuevo producto"}
+                <h1 className="text-2xl font-bold text-orange-700">
+                    {editableProduct.name}
                 </h1>
 
-                <p className="mt-2 text-gray-500">
-                    Administra toda la información del producto.
+                <p className="mt-2 text-sm text-orange-600">
+                    Edita la información del producto.
                 </p>
 
             </div>
 
             <div className="space-y-6 p-6">
 
-                <div className="grid gap-6 md:grid-cols-2">
+                <section className="rounded-xl border border-gray-200 p-6">
 
-                    <div>
+                    <h2 className="mb-6 text-lg font-semibold">
+                        📝 Información General
+                    </h2>
+
+                    <div className="grid gap-6 md:grid-cols-2">
+
+                        <div>
+
+                            <label className="mb-2 block text-sm font-medium">
+                                Nombre
+                            </label>
+
+                            <input
+                                className="w-full rounded-xl border border-gray-300 p-3"
+                                value={editableProduct.name}
+                                onChange={(event) =>
+                                    updateField(
+                                        "name",
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                        <div>
+
+                            <label className="mb-2 block text-sm font-medium">
+                                Precio
+                            </label>
+
+                            <input
+                                type="number"
+                                className="w-full rounded-xl border border-gray-300 p-3"
+                                value={editableProduct.price}
+                                onChange={(event) =>
+                                    updateField(
+                                        "price",
+                                        Number(event.target.value)
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                    </div>
+
+                    <div className="mt-6">
 
                         <label className="mb-2 block text-sm font-medium">
-                            Nombre
+                            Descripción
                         </label>
 
-                        <input
-                            value={product.name}
-                            readOnly
-                            className="w-full rounded-xl border p-3"
+                        <textarea
+                            rows={4}
+                            className="w-full rounded-xl border border-gray-300 p-3"
+                            value={editableProduct.description}
+                            onChange={(event) =>
+                                updateField(
+                                    "description",
+                                    event.target.value
+                                )
+                            }
                         />
 
                     </div>
 
-                    <div>
+                    <div className="mt-6">
 
                         <label className="mb-2 block text-sm font-medium">
-                            Precio
+                            Categoría
                         </label>
 
+                        <select
+                            className="w-full rounded-xl border border-gray-300 p-3"
+                            value={editableProduct.categoryId}
+                            onChange={(event) =>
+                                updateField(
+                                    "categoryId",
+                                    event.target.value
+                                )
+                            }
+                        >
+
+                            {categories.map(category => (
+
+                                <option
+                                    key={category.id}
+                                    value={category.id}
+                                >
+                                    {category.name}
+                                </option>
+
+                            ))}
+
+                        </select>
+
+                    </div>
+
+                </section>                 <section className="rounded-xl border border-gray-200 p-6">
+
+                    <h2 className="mb-4 text-lg font-semibold">
+                        🥬 Ingredientes
+                    </h2>
+
+                    <p className="text-sm text-gray-500">
+                        Próximamente podrás agregar, editar y eliminar ingredientes desde aquí.
+                    </p>
+
+                </section>
+
+                <section className="rounded-xl border border-gray-200 p-6">
+
+                    <h2 className="mb-4 text-lg font-semibold">
+                        ➕ Extras
+                    </h2>
+
+                    <p className="text-sm text-gray-500">
+                        Próximamente podrás administrar los extras del producto.
+                    </p>
+
+                </section>
+
+                <section className="rounded-xl border border-gray-200 p-6">
+
+                    <h2 className="mb-4 text-lg font-semibold">
+                        ⚙ Estado
+                    </h2>
+
+                    <div className="flex items-center justify-between">
+
+                        <span className="text-sm text-gray-600">
+                            Producto disponible
+                        </span>
+
                         <input
-                            value={product.price}
-                            readOnly
-                            className="w-full rounded-xl border p-3"
+                            type="checkbox"
+                            checked={editableProduct.isAvailable}
+                            onChange={(event) =>
+                                updateField(
+                                    "isAvailable",
+                                    event.target.checked
+                                )
+                            }
+                            className="h-5 w-5"
                         />
 
                     </div>
 
-                </div>
-
-                <div>
-
-                    <label className="mb-2 block text-sm font-medium">
-                        Descripción
-                    </label>
-
-                    <textarea
-                        value={product.description}
-                        readOnly
-                        rows={4}
-                        className="w-full rounded-xl border p-3"
-                    />
-
-                </div>
-
-                <div>
-
-                    <label className="mb-2 block text-sm font-medium">
-                        Categoría
-                    </label>
-
-                    <select
-                        value={product.categoryId}
-                        disabled
-                        className="w-full rounded-xl border p-3"
-                    >
-
-                        {categories.map((category) => (
-
-                            <option
-                                key={category.id}
-                                value={category.id}
-                            >
-                                {category.name}
-                            </option>
-
-                        ))}
-
-                    </select>
-
-                </div>
-
-                <div className="rounded-xl bg-gray-50 p-4">
-
-                    <h2 className="font-semibold">
-                        Ingredientes
-                    </h2>
-
-                    <p className="mt-2 text-sm text-gray-500">
-                        {product.ingredients?.length ?? 0} ingredientes.
-                    </p>
-
-                </div>
-
-                <div className="rounded-xl bg-gray-50 p-4">
-
-                    <h2 className="font-semibold">
-                        Extras
-                    </h2>
-
-                    <p className="mt-2 text-sm text-gray-500">
-                        {product.extras?.length ?? 0} extras.
-                    </p>
-
-                </div>
+                </section>
 
             </div>
 
-            <div className="flex justify-between border-t p-6">
+            <div className="flex items-center justify-between border-t border-orange-200 bg-gray-50 p-6">
 
                 <Button
                     variant="danger"
-                    onClick={() => onDelete(product.id)}
+                    onClick={() => onDelete(editableProduct.id)}
                 >
                     Eliminar
                 </Button>
 
-                <Button
-                    onClick={() => onSave(product)}
-                >
-                    Guardar
-                </Button>
+                <div className="flex gap-3">
+
+                    <Button
+                        variant="outline"
+                        onClick={onClose}
+                    >
+                        Cancelar
+                    </Button>
+
+                    <Button
+                        onClick={() => onSave(editableProduct)}
+                    >
+                        Guardar cambios
+                    </Button>
+
+                </div>
 
             </div>
 

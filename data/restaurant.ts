@@ -5,13 +5,13 @@ export const restaurant: Restaurant = {
 
     slug: "demo",
 
-    name: "Pedidos360 Demo",
+    name: "TU NEGOCIO ACÁ",
 
     description: "Los mejores productos de la ciudad.",
 
-    logo: "/images/logo.png",
+    logo: "/logo-demo.png",
 
-    banner: "/images/banner.jpg",
+    banner: "/banner.jpg",
 
     whatsapp: "573184377576",
 
@@ -21,7 +21,7 @@ export const restaurant: Restaurant = {
 
     isOpen: true,
 
-    rating: 4.8,
+    rating: 5.0,
 
     categories: [
         "1",

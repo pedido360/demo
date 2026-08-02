@@ -11,6 +11,7 @@ import RestaurantHoursEditor from "./RestaurantHoursEditor";
 
 import CategoryEditor from "@/components/admin/categories/CategoryEditor";
 import ProductEditor from "@/components/admin/products/ProductEditor";
+import SmartMenu from "@/components/admin/smart-menu/SmartMenu";
 
 import { Category } from "@/types/category";
 import { Product } from "@/types/product";
@@ -95,6 +96,7 @@ export default function RestaurantEditor({
 }: RestaurantEditorProps) {
 
     const isEditMode = Boolean(restaurantId);
+    const USE_SMART_MENU = true;
 
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(isEditMode);
@@ -267,16 +269,31 @@ export default function RestaurantEditor({
                 setHours={setHours}
             />
 
-            <CategoryEditor
-                categories={categories}
-                setCategories={setCategories}
-            />
+            {USE_SMART_MENU ? (
 
-            <ProductEditor
-                categories={categories}
-                products={products}
-                setProducts={setProducts}
-            />
+                <SmartMenu
+                    categories={categories}
+                    products={products}
+                />
+
+            ) : (
+
+                <>
+
+                    <CategoryEditor
+                        categories={categories}
+                        setCategories={setCategories}
+                    />
+
+                    <ProductEditor
+                        categories={categories}
+                        products={products}
+                        setProducts={setProducts}
+                    />
+
+                </>
+
+            )}
 
             <Card
                 title="Configuración"

@@ -1,8 +1,6 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
-
-import Button from "@/components/ui/Button";
+import { ChevronRight } from "lucide-react";
 
 import type { Category } from "@/types/category";
 
@@ -15,64 +13,50 @@ interface CategoryItemProps {
 export default function CategoryItem({
     category,
     onEdit,
-    onDelete,
 }: CategoryItemProps) {
+
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-sm">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-start gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-orange-50 text-3xl">
-                        {category.emoji}
-                    </div>
 
-                    <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                {category.name}
-                            </h3>
+        <button
+            type="button"
+            onClick={onEdit}
+            className="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-4 transition-all hover:border-green-500 hover:bg-green-50"
+        >
 
-                            <span
-                                className={`rounded-full px-2 py-1 text-xs font-medium ${category.isActive
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-gray-200 text-gray-600"
-                                    }`}
-                            >
-                                {category.isActive ? "Activa" : "Oculta"}
-                            </span>
-                        </div>
+            <div className="flex items-center gap-4">
 
-                        {category.description ? (
-                            <p className="mt-2 text-sm text-gray-500">
-                                {category.description}
-                            </p>
-                        ) : (
-                            <p className="mt-2 text-sm italic text-gray-400">
-                                Sin descripción.
-                            </p>
-                        )}
-                    </div>
+                <div className="text-2xl">
+                    {category.emoji}
                 </div>
 
-                <div className="flex gap-2 self-end md:self-center">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        leftIcon={<Pencil size={16} />}
-                        onClick={onEdit}
-                    >
-                        Editar
-                    </Button>
+                <div className="text-left">
 
-                    <Button
-                        variant="danger"
-                        size="sm"
-                        leftIcon={<Trash2 size={16} />}
-                        onClick={onDelete}
-                    >
-                        Eliminar
-                    </Button>
+                    <div className="flex items-center gap-2">
+
+                        <div
+                            className={`h-3 w-3 rounded-full ${category.isActive
+                                ? "bg-green-500"
+                                : "bg-gray-400"
+                                }`}
+                        />
+
+                        <h3 className="font-semibold text-gray-900">
+                            {category.name}
+                        </h3>
+
+                    </div>
+
                 </div>
+
             </div>
-        </div>
+
+            <ChevronRight
+                size={20}
+                className="text-gray-400"
+            />
+
+        </button>
+
     );
+
 }

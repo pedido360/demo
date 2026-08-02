@@ -53,3 +53,38 @@ export async function createExtra(
     }
 
 }
+
+export async function updateExtra(
+    extra: Extra
+): Promise<void> {
+
+    const { error } = await supabase
+        .from("extras")
+        .update({
+            name: extra.name,
+            price: extra.price,
+        })
+        .eq("id", extra.id);
+
+    if (error) {
+        console.error(error);
+        throw new Error(error.message);
+    }
+
+}
+
+export async function deleteExtra(
+    id: string
+): Promise<void> {
+
+    const { error } = await supabase
+        .from("extras")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error(error);
+        throw new Error(error.message);
+    }
+
+}

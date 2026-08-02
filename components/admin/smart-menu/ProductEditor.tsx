@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/Button";
 import IngredientSection from "./IngredientSection";
+import ExtraSection from "./ExtraSection";
 
 import { Category } from "@/types/category";
 import {
@@ -206,17 +207,33 @@ export default function ProductEditor({
                     }}
                 />
 
-                <section className="rounded-xl border border-gray-200 p-6">
+                <ExtraSection
+                    extras={editableProduct.extras ?? []}
+                    onDelete={(id) => {
 
-                    <h2 className="mb-4 text-lg font-semibold">
-                        ➕ Extras
-                    </h2>
+                        updateField(
+                            "extras",
+                            editableProduct.extras?.filter(
+                                extra => extra.id !== id
+                            ) ?? []
+                        );
 
-                    <p className="text-sm text-gray-500">
-                        Próximamente...
-                    </p>
+                    }}
+                    onAdd={(extra) => {
 
-                </section>
+                        updateField(
+                            "extras",
+                            [
+                                ...(editableProduct.extras ?? []),
+                                {
+                                    id: crypto.randomUUID(),
+                                    ...extra,
+                                },
+                            ]
+                        );
+
+                    }}
+                />
 
                 <section className="rounded-xl border border-gray-200 p-6">
 

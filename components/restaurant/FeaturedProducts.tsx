@@ -1,8 +1,15 @@
 import Image from "next/image";
 
-import { products } from "@/data/products";
+import { Product } from "@/types/product";
 
-export default function FeaturedProducts() {
+interface FeaturedProductsProps {
+    products: Product[];
+}
+
+export default function FeaturedProducts({
+    products,
+}: FeaturedProductsProps) {
+
     const featuredProducts = products.filter(
         (product) => product.featured
     );

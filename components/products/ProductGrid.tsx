@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { products } from "@/data/products";
 import { Product } from "@/types/product";
 
 import ProductCard from "./ProductCard";
@@ -10,14 +9,19 @@ import ProductDrawer from "@/components/product/ProductDrawer";
 import { useCart } from "@/hooks/useCart";
 
 interface ProductGridProps {
+    products: Product[];
     selectedCategory: string;
 }
 
 export default function ProductGrid({
+    products,
     selectedCategory,
 }: ProductGridProps) {
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] =
+        useState<Product | null>(null);
+
+    const [drawerOpen, setDrawerOpen] =
+        useState(false);
 
     const { addToCart } = useCart();
 

@@ -91,6 +91,7 @@ export async function getRestaurants(): Promise<Restaurant[]> {
 export async function getRestaurantById(
     id: string
 ): Promise<Restaurant> {
+
     const { data, error } = await supabase
         .from("restaurants")
         .select("*")
@@ -103,6 +104,26 @@ export async function getRestaurantById(
     }
 
     return mapRestaurant(data);
+
+}
+
+export async function getRestaurantBySlug(
+    slug: string
+): Promise<Restaurant> {
+
+    const { data, error } = await supabase
+        .from("restaurants")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+
+    if (error) {
+        console.error("SUPABASE ERROR:", error);
+        throw new Error(error.message);
+    }
+
+    return mapRestaurant(data);
+
 }
 
 export async function updateRestaurant(

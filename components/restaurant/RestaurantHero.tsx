@@ -1,16 +1,34 @@
-import { restaurant } from "@/data/restaurant";
+import { Restaurant } from "@/types/restaurant";
 
-export default function RestaurantHero() {
+interface RestaurantHeroProps {
+    restaurant: Restaurant;
+}
+
+export default function RestaurantHero({
+    restaurant,
+}: RestaurantHeroProps) {
+
+    const isDemo =
+        restaurant.slug === "demo";
+
     return (
         <section className="bg-gray-100">
 
-            <div className="border-b border-blue-100 bg-blue-50 px-4 py-3">
-                <p className="text-center text-sm font-medium text-blue-800">
-                    🚀 <strong>BIENVENIDO AL DEMO INTERACTIVO</strong>
-                    <strong> - PEDIDOS 360</strong> ·
-                    Personaliza este menú para cualquier tipo de negocio.
-                </p>
-            </div>
+            {isDemo && (
+
+                <div className="border-b border-blue-100 bg-blue-50 px-4 py-3">
+
+                    <p className="text-center text-sm font-medium text-blue-800">
+
+                        🚀 <strong>BIENVENIDO AL DEMO INTERACTIVO</strong>
+                        <strong> - PEDIDOS 360</strong> ·
+                        Personaliza este menú para cualquier tipo de negocio.
+
+                    </p>
+
+                </div>
+
+            )}
 
             {/* Banner */}
             <div
@@ -59,43 +77,47 @@ export default function RestaurantHero() {
                     </div>
 
                     {/* Estado */}
-                    <div className="mt-4 flex justify-center">
+                    {isDemo && (
 
-                        <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-                            🚀 Demo Activo
-                        </span>
+                        <div className="mt-4 flex justify-center">
 
-                    </div>
+                            <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+                                🚀 Demo Activo
+                            </span>
 
-                    {/* Dirección */}
+                        </div>
 
-                    <div className="mt-4 text-center text-gray-500">
-
-                        <p>
-                            📍 {restaurant.address}
-                        </p>
-
-                        <p className="mt-1">
-                            {restaurant.city}
-                        </p>
-
-                    </div>
-
-                    {/* Botón */}
-                    <button
-                        onClick={() =>
-                            document
-                                .getElementById("menu")
-                                ?.scrollIntoView({
-                                    behavior: "smooth",
-                                })
-                        }
-                        className="mt-8 w-full rounded-2xl bg-red-600 py-4 text-lg font-bold text-white transition-all hover:bg-red-700"
-                    >
-                        🛒 Haz tu pedido
-                    </button>
+                    )}
 
                 </div>
+
+                {/* Dirección */}
+
+                <div className="mt-4 text-center text-gray-500">
+
+                    <p>
+                        📍 {restaurant.address}
+                    </p>
+
+                    <p className="mt-1">
+                        {restaurant.city}
+                    </p>
+
+                </div>
+
+                {/* Botón */}
+                <button
+                    onClick={() =>
+                        document
+                            .getElementById("menu")
+                            ?.scrollIntoView({
+                                behavior: "smooth",
+                            })
+                    }
+                    className="mt-8 w-full rounded-2xl bg-red-600 py-4 text-lg font-bold text-white transition-all hover:bg-red-700"
+                >
+                    🛒 Haz tu pedido
+                </button>
 
             </div>
 

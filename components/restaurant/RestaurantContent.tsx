@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { RestaurantPageData } from "@/types/restaurant-page";
 
 import RestaurantHero from "./RestaurantHero";
 import FeaturedProducts from "./FeaturedProducts";
@@ -11,20 +13,46 @@ import ProductGrid from "@/components/products/ProductGrid";
 
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
 import CartDrawer from "@/components/cart/CartDrawer";
+import PoweredBy from "./PoweredBy";
 
-export default function RestaurantContent() {
+interface RestaurantContentProps {
+    data: RestaurantPageData;
+}
+
+export default function RestaurantContent({
+    data,
+}: RestaurantContentProps) {
 
     const [selectedCategory, setSelectedCategory] =
-        useState("1");
+        useState("");
 
     const [cartOpen, setCartOpen] =
         useState(false);
+    useEffect(() => {
+
+        if (
+            data.categories.length > 0 &&
+            !selectedCategory
+        ) {
+
+            setSelectedCategory(
+                data.categories[0].id
+            );
+
+        }
+
+    }, [
+        data.categories,
+        selectedCategory,
+    ]);
 
     return (
 
         <>
 
-            <RestaurantHero />
+            <RestaurantHero
+                restaurant={data.restaurant}
+            />
 
             <section className="mx-auto mt-6 max-w-2xl px-5">
 
@@ -87,17 +115,27 @@ export default function RestaurantContent() {
             </section>
 
             <Categories
+                categories={data.categories}
                 selectedCategory={selectedCategory}
                 onSelectCategory={setSelectedCategory}
             />
 
             <ProductGrid
+                products={data.products}
                 selectedCategory={selectedCategory}
             />
 
-            <FeaturedProducts />
+            <FeaturedProducts
+                products={data.products}
+            />
 
-            <CallToAction />
+            {data.restaurant.slug === "demo" && (
+
+                <CallToAction />
+
+            )}
+
+            <PoweredBy />
 
             <FloatingCartButton
                 onClick={() =>
@@ -106,12 +144,12 @@ export default function RestaurantContent() {
             />
 
             <CartDrawer
+                restaurant={data.restaurant}
                 open={cartOpen}
                 onClose={() =>
                     setCartOpen(false)
                 }
             />
-
         </>
 
     );

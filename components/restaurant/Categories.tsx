@@ -3,14 +3,16 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 
-import { categories } from "@/data/categories";
+import { Category } from "@/types/category";
 
 interface CategoriesProps {
+    categories: Category[];
     selectedCategory: string;
     onSelectCategory: (categoryId: string) => void;
 }
 
 export default function Categories({
+    categories,
     selectedCategory,
     onSelectCategory,
 }: CategoriesProps) {

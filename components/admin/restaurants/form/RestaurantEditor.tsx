@@ -12,11 +12,15 @@ import RestaurantHoursEditor from "./RestaurantHoursEditor";
 import CategoryEditor from "@/components/admin/categories/CategoryEditor";
 import ProductEditor from "@/components/admin/products/ProductEditor";
 import SmartMenu from "@/components/admin/smart-menu/SmartMenu";
+import RestaurantCreatedModal from "@/components/admin/restaurants/RestaurantCreatedModal";
+
+import { buildRestaurantUrl } from "@/lib/utils/restaurant-url";
 
 import { Category } from "@/types/category";
 import { Product } from "@/types/product";
 import { Restaurant } from "@/types/restaurant";
 import { RestaurantHour } from "@/types/restaurant-hour";
+
 
 import {
     createCompleteRestaurant,
@@ -96,10 +100,11 @@ export default function RestaurantEditor({
 }: RestaurantEditorProps) {
 
     const isEditMode = Boolean(restaurantId);
-    const USE_SMART_MENU = true;
 
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(isEditMode);
+    const [restaurantUrl, setRestaurantUrl] = useState("");
+    const [isCreatedModalOpen, setIsCreatedModalOpen] = useState(false);
 
     const [restaurant, setRestaurant] = useState<Restaurant>({
         id: "",
@@ -226,15 +231,25 @@ export default function RestaurantEditor({
                 alert("✅ Restaurante actualizado correctamente.");
 
             } else {
+                console.log("=== HANDLE SAVE ===");
+                console.log("Restaurant:", restaurant);
+                console.log("Categories:", categories);
+                console.log("Products:", products);
 
-                await createCompleteRestaurant({
+                const result = await createCompleteRestaurant({
                     restaurant,
                     hours,
                     categories,
                     products,
                 });
 
-                alert("✅ Restaurante creado correctamente.");
+                const url = buildRestaurantUrl(
+                    result.restaurant.slug
+                );
+
+                setRestaurantUrl(url);
+
+                setIsCreatedModalOpen(true);
 
             }
 
@@ -256,73 +271,80 @@ export default function RestaurantEditor({
     }
 
     return (
-
-        <div className="space-y-6">
-
-            <RestaurantInfoForm
-                restaurant={restaurant}
-                setRestaurant={setRestaurant}
+        <>
+            <RestaurantCreatedModal
+                open={isCreatedModalOpen}
+                url={restaurantUrl}
+                onClose={() => setIsCreatedModalOpen(false)}
             />
 
-            <RestaurantHoursEditor
-                hours={hours}
-                setHours={setHours}
-            />
-
-            {USE_SMART_MENU ? (
-
-                <SmartMenu
-                    categories={categories}
-                    products={products}
+            <div className="space-y-6">
+                <RestaurantInfoForm
+                    restaurant={restaurant}
+                    setRestaurant={setRestaurant}
                 />
 
-            ) : (
+                <RestaurantHoursEditor
+                    hours={hours}
+                    setHours={setHours}
+                />
 
-                <>
+                {isEditMode ? (
 
-                    <CategoryEditor
-                        categories={categories}
-                        setCategories={setCategories}
-                    />
-
-                    <ProductEditor
+                    <SmartMenu
                         categories={categories}
                         products={products}
-                        setProducts={setProducts}
                     />
 
-                </>
+                ) : (
 
-            )}
+                    <>
 
-            <Card
-                title="Configuración"
-                description="Opciones adicionales del restaurante"
-            >
-                <p className="text-sm text-gray-500">
-                    Próximamente...
-                </p>
-            </Card>
+                        <CategoryEditor
+                            categories={categories}
+                            setCategories={setCategories}
+                        />
 
-            <div className="flex justify-end">
+                        <ProductEditor
+                            categories={categories}
+                            products={products}
+                            setProducts={setProducts}
+                        />
 
-                <Button
-                    onClick={handleSave}
-                    disabled={loading}
+                    </>
+
+                )}
+
+                <Card
+                    title="Configuración"
+                    description="Opciones adicionales del restaurante"
                 >
-                    {loading
-                        ? isEditMode
-                            ? "Actualizando..."
-                            : "Guardando..."
-                        : isEditMode
-                            ? "Actualizar restaurante"
-                            : "Guardar restaurante"}
-                </Button>
+                    <p className="text-sm text-gray-500">
+                        Próximamente...
+                    </p>
+                </Card>
+
+                <div className="flex justify-end">
+
+                    <Button
+                        onClick={handleSave}
+                        disabled={loading}
+                    >
+                        {loading
+                            ? isEditMode
+                                ? "Actualizando..."
+                                : "Guardando..."
+                            : isEditMode
+                                ? "Actualizar restaurante"
+                                : "Guardar restaurante"}
+                    </Button>
+
+                </div>
 
             </div>
-
-        </div>
+        </>
 
     );
+
 
 }

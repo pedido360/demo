@@ -44,6 +44,7 @@ export default function ProductEditor({
     }
 
     function handleSave(product: Product) {
+        console.log("=== PRODUCTO GUARDADO ===", product);
         setProducts((previous) => {
             const exists = previous.some(
                 (item) => item.id === product.id

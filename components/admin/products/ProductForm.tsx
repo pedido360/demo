@@ -16,6 +16,7 @@ import ImageUploader from '@/components/ui/ImageUploader';
 interface ProductFormProps {
     categories: Category[];
     product?: Product;
+    initialCategoryId?: string;
     onSave: (product: Product) => void;
     onCancel: () => void;
 }
@@ -40,9 +41,11 @@ const emptyProduct: Product = {
 export default function ProductForm({
     categories,
     product,
+    initialCategoryId,
     onSave,
     onCancel,
 }: ProductFormProps) {
+
     const [form, setForm] = useState<Product>(emptyProduct);
 
     const [ingredientName, setIngredientName] = useState('');
@@ -51,12 +54,21 @@ export default function ProductForm({
     const [extraPrice, setExtraPrice] = useState('');
 
     useEffect(() => {
+
         if (product) {
+
             setForm(product);
+
         } else {
-            setForm(emptyProduct);
+
+            setForm({
+                ...emptyProduct,
+                categoryId: initialCategoryId ?? "",
+            });
+
         }
-    }, [product]);
+
+    }, [product, initialCategoryId]);
 
     function updateField<K extends keyof Product>(
         key: K,

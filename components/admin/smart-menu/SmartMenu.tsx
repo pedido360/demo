@@ -14,13 +14,21 @@ import {
 import SearchBar from "./SearchBar";
 import CategoryAccordion from "./CategoryAccordion";
 import ProductEditor from "./ProductEditor";
+import ProductForm from "@/components/admin/products/ProductForm";
+
+import {
+    createCompleteProduct,
+} from "@/lib/services/product.service";
 
 interface SmartMenuProps {
+    restaurantId: string;
     categories: Category[];
     products: Product[];
+
 }
 
 export default function SmartMenu({
+    restaurantId,
     categories,
     products,
 }: SmartMenuProps) {
@@ -30,6 +38,12 @@ export default function SmartMenu({
 
     const [selectedProduct, setSelectedProduct] =
         useState<Product | null>(null);
+
+    const [selectedCategoryId, setSelectedCategoryId] =
+        useState<string | null>(null);
+
+    const [creatingProduct, setCreatingProduct] =
+        useState(false);
 
     const [search, setSearch] =
         useState("");
@@ -64,6 +78,39 @@ export default function SmartMenu({
         [categories, filteredProducts]
     );
 
+    async function handleCreateProduct(
+        product: Product
+    ) {
+
+        try {
+
+            const created =
+                await createCompleteProduct(
+                    restaurantId,
+                    product
+                );
+
+            setProductList(previous => [
+                ...previous,
+                created,
+            ]);
+
+            setCreatingProduct(false);
+
+            setSelectedCategoryId(null);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "No fue posible crear el producto."
+            );
+
+        }
+
+    }
+
     async function handleSaveProduct(
         product: Product
     ) {
@@ -95,6 +142,29 @@ export default function SmartMenu({
 
     }
 
+    if (creatingProduct) {
+
+        return (
+
+            <ProductForm
+                categories={categories}
+                initialCategoryId={
+                    selectedCategoryId ?? undefined
+                }
+                onSave={handleCreateProduct}
+                onCancel={() => {
+
+                    setCreatingProduct(false);
+
+                    setSelectedCategoryId(null);
+
+                }}
+            />
+
+        );
+
+    }
+
     if (selectedProduct) {
 
         return (
@@ -102,7 +172,8 @@ export default function SmartMenu({
             <ProductEditor
                 product={selectedProduct}
                 categories={categories}
-                onSave={handleSaveProduct} onDelete={() => { }}
+                onSave={handleSaveProduct}
+                onDelete={() => { }}
                 onClose={() =>
                     setSelectedProduct(null)
                 }
@@ -165,6 +236,13 @@ export default function SmartMenu({
                             key={group.category.id}
                             group={group}
                             onProductClick={setSelectedProduct}
+                            onCreateProduct={(categoryId) => {
+
+                                setSelectedCategoryId(categoryId);
+
+                                setCreatingProduct(true);
+
+                            }}
                         />
 
                     ))

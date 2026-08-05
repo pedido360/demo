@@ -347,6 +347,7 @@ export default function RestaurantEditor({
                 {isEditMode ? (
 
                     <SmartMenu
+                        restaurantId={restaurant.id}
                         categories={categories}
                         products={products}
                     />

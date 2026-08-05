@@ -1,7 +1,13 @@
 import { Product } from "@/types/product";
 
-import { updateProduct } from "@/lib/repositories/product.repository";
+import {
+    createProduct,
+    updateProduct,
+} from "@/lib/repositories/product.repository";
 
+import {
+    uploadImage,
+} from "@/lib/repositories/storage.repository";
 import {
     getIngredients,
     createIngredient,
@@ -13,6 +19,72 @@ import {
     createExtra,
     deleteExtra,
 } from "@/lib/repositories/extra.repository";
+
+export async function createCompleteProduct(
+    restaurantId: string,
+    product: Product
+): Promise<Product> {
+
+    let productToCreate = {
+        ...product,
+    };
+
+    if (product.imageFile) {
+
+        const extension =
+            product.imageFile.name
+                .split(".")
+                .pop()
+                ?.toLowerCase() ?? "jpg";
+
+        productToCreate.image =
+            await uploadImage(
+                product.imageFile,
+                `restaurants/${restaurantId}/products/${crypto.randomUUID()}.${extension}`
+            );
+
+    }
+
+    const createdProduct =
+        await createProduct(
+            restaurantId,
+            product.categoryId,
+            productToCreate
+        );
+
+    let ingredientSortOrder = 0;
+
+    for (const ingredient of product.ingredients ?? []) {
+
+        await createIngredient(
+            createdProduct.id,
+            ingredient,
+            ingredientSortOrder++
+        );
+
+    }
+
+    let extraSortOrder = 0;
+
+    for (const extra of product.extras ?? []) {
+
+        await createExtra(
+            createdProduct.id,
+            extra,
+            extraSortOrder++
+        );
+
+    }
+
+    createdProduct.ingredients =
+        await getIngredients(createdProduct.id);
+
+    createdProduct.extras =
+        await getExtras(createdProduct.id);
+
+    return createdProduct;
+
+}
 
 export async function saveCompleteProduct(
     product: Product

@@ -3,8 +3,7 @@ export function buildRestaurantUrl(
 ): string {
 
     const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL ??
-        "http://localhost:3000";
+        process.env.NEXT_PUBLIC_APP_URL!;
 
     return `${baseUrl}/${slug}`;
 

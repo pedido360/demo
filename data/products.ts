@@ -4,29 +4,33 @@ const burgerExtras = [
         id: "1",
         name: "Queso",
         price: 3000,
+        isActive: true,
     },
     {
         id: "2",
         name: "Tocineta",
         price: 5000,
+        isActive: true,
     },
     {
         id: "3",
         name: "Carne",
         price: 7000,
+        isActive: true,
     },
 ];
-
 const hotdogExtras = [
     {
         id: "1",
         name: "Queso",
         price: 3000,
+        isActive: true,
     },
     {
         id: "2",
         name: "Tocineta",
         price: 4000,
+        isActive: true,
     },
 ];
 
@@ -42,14 +46,14 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Carne 120 gr" },
-            { id: "3", name: "Pollo desmechado" },
-            { id: "4", name: "Queso" },
-            { id: "5", name: "Tocineta" },
-            { id: "6", name: "Lechuga" },
-            { id: "7", name: "Tomate" },
-            { id: "8", name: "Salsa de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Carne 120 gr", isActive: true },
+            { id: "3", name: "Pollo desmechado", isActive: true },
+            { id: "4", name: "Queso", isActive: true },
+            { id: "5", name: "Tocineta", isActive: true },
+            { id: "6", name: "Lechuga", isActive: true },
+            { id: "7", name: "Tomate", isActive: true },
+            { id: "8", name: "Salsa de la casa", isActive: true },
         ],
 
         extras: burgerExtras,
@@ -65,12 +69,12 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Pollo desmechado" },
-            { id: "3", name: "Queso" },
-            { id: "4", name: "Lechuga" },
-            { id: "5", name: "Tomate" },
-            { id: "6", name: "Salsa de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Pollo desmechado", isActive: true },
+            { id: "3", name: "Queso", isActive: true },
+            { id: "4", name: "Lechuga", isActive: true },
+            { id: "5", name: "Tomate", isActive: true },
+            { id: "6", name: "Salsa de la casa", isActive: true },
         ],
 
         extras: burgerExtras,
@@ -86,13 +90,13 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Carne 120 gr" },
-            { id: "3", name: "Huevo" },
-            { id: "4", name: "Queso" },
-            { id: "5", name: "Tocineta" },
-            { id: "6", name: "Lechuga" },
-            { id: "7", name: "Tomate" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Carne 120 gr", isActive: true },
+            { id: "3", name: "Huevo", isActive: true },
+            { id: "4", name: "Queso", isActive: true },
+            { id: "5", name: "Tocineta", isActive: true },
+            { id: "6", name: "Lechuga", isActive: true },
+            { id: "7", name: "Tomate", isActive: true },
         ],
 
         extras: burgerExtras,
@@ -112,13 +116,13 @@ export const products: Product[] = [
         featured: true,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "2 Carnes 120 gr" },
-            { id: "3", name: "Pollo desmechado" },
-            { id: "4", name: "Queso" },
-            { id: "5", name: "Tocineta" },
-            { id: "6", name: "Lechuga" },
-            { id: "7", name: "Tomate" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "2 Carnes 120 gr", isActive: true },
+            { id: "3", name: "Pollo desmechado", isActive: true },
+            { id: "4", name: "Queso", isActive: true },
+            { id: "5", name: "Tocineta", isActive: true },
+            { id: "6", name: "Lechuga", isActive: true },
+            { id: "7", name: "Tomate", isActive: true },
         ],
 
         extras: burgerExtras,
@@ -134,12 +138,12 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Carne 120 gr" },
-            { id: "3", name: "Queso" },
-            { id: "4", name: "Lechuga" },
-            { id: "5", name: "Tomate" },
-            { id: "6", name: "Salsa de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Carne 120 gr", isActive: true },
+            { id: "3", name: "Queso", isActive: true },
+            { id: "4", name: "Lechuga", isActive: true },
+            { id: "5", name: "Tomate", isActive: true },
+            { id: "6", name: "Salsa de la casa", isActive: true },
         ],
 
         extras: burgerExtras,
@@ -157,11 +161,11 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Salchicha Premium" },
-            { id: "3", name: "Queso" },
-            { id: "4", name: "Papa Ripio" },
-            { id: "5", name: "Salsas de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Salchicha Premium", isActive: true },
+            { id: "3", name: "Queso", isActive: true },
+            { id: "4", name: "Papa Ripio", isActive: true },
+            { id: "5", name: "Salsas de la casa", isActive: true },
         ],
 
         extras: hotdogExtras,
@@ -177,11 +181,11 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Salchicha Premium" },
-            { id: "3", name: "Queso Mozzarella" },
-            { id: "4", name: "Papa Ripio" },
-            { id: "5", name: "Salsas de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Salchicha Premium", isActive: true },
+            { id: "3", name: "Queso Mozzarella", isActive: true },
+            { id: "4", name: "Papa Ripio", isActive: true },
+            { id: "5", name: "Salsas de la casa", isActive: true },
         ],
 
         extras: hotdogExtras,
@@ -197,11 +201,11 @@ export const products: Product[] = [
         featured: true,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Chorizo" },
-            { id: "3", name: "Queso" },
-            { id: "4", name: "Papa Ripio" },
-            { id: "5", name: "Salsas de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Chorizo", isActive: true },
+            { id: "3", name: "Queso", isActive: true },
+            { id: "4", name: "Papa Ripio", isActive: true },
+            { id: "5", name: "Salsas de la casa", isActive: true },
         ],
 
         extras: hotdogExtras,
@@ -217,12 +221,12 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Salchicha Premium" },
-            { id: "3", name: "Tocineta" },
-            { id: "4", name: "Queso Mozzarella" },
-            { id: "5", name: "Papa Ripio" },
-            { id: "6", name: "Salsas de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Salchicha Premium", isActive: true },
+            { id: "3", name: "Tocineta", isActive: true },
+            { id: "4", name: "Queso Mozzarella", isActive: true },
+            { id: "5", name: "Papa Ripio", isActive: true },
+            { id: "6", name: "Salsas de la casa", isActive: true },
         ],
 
         extras: hotdogExtras,
@@ -237,12 +241,12 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Chorizo" },
-            { id: "3", name: "Tocineta" },
-            { id: "4", name: "Queso Mozzarella" },
-            { id: "5", name: "Papa Ripio" },
-            { id: "6", name: "Salsas de la casa" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Chorizo", isActive: true },
+            { id: "3", name: "Tocineta", isActive: true },
+            { id: "4", name: "Queso Mozzarella", isActive: true },
+            { id: "5", name: "Papa Ripio", isActive: true },
+            { id: "6", name: "Salsas de la casa", isActive: true },
         ],
 
         extras: hotdogExtras,
@@ -270,12 +274,12 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Tortilla de Trigo" },
-            { id: "2", name: "Carne de Res" },
-            { id: "3", name: "Arroz" },
-            { id: "4", name: "Frijoles" },
-            { id: "5", name: "Queso Cheddar" },
-            { id: "6", name: "Salsa Especial" },
+            { id: "1", name: "Tortilla de Trigo", isActive: true },
+            { id: "2", name: "Carne de Res", isActive: true },
+            { id: "3", name: "Arroz", isActive: true },
+            { id: "4", name: "Frijoles", isActive: true },
+            { id: "5", name: "Queso Cheddar", isActive: true },
+            { id: "6", name: "Salsa Especial", isActive: true },
         ],
     },
 
@@ -289,11 +293,11 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Tortilla de Trigo" },
-            { id: "2", name: "Pollo Desmechado" },
-            { id: "3", name: "Queso Cheddar" },
-            { id: "4", name: "Cebolla Caramelizada" },
-            { id: "5", name: "Salsa BBQ" },
+            { id: "1", name: "Tortilla de Trigo", isActive: true },
+            { id: "2", name: "Pollo Desmechado", isActive: true },
+            { id: "3", name: "Queso Cheddar", isActive: true },
+            { id: "4", name: "Cebolla Caramelizada", isActive: true },
+            { id: "5", name: "Salsa BBQ", isActive: true },
         ],
     },
 
@@ -307,12 +311,12 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Tortilla de Trigo" },
-            { id: "2", name: "Carne de Res" },
-            { id: "3", name: "Jalapeños" },
-            { id: "4", name: "Guacamole" },
-            { id: "5", name: "Queso Cheddar" },
-            { id: "6", name: "Lechuga" },
+            { id: "1", name: "Tortilla de Trigo", isActive: true },
+            { id: "2", name: "Carne de Res", isActive: true },
+            { id: "3", name: "Jalapeños", isActive: true },
+            { id: "4", name: "Guacamole", isActive: true },
+            { id: "5", name: "Queso Cheddar", isActive: true },
+            { id: "6", name: "Lechuga", isActive: true },
         ],
     },
 
@@ -326,11 +330,11 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Tortilla de Trigo" },
-            { id: "2", name: "Pollo Desmechado" },
-            { id: "3", name: "Chorizo Artesanal" },
-            { id: "4", name: "Queso Cheddar" },
-            { id: "5", name: "Salsa Especial" },
+            { id: "1", name: "Tortilla de Trigo", isActive: true },
+            { id: "2", name: "Pollo Desmechado", isActive: true },
+            { id: "3", name: "Chorizo Artesanal", isActive: true },
+            { id: "4", name: "Queso Cheddar", isActive: true },
+            { id: "5", name: "Salsa Especial", isActive: true },
         ],
     },
 
@@ -484,11 +488,11 @@ export const products: Product[] = [
         featured: false,
 
         ingredients: [
-            { id: "1", name: "Pan" },
-            { id: "2", name: "Salchicha" },
-            { id: "3", name: "Queso" },
-            { id: "4", name: "Papa ripio" },
-            { id: "5", name: "Salsas" },
+            { id: "1", name: "Pan", isActive: true },
+            { id: "2", name: "Salchicha", isActive: true },
+            { id: "3", name: "Queso", isActive: true },
+            { id: "4", name: "Papa ripio", isActive: true },
+            { id: "5", name: "Salsas", isActive: true },
         ],
 
         extras: [
@@ -496,11 +500,13 @@ export const products: Product[] = [
                 id: "1",
                 name: "Tocineta",
                 price: 4000,
+                isActive: true,
             },
             {
                 id: "2",
                 name: "Queso",
                 price: 3000,
+                isActive: true,
             },
         ],
     },

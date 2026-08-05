@@ -265,7 +265,6 @@ export default function ProductEditor({
                                 ...(editableProduct.extras ?? []),
                                 {
                                     id: crypto.randomUUID(),
-                                    isActive: true,
                                     ...extra,
                                 },
                             ]

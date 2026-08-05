@@ -109,6 +109,7 @@ export default function ProductForm({
         const ingredient: Ingredient = {
             id: crypto.randomUUID(),
             name: ingredientName.trim(),
+            isActive: true,
         };
 
         updateField('ingredients', [
@@ -135,6 +136,7 @@ export default function ProductForm({
             id: crypto.randomUUID(),
             name: extraName.trim(),
             price: Number(extraPrice) || 0,
+            isActive: true,
         };
 
         updateField('extras', [

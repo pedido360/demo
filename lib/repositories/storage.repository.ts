@@ -1,30 +1,19 @@
 import { supabase } from "@/lib/supabase";
 
 /**
- * Sube una imagen del restaurante.
+ * Sube cualquier imagen al Storage y retorna la URL pública.
  */
-export async function uploadRestaurantImage(
-    restaurantSlug: string,
-    type: "logo" | "banner",
-    file: File
+export async function uploadImage(
+    file: File,
+    path: string
 ): Promise<string> {
-
-    const extension =
-        file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-
-    const path =
-        `restaurants/${restaurantSlug}/${type}.${extension}`;
 
     const { error } =
         await supabase.storage
             .from("restaurant-images")
-            .upload(
-                path,
-                file,
-                {
-                    upsert: true,
-                }
-            );
+            .upload(path, file, {
+                upsert: true,
+            });
 
     if (error) {
 
@@ -34,9 +23,7 @@ export async function uploadRestaurantImage(
 
     }
 
-    const {
-        data,
-    } =
+    const { data } =
         supabase.storage
             .from("restaurant-images")
             .getPublicUrl(path);
@@ -46,9 +33,9 @@ export async function uploadRestaurantImage(
 }
 
 /**
- * Elimina una imagen.
+ * Elimina cualquier imagen del Storage.
  */
-export async function deleteRestaurantImage(
+export async function deleteImage(
     path: string
 ): Promise<void> {
 

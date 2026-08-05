@@ -22,6 +22,8 @@ export interface Product {
 
     image: string;
 
+    imageFile?: File;
+
     featured: boolean;
 
     isAvailable?: boolean;

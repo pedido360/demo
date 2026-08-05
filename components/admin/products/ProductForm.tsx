@@ -11,6 +11,7 @@ import Textarea from '@/components/ui/Textarea';
 
 import { Category } from '@/types/category';
 import { Extra, Ingredient, Product } from '@/types/product';
+import ImageUploader from '@/components/ui/ImageUploader';
 
 interface ProductFormProps {
     categories: Category[];
@@ -65,6 +66,20 @@ export default function ProductForm({
             ...prev,
             [key]: value,
         }));
+    }
+
+    function handleImage(
+        file: File | null
+    ) {
+
+        if (!file) return;
+
+        setForm((prev) => ({
+            ...prev,
+            image: URL.createObjectURL(file),
+            imageFile: file,
+        }));
+
     }
 
     function handleSubmit(e: FormEvent) {
@@ -232,19 +247,10 @@ export default function ProductForm({
 
                     <div>
 
-                        <Label>
-                            URL de la imagen
-                        </Label>
-
-                        <Input
-                            placeholder="https://..."
+                        <ImageUploader
+                            label="Imagen del producto"
                             value={form.image}
-                            onChange={(e) =>
-                                updateField(
-                                    'image',
-                                    e.target.value
-                                )
-                            }
+                            onChange={handleImage}
                         />
 
                     </div>

@@ -27,6 +27,10 @@ import {
     createProduct,
 } from "@/lib/repositories/product.repository";
 
+import { uploadImage } from "@/lib/repositories/storage.repository";
+
+import { generateSlug } from "@/lib/utils/slug";
+
 interface CreateRestaurantData {
     restaurant: Restaurant;
     hours: RestaurantHour[];
@@ -82,6 +86,25 @@ export async function createCompleteRestaurant({
 
         if (!categoryId) {
             continue;
+        }
+
+        if (product.imageFile) {
+
+            const extension =
+                product.imageFile.name
+                    .split(".")
+                    .pop()
+                    ?.toLowerCase() ?? "jpg";
+
+            const filename =
+                `${Date.now()}-${generateSlug(product.name)}.${extension}`;
+
+            product.image =
+                await uploadImage(
+                    product.imageFile,
+                    `restaurants/${savedRestaurant.slug}/products/${filename}`
+                );
+
         }
 
         const savedProduct =

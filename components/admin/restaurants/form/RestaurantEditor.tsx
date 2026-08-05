@@ -48,7 +48,7 @@ import {
 } from "@/lib/repositories/product.repository";
 
 import {
-    uploadRestaurantImage,
+    uploadImage,
 } from "@/lib/repositories/storage.repository";
 
 interface RestaurantEditorProps {
@@ -247,28 +247,6 @@ export default function RestaurantEditor({
                 console.log("Categories:", categories);
                 console.log("Products:", products);
 
-                if (logoFile) {
-
-                    restaurant.logo =
-                        await uploadRestaurantImage(
-                            restaurant.slug,
-                            "logo",
-                            logoFile
-                        );
-
-                }
-
-                if (bannerFile) {
-
-                    restaurant.banner =
-                        await uploadRestaurantImage(
-                            restaurant.slug,
-                            "banner",
-                            bannerFile
-                        );
-
-                }
-
                 const slug = generateSlug(
                     restaurant.name
                 );
@@ -277,22 +255,32 @@ export default function RestaurantEditor({
 
                 if (logoFile) {
 
+                    const extension =
+                        logoFile.name
+                            .split(".")
+                            .pop()
+                            ?.toLowerCase() ?? "jpg";
+
                     restaurant.logo =
-                        await uploadRestaurantImage(
-                            slug,
-                            "logo",
-                            logoFile
+                        await uploadImage(
+                            logoFile,
+                            `restaurants/${slug}/logo.${extension}`
                         );
 
                 }
 
                 if (bannerFile) {
 
+                    const extension =
+                        bannerFile.name
+                            .split(".")
+                            .pop()
+                            ?.toLowerCase() ?? "jpg";
+
                     restaurant.banner =
-                        await uploadRestaurantImage(
-                            slug,
-                            "banner",
-                            bannerFile
+                        await uploadImage(
+                            bannerFile,
+                            `restaurants/${slug}/banner.${extension}`
                         );
 
                 }

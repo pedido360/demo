@@ -20,6 +20,7 @@ import { Category } from "@/types/category";
 import { Product } from "@/types/product";
 import { Restaurant } from "@/types/restaurant";
 import { RestaurantHour } from "@/types/restaurant-hour";
+import { generateSlug } from "@/lib/utils/slug";
 
 
 import {
@@ -45,6 +46,10 @@ import {
 import {
     getProducts,
 } from "@/lib/repositories/product.repository";
+
+import {
+    uploadRestaurantImage,
+} from "@/lib/repositories/storage.repository";
 
 interface RestaurantEditorProps {
     restaurantId?: string;
@@ -136,6 +141,12 @@ export default function RestaurantEditor({
     const [categories, setCategories] = useState<Category[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [hours, setHours] = useState<RestaurantHour[]>(defaultHours);
+
+    const [logoFile, setLogoFile] =
+        useState<File | null>(null);
+
+    const [bannerFile, setBannerFile] =
+        useState<File | null>(null);
 
     useEffect(() => {
 
@@ -236,6 +247,56 @@ export default function RestaurantEditor({
                 console.log("Categories:", categories);
                 console.log("Products:", products);
 
+                if (logoFile) {
+
+                    restaurant.logo =
+                        await uploadRestaurantImage(
+                            restaurant.slug,
+                            "logo",
+                            logoFile
+                        );
+
+                }
+
+                if (bannerFile) {
+
+                    restaurant.banner =
+                        await uploadRestaurantImage(
+                            restaurant.slug,
+                            "banner",
+                            bannerFile
+                        );
+
+                }
+
+                const slug = generateSlug(
+                    restaurant.name
+                );
+
+                restaurant.slug = slug;
+
+                if (logoFile) {
+
+                    restaurant.logo =
+                        await uploadRestaurantImage(
+                            slug,
+                            "logo",
+                            logoFile
+                        );
+
+                }
+
+                if (bannerFile) {
+
+                    restaurant.banner =
+                        await uploadRestaurantImage(
+                            slug,
+                            "banner",
+                            bannerFile
+                        );
+
+                }
+
                 const result = await createCompleteRestaurant({
                     restaurant,
                     hours,
@@ -282,6 +343,12 @@ export default function RestaurantEditor({
                 <RestaurantInfoForm
                     restaurant={restaurant}
                     setRestaurant={setRestaurant}
+
+                    logoFile={logoFile}
+                    setLogoFile={setLogoFile}
+
+                    bannerFile={bannerFile}
+                    setBannerFile={setBannerFile}
                 />
 
                 <RestaurantHoursEditor

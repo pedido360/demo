@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { Restaurant } from "@/types/restaurant";
+import { generateSlug } from "@/lib/utils/slug";
 
 function mapRestaurant(data: any): Restaurant {
     return {
@@ -34,11 +35,9 @@ function mapRestaurant(data: any): Restaurant {
 export async function createRestaurant(
     restaurant: Restaurant
 ): Promise<Restaurant> {
-    const slug = restaurant.name
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "");
+    const slug = generateSlug(
+        restaurant.name
+    );
 
     const { data, error } = await supabase
         .from("restaurants")
@@ -130,11 +129,9 @@ export async function updateRestaurant(
     id: string,
     restaurant: Restaurant
 ): Promise<Restaurant> {
-    const slug = restaurant.name
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "");
+    const slug = generateSlug(
+        restaurant.name
+    );
 
     const { data, error } = await supabase
         .from("restaurants")

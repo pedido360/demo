@@ -1,12 +1,14 @@
 export interface Ingredient {
     id: string;
     name: string;
+    isActive: boolean;
 }
 
 export interface Extra {
     id: string;
     name: string;
     price: number;
+    isActive: boolean;
 }
 
 export interface Product {

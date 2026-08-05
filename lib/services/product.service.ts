@@ -8,15 +8,18 @@ import {
 import {
     uploadImage,
 } from "@/lib/repositories/storage.repository";
+
 import {
     getIngredients,
     createIngredient,
+    updateIngredient,
     deleteIngredient,
 } from "@/lib/repositories/ingredient.repository";
 
 import {
     getExtras,
     createExtra,
+    updateExtra,
     deleteExtra,
 } from "@/lib/repositories/extra.repository";
 
@@ -126,6 +129,12 @@ export async function saveCompleteProduct(
                 ingredientSortOrder
             );
 
+        } else {
+
+            await updateIngredient(
+                ingredient
+            );
+
         }
 
         ingredientSortOrder++;
@@ -175,6 +184,12 @@ export async function saveCompleteProduct(
                 product.id,
                 extra,
                 extraSortOrder
+            );
+
+        } else {
+
+            await updateExtra(
+                extra
             );
 
         }

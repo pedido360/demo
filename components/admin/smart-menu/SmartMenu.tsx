@@ -13,12 +13,22 @@ import {
 
 import SearchBar from "./SearchBar";
 import CategoryAccordion from "./CategoryAccordion";
-import ProductEditor from "./ProductEditor";
+import ProductEditor from "./ProductEditor"
+
+import CategoryForm from "@/components/admin/categories/CategoryForm";
 import ProductForm from "@/components/admin/products/ProductForm";
 
 import {
     createCompleteProduct,
 } from "@/lib/services/product.service";
+
+import {
+    createCategory,
+} from "@/lib/repositories/category.repository";
+
+import {
+    getCategoryEmoji,
+} from "@/lib/getCategoryEmoji";
 
 interface SmartMenuProps {
     restaurantId: string;
@@ -33,6 +43,9 @@ export default function SmartMenu({
     products,
 }: SmartMenuProps) {
 
+    const [categoryList, setCategoryList] =
+        useState<Category[]>(categories);
+
     const [productList, setProductList] =
         useState<Product[]>(products);
 
@@ -45,14 +58,19 @@ export default function SmartMenu({
     const [creatingProduct, setCreatingProduct] =
         useState(false);
 
+    const [creatingCategory, setCreatingCategory] =
+        useState(false);
+
     const [search, setSearch] =
         useState("");
 
     useEffect(() => {
 
+        setCategoryList(categories);
+
         setProductList(products);
 
-    }, [products]);
+    }, [categories, products]);
 
     const filteredProducts = useMemo(() => {
 
@@ -72,11 +90,46 @@ export default function SmartMenu({
 
     const menu = useMemo(
         () => buildMenu(
-            categories,
+            categoryList,
             filteredProducts
         ),
-        [categories, filteredProducts]
+        [categoryList, filteredProducts]
     );
+
+    async function handleCreateCategory(
+        data: Omit<Category, "id" | "emoji">
+    ) {
+
+        try {
+
+            const created =
+                await createCategory(
+                    restaurantId,
+                    {
+                        id: "",
+                        emoji: getCategoryEmoji(data.name),
+                        ...data,
+                    }
+                );
+
+            setCategoryList(previous => [
+                ...previous,
+                created,
+            ]);
+
+            setCreatingCategory(false);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "No fue posible crear la categoría."
+            );
+
+        }
+
+    }
 
     async function handleCreateProduct(
         product: Product
@@ -141,6 +194,64 @@ export default function SmartMenu({
         }
 
     }
+
+    async function handleToggleProduct(
+        id: string
+    ) {
+
+        const product =
+            productList.find(
+                item => item.id === id
+            );
+
+        if (!product) {
+            return;
+        }
+
+        try {
+
+            const updated =
+                await saveCompleteProduct({
+                    ...product,
+                    isAvailable: !product.isAvailable,
+                });
+
+            setProductList(previous =>
+                previous.map(item =>
+                    item.id === updated.id
+                        ? updated
+                        : item
+                )
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "No fue posible actualizar el estado del producto."
+            );
+
+        }
+
+    }
+
+    if (creatingCategory) {
+
+        return (
+
+            <CategoryForm
+                category={null}
+                onSave={handleCreateCategory}
+                onCancel={() =>
+                    setCreatingCategory(false)
+                }
+            />
+
+        );
+
+    }
+
 
     if (creatingProduct) {
 
@@ -209,6 +320,18 @@ export default function SmartMenu({
 
                 </div>
 
+                <div className="mt-4">
+
+                    <button
+                        type="button"
+                        onClick={() => setCreatingCategory(true)}
+                        className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+                    >
+                        + Nueva categoría
+                    </button>
+
+                </div>
+
             </div>
 
             <div className="space-y-5 p-6">
@@ -236,6 +359,7 @@ export default function SmartMenu({
                             key={group.category.id}
                             group={group}
                             onProductClick={setSelectedProduct}
+                            onToggleProduct={handleToggleProduct}
                             onCreateProduct={(categoryId) => {
 
                                 setSelectedCategoryId(categoryId);

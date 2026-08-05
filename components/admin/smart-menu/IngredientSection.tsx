@@ -10,12 +10,14 @@ interface IngredientSectionProps {
     ingredients: Ingredient[];
     onDelete: (id: string) => void;
     onAdd: (name: string) => void;
+    onToggle: (id: string) => void;
 }
 
 export default function IngredientSection({
     ingredients,
     onDelete,
     onAdd,
+    onToggle,
 }: IngredientSectionProps) {
 
     const [isAdding, setIsAdding] =
@@ -63,25 +65,40 @@ export default function IngredientSection({
                             className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3"
                         >
 
+                            <span
+                                className={
+                                    ingredient.isActive
+                                        ? "font-medium text-gray-900"
+                                        : "font-medium text-gray-500"
+                                }
+                            >
+                                {ingredient.name}
+                            </span>
+
                             <div className="flex items-center gap-3">
 
-                                <span className="text-gray-400">
-                                    ☰
-                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => onToggle(ingredient.id)}
+                                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${ingredient.isActive
+                                        ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                        : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                                        }`}
+                                >
+                                    {ingredient.isActive
+                                        ? "🟢 Activo"
+                                        : "⚪ Inactivo"}
+                                </button>
 
-                                <span className="font-medium">
-                                    {ingredient.name}
-                                </span>
+                                <Button
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={() => onDelete(ingredient.id)}
+                                >
+                                    Eliminar
+                                </Button>
 
                             </div>
-
-                            <Button
-                                variant="danger"
-                                size="sm"
-                                onClick={() => onDelete(ingredient.id)}
-                            >
-                                Eliminar
-                            </Button>
 
                         </div>
 

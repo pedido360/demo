@@ -22,6 +22,7 @@ export async function getIngredients(
     return (data ?? []).map((ingredient) => ({
         id: ingredient.id,
         name: ingredient.name,
+        isActive: ingredient.is_active,
     }));
 
 }
@@ -38,6 +39,8 @@ export async function createIngredient(
             product_id: productId,
 
             name: ingredient.name,
+
+            is_active: ingredient.isActive ?? true,
 
             is_removable: true,
 
@@ -59,6 +62,7 @@ export async function updateIngredient(
         .from("ingredients")
         .update({
             name: ingredient.name,
+            is_active: ingredient.isActive,
         })
         .eq("id", ingredient.id);
 

@@ -23,6 +23,7 @@ export async function getExtras(
         id: extra.id,
         name: extra.name,
         price: Number(extra.price),
+        isActive: extra.is_active,
     }));
 
 }
@@ -42,7 +43,7 @@ export async function createExtra(
 
             price: extra.price,
 
-            is_active: true,
+            is_active: extra.isActive ?? true,
 
             sort_order: sortOrder,
         });
@@ -63,6 +64,7 @@ export async function updateExtra(
         .update({
             name: extra.name,
             price: extra.price,
+            is_active: extra.isActive,
         })
         .eq("id", extra.id);
 

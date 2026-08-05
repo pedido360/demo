@@ -11,11 +11,13 @@ import { Product } from "@/types/product";
 interface ProductRowProps {
     product: Product;
     onClick: () => void;
+    onToggle: (id: string) => void;
 }
 
 export default function ProductRow({
     product,
     onClick,
+    onToggle,
 }: ProductRowProps) {
 
     const warnings: string[] = [];
@@ -34,22 +36,11 @@ export default function ProductRow({
 
     return (
 
-        <button
-            type="button"
-            onClick={onClick}
-            className="w-full rounded-xl border border-gray-200 bg-white p-4 text-left transition-all hover:border-green-500 hover:bg-green-50"
-        >
+        <div className="rounded-xl border border-gray-200 bg-white p-4 transition-all hover:border-green-500 hover:bg-green-50">
 
             <div className="flex items-start justify-between">
 
-                <div className="flex gap-4 flex-1">
-
-                    <div
-                        className={`mt-2 h-3 w-3 rounded-full ${product.isAvailable
-                            ? "bg-green-500"
-                            : "bg-gray-400"
-                            }`}
-                    />
+                <div className="flex flex-1 gap-4">
 
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
 
@@ -74,9 +65,23 @@ export default function ProductRow({
 
                     <div className="min-w-0 flex-1">
 
-                        <h3 className="truncate font-semibold text-gray-900">
-                            {product.name}
-                        </h3>
+                        <button
+                            type="button"
+                            onClick={onClick}
+                            className="text-left"
+                        >
+
+                            <h3
+                                className={
+                                    product.isAvailable
+                                        ? "truncate font-semibold text-gray-900"
+                                        : "truncate font-semibold text-gray-500"
+                                }
+                            >
+                                {product.name}
+                            </h3>
+
+                        </button>
 
                         <p className="mt-1 line-clamp-2 text-sm text-gray-500">
                             {product.description}
@@ -116,14 +121,37 @@ export default function ProductRow({
 
                 </div>
 
-                <ChevronRight
-                    size={20}
-                    className="ml-4 mt-6 shrink-0 text-gray-400"
-                />
+                <div className="ml-4 flex flex-col items-end gap-3">
+
+                    <button
+                        type="button"
+                        onClick={() => onToggle(product.id)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${product.isAvailable
+                                ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                            }`}
+                    >
+                        {product.isAvailable
+                            ? "🟢 Activo"
+                            : "⚪ Inactivo"}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={onClick}
+                        className="rounded-lg p-1 hover:bg-gray-200"
+                    >
+                        <ChevronRight
+                            size={20}
+                            className="text-gray-400"
+                        />
+                    </button>
+
+                </div>
 
             </div>
 
-        </button>
+        </div>
 
     );
 

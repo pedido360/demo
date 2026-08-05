@@ -5,6 +5,7 @@ export async function createRestaurantHours(
     restaurantId: string,
     hours: RestaurantHour[]
 ) {
+
     const records = hours.map((hour) => ({
         restaurant_id: restaurantId,
         day_of_week: hour.dayOfWeek,
@@ -24,14 +25,20 @@ export async function createRestaurantHours(
     }
 
     return data;
+
 }
 
-export async function getRestaurantHours(restaurantId: string) {
+export async function getRestaurantHours(
+    restaurantId: string
+) {
+
     const { data, error } = await supabase
         .from("restaurant_hours")
         .select("*")
         .eq("restaurant_id", restaurantId)
-        .order("day_of_week", { ascending: true });
+        .order("day_of_week", {
+            ascending: true,
+        });
 
     if (error) {
         console.error("SUPABASE ERROR:", error);
@@ -39,21 +46,35 @@ export async function getRestaurantHours(restaurantId: string) {
     }
 
     return data;
+
 }
 
 export async function updateRestaurantHours(
     restaurantId: string,
     hours: RestaurantHour[]
 ) {
-    const { error: deleteError } = await supabase
-        .from("restaurant_hours")
-        .delete()
-        .eq("restaurant_id", restaurantId);
 
-    if (deleteError) {
-        console.error("SUPABASE ERROR:", deleteError);
-        throw new Error(deleteError.message);
+    const records = hours.map((hour) => ({
+        restaurant_id: restaurantId,
+        day_of_week: hour.dayOfWeek,
+        is_open: hour.isOpen,
+        open_time: hour.isOpen ? hour.openTime : null,
+        close_time: hour.isOpen ? hour.closeTime : null,
+    }));
+
+    const { error } = await supabase
+        .from("restaurant_hours")
+        .upsert(
+            records,
+            {
+                onConflict:
+                    "restaurant_id,day_of_week",
+            }
+        );
+
+    if (error) {
+        console.error("SUPABASE ERROR:", error);
+        throw new Error(error.message);
     }
 
-    return createRestaurantHours(restaurantId, hours);
 }

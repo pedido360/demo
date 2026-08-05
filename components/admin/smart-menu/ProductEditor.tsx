@@ -181,6 +181,24 @@ export default function ProductEditor({
 
                 <IngredientSection
                     ingredients={editableProduct.ingredients ?? []}
+
+                    onToggle={(id) => {
+
+                        updateField(
+                            "ingredients",
+                            (editableProduct.ingredients ?? []).map(
+                                ingredient =>
+                                    ingredient.id === id
+                                        ? {
+                                            ...ingredient,
+                                            isActive: !ingredient.isActive,
+                                        }
+                                        : ingredient
+                            )
+                        );
+
+                    }}
+
                     onDelete={(id) => {
 
                         updateField(
@@ -200,6 +218,7 @@ export default function ProductEditor({
                                 {
                                     id: crypto.randomUUID(),
                                     name,
+                                    isActive: true,
                                 },
                             ]
                         );
@@ -209,6 +228,24 @@ export default function ProductEditor({
 
                 <ExtraSection
                     extras={editableProduct.extras ?? []}
+
+                    onToggle={(id) => {
+
+                        updateField(
+                            "extras",
+                            (editableProduct.extras ?? []).map(
+                                extra =>
+                                    extra.id === id
+                                        ? {
+                                            ...extra,
+                                            isActive: !extra.isActive,
+                                        }
+                                        : extra
+                            )
+                        );
+
+                    }}
+
                     onDelete={(id) => {
 
                         updateField(
@@ -219,6 +256,7 @@ export default function ProductEditor({
                         );
 
                     }}
+
                     onAdd={(extra) => {
 
                         updateField(
@@ -227,6 +265,7 @@ export default function ProductEditor({
                                 ...(editableProduct.extras ?? []),
                                 {
                                     id: crypto.randomUUID(),
+                                    isActive: true,
                                     ...extra,
                                 },
                             ]

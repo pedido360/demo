@@ -13,12 +13,14 @@ import CategoryHeader from "./CategoryHeader";
 interface CategoryAccordionProps {
     group: MenuCategory;
     onProductClick: (product: Product) => void;
+    onToggleProduct: (id: string) => void;
     onCreateProduct?: (categoryId: string) => void;
 }
 
 export default function CategoryAccordion({
     group,
     onProductClick,
+    onToggleProduct,
     onCreateProduct,
 }: CategoryAccordionProps) {
 
@@ -71,7 +73,10 @@ export default function CategoryAccordion({
                                 <ProductRow
                                     key={product.id}
                                     product={product}
-                                    onClick={() => onProductClick(product)}
+                                    onClick={() =>
+                                        onProductClick(product)
+                                    }
+                                    onToggle={onToggleProduct}
                                 />
 
                             ))

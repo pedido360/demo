@@ -10,12 +10,14 @@ interface ExtraSectionProps {
     extras: Extra[];
     onDelete: (id: string) => void;
     onAdd: (extra: Omit<Extra, "id">) => void;
+    onToggle: (id: string) => void;
 }
 
 export default function ExtraSection({
     extras,
     onDelete,
     onAdd,
+    onToggle,
 }: ExtraSectionProps) {
 
     const [isAdding, setIsAdding] =
@@ -36,6 +38,7 @@ export default function ExtraSection({
         onAdd({
             name: name.trim(),
             price,
+            isActive: true,
         });
 
         setName("");
@@ -71,7 +74,13 @@ export default function ExtraSection({
 
                             <div>
 
-                                <div className="font-medium">
+                                <div
+                                    className={
+                                        extra.isActive
+                                            ? "font-medium text-gray-900"
+                                            : "font-medium text-gray-500"
+                                    }
+                                >
                                     {extra.name}
                                 </div>
 
@@ -81,15 +90,32 @@ export default function ExtraSection({
 
                             </div>
 
-                            <Button
-                                variant="danger"
-                                size="sm"
-                                onClick={() =>
-                                    onDelete(extra.id)
-                                }
-                            >
-                                Eliminar
-                            </Button>
+                            <div className="flex items-center gap-3">
+
+                                <button
+                                    type="button"
+                                    onClick={() => onToggle(extra.id)}
+                                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${extra.isActive
+                                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                                        }`}
+                                >
+                                    {extra.isActive
+                                        ? "🟢 Activo"
+                                        : "⚪ Inactivo"}
+                                </button>
+
+                                <Button
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={() =>
+                                        onDelete(extra.id)
+                                    }
+                                >
+                                    Eliminar
+                                </Button>
+
+                            </div>
 
                         </div>
 

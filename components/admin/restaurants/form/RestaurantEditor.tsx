@@ -8,6 +8,8 @@ import Loading from "@/components/ui/feedback/Loading";
 
 import RestaurantInfoForm from "./RestaurantInfoForm";
 import RestaurantHoursEditor from "./RestaurantHoursEditor";
+import RestaurantOwnerForm from "./RestaurantOwnerForm";
+import { RestaurantOwner } from "@/types/restaurant-owner";
 
 import CategoryEditor from "@/components/admin/categories/CategoryEditor";
 import ProductEditor from "@/components/admin/products/ProductEditor";
@@ -141,6 +143,11 @@ export default function RestaurantEditor({
     const [categories, setCategories] = useState<Category[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [hours, setHours] = useState<RestaurantHour[]>(defaultHours);
+    const [owner, setOwner] = useState<RestaurantOwner>({
+        fullName: "",
+        email: "",
+        password: "",
+    });
 
     const [logoFile, setLogoFile] =
         useState<File | null>(null);
@@ -274,12 +281,44 @@ export default function RestaurantEditor({
 
                 }
 
-                const result = await createCompleteRestaurant({
-                    restaurant,
-                    hours,
-                    categories,
-                    products,
+                const result =
+                    await createCompleteRestaurant({
+                        restaurant,
+                        hours,
+                        categories,
+                        products,
+                    });
+
+                const response = await fetch("/api/restaurant-users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        fullName: owner.fullName,
+                        email: owner.email,
+                        password: owner.password,
+                        restaurantId: result.restaurant.id,
+                    }),
                 });
+
+                const userResult = await response.json();
+
+                if (!response.ok) {
+
+                    alert(
+                        `⚠️ El restaurante fue creado correctamente, pero no fue posible crear el usuario.\n\n${userResult.message}`
+                    );
+
+                } else {
+
+                    console.log(
+                        "Usuario creado correctamente.",
+                        userResult.user
+                    );
+
+                }
+
 
                 const url = buildRestaurantUrl(
                     result.restaurant.slug
@@ -331,6 +370,11 @@ export default function RestaurantEditor({
                 <RestaurantHoursEditor
                     hours={hours}
                     setHours={setHours}
+                />
+
+                <RestaurantOwnerForm
+                    owner={owner}
+                    setOwner={setOwner}
                 />
 
                 {isEditMode ? (

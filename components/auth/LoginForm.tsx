@@ -36,7 +36,45 @@ export default function LoginForm() {
             return;
         }
 
-        router.push("/dashboard");
+        // Obtener el usuario autenticado
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+            setErrorMessage("No fue posible obtener el usuario.");
+            return;
+        }
+
+        // Buscar el perfil
+        const { data: profile, error: profileError } =
+            await supabase
+                .from("profiles")
+                .select("role")
+                .eq("id", user.id)
+                .single();
+
+        if (profileError || !profile) {
+            setErrorMessage("No fue posible obtener el perfil.");
+            return;
+        }
+
+        // Redireccionar según el rol
+        if (profile.role === "super_admin") {
+
+            router.push("/dashboard");
+
+        } else if (profile.role === "restaurant_admin") {
+
+            router.push("/restaurant");
+
+        } else {
+
+            setErrorMessage("Rol no reconocido.");
+            return;
+
+        }
+
         router.refresh();
     }
 

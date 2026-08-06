@@ -1,15 +1,22 @@
 import { Restaurant } from "@/types/restaurant";
 
+import { RestaurantHour } from "@/types/restaurant-hour";
+import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
+
 interface RestaurantHeroProps {
     restaurant: Restaurant;
+    hours?: RestaurantHour[];
 }
 
 export default function RestaurantHero({
     restaurant,
+    hours,
 }: RestaurantHeroProps) {
-
     const isDemo =
         restaurant.slug === "demo";
+
+    const open = isRestaurantOpen(hours ?? []);
+
 
     return (
         <section className="bg-gray-100">
@@ -64,6 +71,21 @@ export default function RestaurantHero({
                     <p className="mt-2 text-center text-gray-500">
                         {restaurant.description}
                     </p>
+
+                    <div className="mt-4 flex justify-center">
+
+                        <span
+                            className={`rounded-full px-4 py-2 text-sm font-semibold ${open
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                                }`}
+                        >
+                            {open
+                                ? "🟢 Abierto ahora"
+                                : "🔴 Cerrado"}
+                        </span>
+
+                    </div>
 
                     {/* Rating */}
                     <div className="mt-4 flex items-center justify-center gap-2">

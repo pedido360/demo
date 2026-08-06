@@ -52,6 +52,7 @@ export default function RestaurantContent({
 
             <RestaurantHero
                 restaurant={data.restaurant}
+                hours={data.hours}
             />
 
             <section className="mx-auto mt-6 max-w-2xl px-5">

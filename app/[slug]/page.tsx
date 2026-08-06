@@ -16,6 +16,10 @@ import {
     getProducts,
 } from "@/lib/repositories/product.repository";
 
+import {
+    getRestaurantHours,
+} from "@/lib/repositories/restaurant-hours.repository";
+
 interface RestaurantPageProps {
     params: Promise<{
         slug: string;
@@ -43,10 +47,16 @@ export default async function RestaurantPage({
                 restaurant.id
             );
 
+        const hours =
+            await getRestaurantHours(
+                restaurant.id
+            );
+
         const data: RestaurantPageData = {
             restaurant,
             categories,
             products,
+            hours,
         };
 
         return (

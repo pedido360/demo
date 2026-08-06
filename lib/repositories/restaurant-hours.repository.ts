@@ -30,7 +30,7 @@ export async function createRestaurantHours(
 
 export async function getRestaurantHours(
     restaurantId: string
-) {
+): Promise<RestaurantHour[]> {
 
     const { data, error } = await supabase
         .from("restaurant_hours")
@@ -45,7 +45,14 @@ export async function getRestaurantHours(
         throw new Error(error.message);
     }
 
-    return data;
+    return (data ?? []).map((hour) => ({
+        id: hour.id,
+        restaurantId: hour.restaurant_id,
+        dayOfWeek: hour.day_of_week,
+        isOpen: hour.is_open,
+        openTime: hour.open_time ?? "",
+        closeTime: hour.close_time ?? "",
+    }));
 
 }
 

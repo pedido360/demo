@@ -182,18 +182,7 @@ export default function RestaurantEditor({
 
             setProducts(productsData);
 
-            if (hoursData.length > 0) {
-
-                setHours(
-                    hoursData.map((hour) => ({
-                        dayOfWeek: hour.day_of_week,
-                        isOpen: hour.is_open,
-                        openTime: hour.open_time ?? "08:00",
-                        closeTime: hour.close_time ?? "22:00",
-                    }))
-                );
-
-            }
+            setHours(hoursData);
 
         } catch (error) {
 

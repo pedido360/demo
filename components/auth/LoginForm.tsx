@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -84,6 +85,17 @@ export default function LoginForm() {
                     placeholder="********"
                     required
                 />
+
+                <div className="mt-2 text-right">
+
+                    <Link
+                        href="/reset-password"
+                        className="text-sm text-blue-600 hover:underline"
+                    >
+                        ¿Olvidaste tu contraseña?
+                    </Link>
+
+                </div>
             </div>
 
             {errorMessage && (

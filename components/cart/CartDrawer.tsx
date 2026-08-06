@@ -12,14 +12,20 @@ import { useCart } from "@/hooks/useCart";
 import CartItem from "./CartItem";
 import OrderSentModal from "./OrderSentModal";
 
+import { RestaurantHour } from "@/types/restaurant-hour";
+
 interface CartDrawerProps {
     restaurant: Restaurant;
+    hours?: RestaurantHour[];
+    isOpen: boolean;
     open: boolean;
     onClose: () => void;
 }
 
 export default function CartDrawer({
     restaurant,
+    hours,
+    isOpen,
     open,
     onClose,
 }: CartDrawerProps) {
@@ -57,6 +63,16 @@ export default function CartDrawer({
 
 
     function handleWhatsApp() {
+
+        if (!isOpen) {
+
+            alert(
+                "🔴 Lo sentimos. El restaurante se encuentra cerrado en este momento y no está recibiendo pedidos."
+            );
+
+            return;
+
+        }
 
         if (sendingOrder) {
             return;

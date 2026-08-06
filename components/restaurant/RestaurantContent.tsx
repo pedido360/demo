@@ -14,6 +14,7 @@ import ProductGrid from "@/components/products/ProductGrid";
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
 import CartDrawer from "@/components/cart/CartDrawer";
 import PoweredBy from "./PoweredBy";
+import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
 
 interface RestaurantContentProps {
     data: RestaurantPageData;
@@ -28,6 +29,9 @@ export default function RestaurantContent({
 
     const [cartOpen, setCartOpen] =
         useState(false);
+
+    const isOpen = isRestaurantOpen(data.hours ?? []);
+
     useEffect(() => {
 
         if (
@@ -146,6 +150,8 @@ export default function RestaurantContent({
 
             <CartDrawer
                 restaurant={data.restaurant}
+                hours={data.hours}
+                isOpen={isOpen}
                 open={cartOpen}
                 onClose={() =>
                     setCartOpen(false)

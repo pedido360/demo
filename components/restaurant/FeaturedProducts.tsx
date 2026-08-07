@@ -14,7 +14,12 @@ export default function FeaturedProducts({
         (product) => product.featured
     );
 
+    if (featuredProducts.length === 0) {
+        return null;
+    }
+
     return (
+
         <section className="w-full px-4 py-5">
 
             <div className="mb-4 flex items-center justify-between">
@@ -32,31 +37,38 @@ export default function FeaturedProducts({
             <div className="space-y-3">
 
                 {featuredProducts.map((product) => (
+
                     <article
                         key={product.id}
                         className="flex items-center gap-3 rounded-2xl border border-yellow-200 bg-yellow-50 p-3"
                     >
 
                         {/* Imagen */}
-                        <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-white">
 
-                            {product.image.startsWith("/") ? (
+                        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-white">
+
+                            {product.image ? (
+
                                 <Image
                                     src={product.image}
                                     alt={product.name}
-                                    width={80}
-                                    height={80}
-                                    className="h-full w-full object-cover"
+                                    fill
+                                    unoptimized
+                                    className="object-cover"
                                 />
+
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center text-4xl">
-                                    {product.image}
+
+                                <div className="flex h-full w-full items-center justify-center text-3xl">
+                                    🍔
                                 </div>
+
                             )}
 
                         </div>
 
                         {/* Información */}
+
                         <div className="min-w-0 flex-1">
 
                             <h3 className="truncate font-semibold text-gray-900">
@@ -70,6 +82,7 @@ export default function FeaturedProducts({
                         </div>
 
                         {/* Precio */}
+
                         <div className="ml-2 flex flex-col items-end gap-2">
 
                             <span className="whitespace-nowrap font-bold text-red-600">
@@ -83,10 +96,13 @@ export default function FeaturedProducts({
                         </div>
 
                     </article>
+
                 ))}
 
             </div>
 
         </section>
+
     );
+
 }

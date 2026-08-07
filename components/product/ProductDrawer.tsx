@@ -25,6 +25,9 @@ export default function ProductDrawer({
 
     const [notes, setNotes] = useState("");
 
+    const [selectedExtras, setSelectedExtras] =
+        useState<string[]>([]);
+
     useEffect(() => {
         if (open) {
             requestAnimationFrame(() => setMounted(true));
@@ -33,6 +36,9 @@ export default function ProductDrawer({
 
             setQuantity(1);
             setNotes("");
+
+
+            setSelectedExtras([]);
         } else {
             setMounted(false);
             document.body.style.overflow = "";
@@ -45,19 +51,51 @@ export default function ProductDrawer({
 
     if (!product) return null;
 
-    const total = product.price * quantity;
+    const extrasTotal =
+        (product.extras ?? [])
+            .filter(extra =>
+                selectedExtras.includes(extra.id)
+            )
+            .reduce(
+                (total, extra) =>
+                    total + extra.price,
+                0
+            );
+
+    const total =
+        (product.price + extrasTotal)
+        * quantity;
 
     function handleAdd() {
 
+        if (!product) return;
+
+        const selectedExtraObjects =
+            (product.extras ?? []).filter(
+                extra =>
+                    selectedExtras.includes(
+                        extra.id
+                    )
+            );
+
         onAdd({
-            product: product!,
+
+            product,
+
             quantity,
-            ingredients: [],
-            extras: [],
+
+            ingredients:
+                product.ingredients ?? [],
+
+            extras:
+                selectedExtraObjects,
+
             notes,
+
         });
 
         onClose();
+
     }
 
     return (
@@ -106,6 +144,95 @@ export default function ProductDrawer({
                         <p className="mt-4 text-center text-gray-500">
                             {product.description}
                         </p>
+
+                        {/* Ingredientes */}
+
+                        {(product.ingredients?.length ?? 0) > 0 && (
+
+                            <div className="mt-8">
+
+                                <h3 className="mb-3 text-lg font-semibold">
+                                    Ingredientes
+                                </h3>
+
+                                <p className="text-gray-600 leading-6">
+                                    {(product.ingredients ?? [])
+                                        .filter(ingredient => ingredient.isActive)
+                                        .map(ingredient => ingredient.name)
+                                        .join(", ")}
+                                </p>
+
+                            </div>
+
+                        )}
+
+                        {/* Extras */}
+
+                        {(product.extras?.length ?? 0) > 0 && (
+
+                            <div className="mt-8">
+
+                                <h3 className="mb-3 text-lg font-semibold">
+                                    Extras
+                                </h3>
+                                <p className="mb-3 text-sm text-gray-500">
+                                    ✨ Personaliza tu pedido seleccionando tus extras favoritos.
+                                </p>
+
+                                <div className="space-y-2">
+
+                                    {product.extras!
+                                        .filter(extra => extra.isActive)
+                                        .map(extra => (
+
+                                            <label
+                                                key={extra.id}
+                                                className="flex items-center justify-between"
+                                            >
+
+                                                <div className="flex items-center gap-3">
+
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedExtras.includes(extra.id)}
+                                                        onChange={(e) => {
+
+                                                            if (e.target.checked) {
+
+                                                                setSelectedExtras(current => [
+                                                                    ...current,
+                                                                    extra.id,
+                                                                ]);
+
+                                                            } else {
+
+                                                                setSelectedExtras(current =>
+                                                                    current.filter(id => id !== extra.id)
+                                                                );
+
+                                                            }
+
+                                                        }}
+                                                    />
+                                                    <span>
+                                                        {extra.name}
+                                                    </span>
+
+                                                </div>
+
+                                                <span className="font-semibold text-red-600">
+                                                    +${extra.price.toLocaleString("es-CO")}
+                                                </span>
+
+                                            </label>
+
+                                        ))}
+
+                                </div>
+
+                            </div>
+
+                        )}
 
                         <div className="mt-8">
                             <QuantitySelector

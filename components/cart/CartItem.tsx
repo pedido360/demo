@@ -15,7 +15,15 @@ export default function CartItem({
     onRemove,
 }: CartItemProps) {
 
-    const subtotal = item.product.price * item.quantity;
+    const extrasTotal =
+        (item.extras ?? []).reduce(
+            (total, extra) => total + extra.price,
+            0
+        );
+
+    const subtotal =
+        (item.product.price + extrasTotal)
+        * item.quantity;
 
     return (
         <article className="rounded-2xl border border-gray-200 bg-white p-4">
@@ -32,10 +40,53 @@ export default function CartItem({
                         Cantidad: {item.quantity}
                     </p>
 
+                    {item.extras.length > 0 && (
+
+                        <div className="mt-3">
+
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                ➕ Extras
+                            </p>
+
+                            <div className="space-y-1">
+
+                                {item.extras.map(extra => (
+
+                                    <div
+                                        key={extra.id}
+                                        className="flex items-center gap-2 text-sm text-gray-700"
+                                    >
+                                        <span className="text-green-600">
+                                            ✓
+                                        </span>
+
+                                        <span>
+                                            {extra.name}
+                                        </span>
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+
+                        </div>
+
+                    )}
                     {item.notes && (
-                        <p className="mt-2 text-sm italic text-gray-500">
-                            "{item.notes}"
-                        </p>
+
+                        <div className="mt-4">
+
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                📝 Observaciones
+                            </p>
+
+                            <p className="text-sm italic text-gray-700">
+                                "{item.notes}"
+                            </p>
+
+                        </div>
+
                     )}
 
                 </div>

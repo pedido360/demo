@@ -6,11 +6,19 @@ import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
 interface SmartHeaderProps {
     restaurant: Restaurant;
     hours?: RestaurantHour[];
+
+    adminName?: string;
+    adminEmail?: string;
+
+    onLogout?: () => void;
 }
 
 export default function SmartHeader({
     restaurant,
     hours,
+    adminName,
+    adminEmail,
+    onLogout,
 }: SmartHeaderProps) {
 
     const open =
@@ -42,8 +50,8 @@ export default function SmartHeader({
 
                         <span
                             className={`rounded-full px-3 py-1 text-sm font-semibold ${open
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
                                 }`}
                         >
                             {open
@@ -53,9 +61,49 @@ export default function SmartHeader({
 
                     </div>
 
+                    {(adminName || adminEmail) && (
+
+                        <div className="mt-5 border-t border-gray-200 pt-4">
+
+                            {adminName && (
+
+                                <p className="font-semibold text-gray-800">
+                                    👤 {adminName}
+                                </p>
+
+                            )}
+
+                            {adminEmail && (
+
+                                <p className="text-sm text-gray-500">
+                                    📧 {adminEmail}
+                                </p>
+
+                            )}
+
+                        </div>
+
+                    )}
+
                 </div>
 
             </div>
+
+            {onLogout && (
+
+                <div className="mt-6 flex justify-end border-t border-gray-200 pt-5">
+
+                    <button
+                        type="button"
+                        onClick={onLogout}
+                        className="rounded-xl bg-red-600 px-5 py-2 font-semibold text-white transition hover:bg-red-700"
+                    >
+                        🚪 Cerrar sesión
+                    </button>
+
+                </div>
+
+            )}
 
         </section>
 

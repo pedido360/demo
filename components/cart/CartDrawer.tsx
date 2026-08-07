@@ -61,8 +61,16 @@ export default function CartDrawer({
     const [orderSentOpen, setOrderSentOpen] =
         useState(false);
 
+    const canSend =
+        customerName.trim() !== "" &&
+        address.trim() !== "";
+
 
     function handleWhatsApp() {
+
+        if (!canSend) {
+            return;
+        }
 
         if (!isOpen) {
 
@@ -211,10 +219,20 @@ export default function CartDrawer({
 
                             <div className="space-y-4">
 
+                                <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3">
+
+                                    <p className="text-sm leading-6 text-blue-800">
+                                        ℹ️ Completa tu <strong>nombre</strong> y la
+                                        <strong> dirección de entrega</strong> para habilitar el <strong>BOTÓN </strong>de envío del
+                                        pedido por WhatsApp.
+                                    </p>
+
+                                </div>
+
                                 <div>
 
                                     <label className="mb-1 block text-sm font-medium">
-                                        👤 Nombre
+                                        👤 Nombre <span className="text-red-600">*</span>
                                     </label>
 
                                     <input
@@ -223,7 +241,7 @@ export default function CartDrawer({
                                         onChange={(e) =>
                                             setCustomerName(e.target.value)
                                         }
-                                        placeholder="Tu nombre"
+                                        placeholder="Ej: Juan Pérez"
                                         className="w-full rounded-xl border border-gray-300 p-3"
                                     />
 
@@ -232,7 +250,7 @@ export default function CartDrawer({
                                 <div>
 
                                     <label className="mb-1 block text-sm font-medium">
-                                        📍 Dirección
+                                        📍 Dirección*
                                     </label>
 
                                     <input
@@ -241,7 +259,7 @@ export default function CartDrawer({
                                         onChange={(e) =>
                                             setAddress(e.target.value)
                                         }
-                                        placeholder="Dirección de entrega"
+                                        placeholder="Agrega tu dirección de entrega  📍"
                                         className="w-full rounded-xl border border-gray-300 p-3"
                                     />
 
@@ -327,6 +345,12 @@ export default function CartDrawer({
 
                         </div>
 
+                        <p className="mt-4 mb-6 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-center text-xs leading-5 text-amber-800">
+                            💡 El valor del pedido no incluye el costo del domicilio.
+                            En seguida te informaremos el valor para que puedas
+                            confirmar el despacho.
+                        </p>
+
                         {items.length > 0 && checkoutStep === "cart" && (
 
                             <div className="flex gap-3">
@@ -367,12 +391,17 @@ export default function CartDrawer({
 
                                 <button
                                     onClick={handleWhatsApp}
-                                    disabled={sendingOrder}
-                                    className="w-full rounded-2xl bg-green-600 py-4 font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                                    disabled={sendingOrder || !canSend}
+                                    className={`w-full rounded-2xl py-4 font-bold text-white transition ${canSend
+                                        ? "bg-green-600 hover:bg-green-700"
+                                        : "cursor-not-allowed bg-gray-300"
+                                        }`}
                                 >
                                     {sendingOrder
                                         ? "⏳ Abriendo WhatsApp..."
-                                        : "📲 Enviar pedido por WhatsApp"}
+                                        : !canSend
+                                            ? "Completa nombre y dirección"
+                                            : "📲 Enviar pedido por WhatsApp"}
                                 </button>
 
                             </div>

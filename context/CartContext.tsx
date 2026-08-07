@@ -54,11 +54,20 @@ export function CartProvider({ children }: CartProviderProps) {
 
     const totalPrice = useMemo(
         () =>
-            items.reduce(
-                (total, item) =>
-                    total + item.product.price * item.quantity,
-                0
-            ),
+            items.reduce((total, item) => {
+
+                const extrasTotal = (item.extras ?? []).reduce(
+                    (sum, extra) => sum + extra.price,
+                    0
+                );
+
+                return (
+                    total +
+                    (item.product.price + extrasTotal) *
+                    item.quantity
+                );
+
+            }, 0),
         [items]
     );
 

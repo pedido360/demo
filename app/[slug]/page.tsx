@@ -47,6 +47,11 @@ export default async function RestaurantPage({
                 restaurant.id
             );
 
+        const availableProducts =
+            products.filter(
+                product => product.isAvailable
+            );
+
         const hours =
             await getRestaurantHours(
                 restaurant.id
@@ -55,7 +60,7 @@ export default async function RestaurantPage({
         const data: RestaurantPageData = {
             restaurant,
             categories,
-            products,
+            products: availableProducts,
             hours,
         };
 

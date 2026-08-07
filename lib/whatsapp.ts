@@ -17,8 +17,19 @@ export function buildWhatsAppMessage(
 
     const lines: string[] = [];
 
-    lines.push("🍔 *NUEVO PEDIDO*");
+    const now = new Date();
+
+    const date = now.toLocaleDateString("es-CO");
+
+    const time = now.toLocaleTimeString("es-CO", {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    lines.push("🛎️ *NUEVO PEDIDO*");
+    lines.push(`🕒 ${date} • ${time}`);
     lines.push("");
+
     lines.push(`🏪 *${restaurant.name}*`);
     lines.push("");
 
@@ -27,9 +38,9 @@ export function buildWhatsAppMessage(
     lines.push("━━━━━━━━━━━━━━━━━━━━");
     lines.push("");
 
-    lines.push(`Nombre: ${order.customerName}`);
-    lines.push(`Dirección: ${order.address}`);
-    lines.push(`Pago: ${order.paymentMethod}`);
+    lines.push(`👤 Nombre: ${order.customerName}`);
+    lines.push(`📍 Dirección: ${order.address}`);
+    lines.push(`💳 Pago: ${order.paymentMethod}`);
 
     if (
         order.paymentMethod === "Efectivo" &&
@@ -37,16 +48,18 @@ export function buildWhatsAppMessage(
     ) {
 
         lines.push(
-            `Cambio para: ${order.cashChange}`
+            `💵 Cambio para: ${order.cashChange}`
         );
 
     }
 
     if (order.observations.trim()) {
 
-        lines.push(
-            `Observaciones: ${order.observations}`
-        );
+        lines.push("");
+
+        lines.push("📝 Observaciones generales:");
+
+        lines.push(order.observations);
 
     }
 
@@ -58,50 +71,77 @@ export function buildWhatsAppMessage(
 
     items.forEach((item, index) => {
 
+        const extrasTotal =
+            (item.extras ?? []).reduce(
+                (total, extra) => total + extra.price,
+                0
+            );
+
+        const subtotal =
+            (item.product.price + extrasTotal) *
+            item.quantity;
+
         lines.push(
-            `${index + 1}. ${item.product.name}`
+            `${index + 1}. 🍽️ *${item.product.name}*`
         );
 
         lines.push(
             `Cantidad: ${item.quantity}`
         );
 
-        if (item.notes?.trim()) {
+        if ((item.extras ?? []).length > 0) {
 
-            lines.push(
-                `Notas: ${item.notes}`
-            );
+            lines.push("");
+
+            lines.push("➕ Extras:");
+
+            item.extras.forEach(extra => {
+
+                lines.push(
+                    `   ✓ ${extra.name}`
+                );
+
+            });
 
         }
 
+        if (item.notes?.trim()) {
+
+            lines.push("");
+
+            lines.push("📝 Observaciones:");
+
+            lines.push(item.notes);
+
+        }
+
+        lines.push("");
+
         lines.push(
-            `Subtotal: $${(
-                item.product.price *
-                item.quantity
-            ).toLocaleString("es-CO")}`
+            `Subtotal: $${subtotal.toLocaleString("es-CO")}`
         );
 
+        lines.push("");
+        lines.push("────────────────────");
         lines.push("");
 
     });
 
-    lines.push("━━━━━━━━━━━━━━━━━━━━");
-
-    lines.push("");
-
+    lines.push("💰 *TOTAL PRODUCTOS*");
     lines.push(
-        `💰 *TOTAL: $${totalPrice.toLocaleString("es-CO")}*`
+        `$${totalPrice.toLocaleString("es-CO")}`
     );
 
     lines.push("");
-
     lines.push("━━━━━━━━━━━━━━━━━━━━");
-
     lines.push("");
 
-    lines.push("✅ ¡Gracias!");
+    lines.push("🙏 Muchas gracias.");
+    lines.push("");
+    lines.push(
+        "Quedo atento a la confirmación del valor del domicilio y al despacho de mi pedido."
+    );
 
-    lines.push("Quedo atent@ a la confirmación de mi pedido. 🙌");
     return lines.join("\n");
 
 }

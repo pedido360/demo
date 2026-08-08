@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import RestaurantApp from "@/components/restaurant/RestaurantApp";
@@ -24,6 +25,83 @@ interface RestaurantPageProps {
     params: Promise<{
         slug: string;
     }>;
+}
+
+export async function generateMetadata({
+    params,
+}: RestaurantPageProps): Promise<Metadata> {
+
+    try {
+
+        const { slug } = await params;
+
+        const restaurant =
+            await getRestaurantBySlug(slug);
+
+        const image = restaurant.logo?.trim()
+            ? restaurant.logo
+            : "https://pedidos360.com/logo-demo.png";
+
+        const url = `https://pedidos360.com/${slug}`;
+
+        return {
+
+            metadataBase: new URL("https://pedidos360.com"),
+
+            title: `${restaurant.name} | Pedidos360`,
+
+            description: restaurant.description,
+
+            openGraph: {
+
+                title: `${restaurant.name} | Pedidos360`,
+
+                description: restaurant.description,
+
+                url,
+
+                siteName: "Pedidos360",
+
+                locale: "es_CO",
+
+                type: "website",
+
+                images: [
+                    {
+                        url: image,
+                        width: 512,
+                        height: 512,
+                        alt: restaurant.name,
+                    },
+                ],
+            },
+
+            twitter: {
+
+                card: "summary_large_image",
+
+                title: `${restaurant.name} | Pedidos360`,
+
+                description: restaurant.description,
+
+                images: [image],
+
+            },
+
+        };
+
+    } catch {
+
+        return {
+
+            title: "Pedidos360",
+
+            description: "Haz tu pedido en línea.",
+
+        };
+
+    }
+
 }
 
 export default async function RestaurantPage({
@@ -58,10 +136,15 @@ export default async function RestaurantPage({
             );
 
         const data: RestaurantPageData = {
+
             restaurant,
+
             categories,
+
             products: availableProducts,
+
             hours,
+
         };
 
         return (

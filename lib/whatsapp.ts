@@ -77,8 +77,12 @@ export function buildWhatsAppMessage(
                 0
             );
 
+        const productPrice =
+            item.variant?.price ??
+            item.product.price;
+
         const subtotal =
-            (item.product.price + extrasTotal) *
+            (productPrice + extrasTotal) *
             item.quantity;
 
         lines.push(
@@ -88,6 +92,14 @@ export function buildWhatsAppMessage(
         lines.push(
             `Cantidad: ${item.quantity}`
         );
+
+        if (item.variant) {
+
+            lines.push(
+                `📏 Presentación: ${item.variant.label}`
+            );
+
+        }
 
         if ((item.extras ?? []).length > 0) {
 

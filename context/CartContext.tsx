@@ -61,9 +61,13 @@ export function CartProvider({ children }: CartProviderProps) {
                     0
                 );
 
+                const productPrice =
+                    item.variant?.price ??
+                    item.product.price;
+
                 return (
                     total +
-                    (item.product.price + extrasTotal) *
+                    (productPrice + extrasTotal) *
                     item.quantity
                 );
 

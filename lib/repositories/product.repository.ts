@@ -3,12 +3,20 @@ import { supabase } from "@/lib/supabase";
 import { Product } from "@/types/product";
 
 import {
+    getVariants,
+} from "@/lib/repositories/product-variant.repository";
+
+import {
     getIngredients,
 } from "@/lib/repositories/ingredient.repository";
 
 import {
     getExtras,
 } from "@/lib/repositories/extra.repository";
+
+import {
+    replaceVariants,
+} from "@/lib/repositories/product-variant.repository";
 
 function mapProduct(data: any): Product {
     return {
@@ -63,6 +71,9 @@ export async function getProducts(
         product.extras =
             await getExtras(product.id);
 
+        product.variants =
+            await getVariants(product.id);
+
         products.push(product);
 
     }
@@ -104,13 +115,23 @@ export async function createProduct(
         throw new Error(error.message);
     }
 
+
+
     const created = mapProduct(data);
+
+    await replaceVariants(
+        created.id,
+        product.variants ?? []
+    );
 
     created.ingredients =
         product.ingredients ?? [];
 
     created.extras =
         product.extras ?? [];
+
+    created.variants =
+        product.variants ?? [];
 
     return created;
 
@@ -148,11 +169,19 @@ export async function updateProduct(
 
     const updated = mapProduct(data);
 
+    await replaceVariants(
+        updated.id,
+        product.variants ?? []
+    );
+
     updated.ingredients =
         product.ingredients ?? [];
 
     updated.extras =
         product.extras ?? [];
+
+    updated.variants =
+        product.variants ?? [];
 
     return updated;
 

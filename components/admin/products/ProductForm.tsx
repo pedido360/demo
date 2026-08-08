@@ -53,6 +53,10 @@ export default function ProductForm({
     const [extraName, setExtraName] = useState('');
     const [extraPrice, setExtraPrice] = useState('');
 
+    // Variantes
+    const [variantLabel, setVariantLabel] = useState('');
+    const [variantPrice, setVariantPrice] = useState('');
+
     useEffect(() => {
 
         if (product) {
@@ -157,6 +161,46 @@ export default function ProductForm({
         );
     }
 
+    function addVariant() {
+
+        if (!variantLabel.trim()) return;
+
+        const variants = form.variants ?? [];
+
+        updateField(
+            "variants",
+            [
+                ...variants,
+                {
+                    id: crypto.randomUUID(),
+                    productId: form.id,
+                    label: variantLabel.trim(),
+                    price: Number(variantPrice) || 0,
+                    isDefault: variants.length === 0,
+                    isAvailable: true,
+                    sortOrder: variants.length,
+                },
+            ]
+        );
+
+        setVariantLabel("");
+
+        setVariantPrice("");
+
+    }
+
+    function removeVariant(
+        id: string
+    ) {
+
+        updateField(
+            "variants",
+            (form.variants ?? []).filter(
+                variant => variant.id !== id
+            )
+        );
+
+    }
     return (
         <form
             onSubmit={handleSubmit}
@@ -463,6 +507,109 @@ export default function ProductForm({
                                     leftIcon={<Trash2 size={16} />}
                                     onClick={() =>
                                         removeExtra(extra.id)
+                                    }
+                                >
+                                    Eliminar
+                                </Button>
+
+                            </div>
+
+                        ))}
+
+                    </div>
+
+                )}
+
+            </Card>
+
+            <Card title="Variantes">
+
+                <div className="grid gap-3 md:grid-cols-[1fr_160px_auto]">
+
+                    <div>
+
+                        <Label>
+                            Presentación
+                        </Label>
+
+                        <Input
+                            placeholder="Ej. 250 g"
+                            value={variantLabel}
+                            onChange={(e) =>
+                                setVariantLabel(
+                                    e.target.value
+                                )
+                            }
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <Label>
+                            Precio
+                        </Label>
+
+                        <Input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            value={variantPrice}
+                            onChange={(e) =>
+                                setVariantPrice(
+                                    e.target.value
+                                )
+                            }
+                        />
+
+                    </div>
+
+                    <div className="flex items-end">
+
+                        <Button
+                            type="button"
+                            leftIcon={<Plus size={18} />}
+                            onClick={addVariant}
+                        >
+                            Agregar
+                        </Button>
+
+                    </div>
+
+                </div>
+
+                {(form.variants?.length ?? 0) > 0 && (
+
+                    <div className="mt-5 space-y-2">
+
+                        {form.variants!.map((variant) => (
+
+                            <div
+                                key={variant.id}
+                                className="flex items-center justify-between rounded-lg border p-3"
+                            >
+
+                                <div>
+
+                                    <p className="font-medium">
+                                        {variant.label}
+                                    </p>
+
+                                    <p className="text-sm text-gray-500">
+                                        ${variant.price.toFixed(2)}
+                                    </p>
+
+                                </div>
+
+                                <Button
+                                    type="button"
+                                    variant="danger"
+                                    size="sm"
+                                    leftIcon={<Trash2 size={16} />}
+                                    onClick={() =>
+                                        removeVariant(
+                                            variant.id
+                                        )
                                     }
                                 >
                                     Eliminar

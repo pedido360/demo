@@ -28,6 +28,9 @@ export default function ProductDrawer({
     const [selectedExtras, setSelectedExtras] =
         useState<string[]>([]);
 
+    const [selectedVariantId, setSelectedVariantId] =
+        useState<string>("");
+
     useEffect(() => {
         if (open) {
             requestAnimationFrame(() => setMounted(true));
@@ -35,10 +38,18 @@ export default function ProductDrawer({
             document.body.style.overflow = "hidden";
 
             setQuantity(1);
+
             setNotes("");
 
-
             setSelectedExtras([]);
+
+            setSelectedVariantId(
+                product?.variants?.find(
+                    variant => variant.isDefault
+                )?.id ??
+                product?.variants?.[0]?.id ??
+                ""
+            );
         } else {
             setMounted(false);
             document.body.style.overflow = "";
@@ -50,6 +61,16 @@ export default function ProductDrawer({
     }, [open]);
 
     if (!product) return null;
+
+    const selectedVariant =
+        product.variants?.find(
+            variant =>
+                variant.id === selectedVariantId
+        );
+
+    const productPrice =
+        selectedVariant?.price ??
+        product.price;
 
     const extrasTotal =
         (product.extras ?? [])
@@ -63,7 +84,7 @@ export default function ProductDrawer({
             );
 
     const total =
-        (product.price + extrasTotal)
+        (productPrice + extrasTotal)
         * quantity;
 
     function handleAdd() {
@@ -81,6 +102,8 @@ export default function ProductDrawer({
         onAdd({
 
             product,
+
+            variant: selectedVariant,
 
             quantity,
 
@@ -138,12 +161,79 @@ export default function ProductDrawer({
                         </h2>
 
                         <p className="mt-2 text-center text-xl font-bold text-red-600">
-                            ${product.price.toLocaleString("es-CO")}
+                            ${productPrice.toLocaleString("es-CO")}
                         </p>
 
                         <p className="mt-4 text-center text-gray-500">
                             {product.description}
                         </p>
+
+                        {(product.variants?.length ?? 0) > 0 && (
+
+                            <div className="mt-8">
+
+                                <h3 className="mb-3 text-lg font-semibold">
+                                    Presentación
+                                </h3>
+
+                                <div className="space-y-3">
+
+                                    {product.variants!
+                                        .filter(variant => variant.isAvailable)
+                                        .map(variant => (
+
+                                            <label
+                                                key={variant.id}
+                                                className="
+                            flex
+                            cursor-pointer
+                            items-center
+                            justify-between
+                            rounded-xl
+                            border
+                            p-4
+                            transition
+                            hover:border-red-500
+                        "
+                                            >
+
+                                                <div className="flex items-center gap-3">
+
+                                                    <input
+                                                        type="radio"
+                                                        name="variant"
+                                                        checked={
+                                                            selectedVariantId ===
+                                                            variant.id
+                                                        }
+                                                        onChange={() =>
+                                                            setSelectedVariantId(
+                                                                variant.id
+                                                            )
+                                                        }
+                                                    />
+
+                                                    <span>
+                                                        {variant.label}
+                                                    </span>
+
+                                                </div>
+
+                                                <span className="font-bold text-red-600">
+
+                                                    ${variant.price.toLocaleString("es-CO")}
+
+                                                </span>
+
+                                            </label>
+
+                                        ))}
+
+                                </div>
+
+                            </div>
+
+                        )}
 
                         {/* Ingredientes */}
 

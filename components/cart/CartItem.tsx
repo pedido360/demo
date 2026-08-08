@@ -21,8 +21,12 @@ export default function CartItem({
             0
         );
 
+    const productPrice =
+        item.variant?.price ??
+        item.product.price;
+
     const subtotal =
-        (item.product.price + extrasTotal)
+        (productPrice + extrasTotal)
         * item.quantity;
 
     return (
@@ -35,6 +39,14 @@ export default function CartItem({
                     <h3 className="font-bold">
                         {item.product.name}
                     </h3>
+
+                    {item.variant && (
+
+                        <p className="mt-1 text-sm font-medium text-red-600">
+                            📏 {item.variant.label}
+                        </p>
+
+                    )}
 
                     <p className="mt-1 text-sm text-gray-500">
                         Cantidad: {item.quantity}

@@ -17,6 +17,7 @@ function mapRestaurant(data: any): Restaurant {
 
         address: data.address,
         city: data.city,
+        department: data.department,
 
         isOpen: data.is_open,
 
@@ -35,6 +36,7 @@ function mapRestaurant(data: any): Restaurant {
 export async function createRestaurant(
     restaurant: Restaurant
 ): Promise<Restaurant> {
+
     const slug = generateSlug(
         restaurant.name
     );
@@ -54,6 +56,7 @@ export async function createRestaurant(
 
             address: restaurant.address,
             city: restaurant.city,
+            department: restaurant.department,
 
             is_open: restaurant.isOpen,
             rating: restaurant.rating,
@@ -74,6 +77,7 @@ export async function createRestaurant(
 }
 
 export async function getRestaurants(): Promise<Restaurant[]> {
+
     const { data, error } = await supabase
         .from("restaurants")
         .select("*")
@@ -103,7 +107,6 @@ export async function getRestaurantById(
     }
 
     return mapRestaurant(data);
-
 }
 
 export async function getRestaurantBySlug(
@@ -122,13 +125,13 @@ export async function getRestaurantBySlug(
     }
 
     return mapRestaurant(data);
-
 }
 
 export async function updateRestaurant(
     id: string,
     restaurant: Restaurant
 ): Promise<Restaurant> {
+
     const slug = generateSlug(
         restaurant.name
     );
@@ -148,6 +151,7 @@ export async function updateRestaurant(
 
             address: restaurant.address,
             city: restaurant.city,
+            department: restaurant.department,
 
             is_open: restaurant.isOpen,
             rating: restaurant.rating,
@@ -171,6 +175,7 @@ export async function updateRestaurant(
 export async function deleteRestaurant(
     id: string
 ): Promise<void> {
+
     const { error } = await supabase
         .from("restaurants")
         .delete()
@@ -189,6 +194,7 @@ export async function pauseRestaurant(
     id: string,
     reason?: string
 ): Promise<void> {
+
     const { error } = await supabase
         .from("restaurants")
         .update({
@@ -210,6 +216,7 @@ export async function pauseRestaurant(
 export async function resumeRestaurant(
     id: string
 ): Promise<void> {
+
     const { error } = await supabase
         .from("restaurants")
         .update({

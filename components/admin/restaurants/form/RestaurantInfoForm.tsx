@@ -28,6 +28,7 @@ export default function RestaurantInfoForm({
 
     bannerFile,
     setBannerFile,
+
 }: RestaurantInfoFormProps) {
 
     function handleChange(
@@ -99,6 +100,19 @@ export default function RestaurantInfoForm({
                         name="city"
                         placeholder="Bogotá"
                         value={restaurant.city}
+                        onChange={handleChange}
+                    />
+
+                </div>
+
+                <div>
+
+                    <Label required>Departamento</Label>
+
+                    <Input
+                        name="department"
+                        placeholder="Cundinamarca"
+                        value={restaurant.department}
                         onChange={handleChange}
                     />
 

@@ -16,6 +16,8 @@ export interface Restaurant {
 
     city: string;
 
+    department: string;
+
     isOpen: boolean;
 
     rating: number;

@@ -129,6 +129,8 @@ export default function RestaurantEditor({
 
         city: "",
 
+        department: "",
+
         isOpen: true,
 
         rating: 5,

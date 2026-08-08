@@ -113,16 +113,24 @@ export default function RestaurantHero({
 
                 </div>
 
-                {/* Dirección */}
+                {/* Ubicación */}
 
-                <div className="mt-4 text-center text-gray-500">
+                < div className="mt-6 text-center text-gray-500">
 
-                    <p>
-                        📍 {restaurant.address}
+                    <div className="mb-3 text-2xl">
+                        📍
+                    </div>
+
+                    <p className="font-medium text-gray-700">
+                        {restaurant.address}
                     </p>
 
-                    <p className="mt-1">
+                    <p className="mt-2 text-base">
                         {restaurant.city}
+                    </p>
+
+                    <p className="mt-1 text-sm">
+                        {restaurant.department}
                     </p>
 
                 </div>

@@ -15,9 +15,11 @@ export const restaurant: Restaurant = {
 
     whatsapp: "573184377576",
 
-    address: "Calle Principal #123",
+    address: "Calle 57 # 34 -98  Piso 2",
 
-    city: "Bogotá",
+    city: "Bucaramanga",
+
+    department: "Santander",
 
     isOpen: true,
 

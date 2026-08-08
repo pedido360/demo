@@ -21,8 +21,10 @@ export default function SmartHeader({
     onLogout,
 }: SmartHeaderProps) {
 
-    const open =
-        isRestaurantOpen(hours ?? []);
+    const isOpen =
+        restaurant.slug === "demo"
+            ? true
+            : isRestaurantOpen(hours ?? []);
 
     return (
 
@@ -49,12 +51,12 @@ export default function SmartHeader({
                     <div className="mt-3">
 
                         <span
-                            className={`rounded-full px-3 py-1 text-sm font-semibold ${open
+                            className={`rounded-full px-3 py-1 text-sm font-semibold ${isOpen
                                 ? "bg-green-100 text-green-700"
                                 : "bg-red-100 text-red-700"
                                 }`}
                         >
-                            {open
+                            {isOpen
                                 ? "🟢 Restaurante Abierto"
                                 : "🔴 Restaurante Cerrado"}
                         </span>

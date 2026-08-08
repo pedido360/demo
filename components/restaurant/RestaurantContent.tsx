@@ -30,7 +30,10 @@ export default function RestaurantContent({
     const [cartOpen, setCartOpen] =
         useState(false);
 
-    const isOpen = isRestaurantOpen(data.hours ?? []);
+    const isOpen =
+        data.restaurant.slug === "demo"
+            ? true
+            : isRestaurantOpen(data.hours ?? []);
 
     useEffect(() => {
 

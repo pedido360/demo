@@ -15,7 +15,10 @@ export default function RestaurantHero({
     const isDemo =
         restaurant.slug === "demo";
 
-    const open = isRestaurantOpen(hours ?? []);
+    const open =
+        restaurant.slug === "demo"
+            ? true
+            : isRestaurantOpen(hours ?? []);
 
 
     return (

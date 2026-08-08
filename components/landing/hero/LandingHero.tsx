@@ -15,7 +15,7 @@ export default function LandingHero() {
             <Container className="relative py-20 lg:py-28">
                 <div className="grid items-center gap-16 lg:grid-cols-2">
                     {/* Texto */}
-                    <div className="text-center lg:text-left">
+                    <div className="order-2 text-center lg:order-1 lg:text-left">
                         <Badge>
                             📲 Ahora tus pedidos, directo a tu WhatsApp.
                         </Badge>
@@ -76,7 +76,9 @@ export default function LandingHero() {
                     </div>
 
                     {/* Teléfono */}
-                    <PhoneMockup />
+                    <div className="order-1 lg:order-2">
+                        <PhoneMockup />
+                    </div>
                 </div>
             </Container>
         </section>

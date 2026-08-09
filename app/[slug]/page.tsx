@@ -40,31 +40,40 @@ export async function generateMetadata({
 
         const image = restaurant.logo?.trim()
             ? restaurant.logo
-            : "https://pedidos360.com/logo-demo.png";
+            : "https://pedidos360.shop/logo-demo.png";
 
-        const url = `https://pedidos360.com/${slug}`;
+        const url =
+            `https://pedidos360.shop/${slug}`;
 
         return {
 
-            metadataBase: new URL("https://pedidos360.com"),
+            metadataBase:
+                new URL("https://pedidos360.shop"),
 
-            title: `${restaurant.name} | Pedidos360`,
+            title:
+                `${restaurant.name} | Pedidos360`,
 
-            description: restaurant.description,
+            description:
+                restaurant.description,
 
             openGraph: {
 
-                title: `${restaurant.name} | Pedidos360`,
+                title:
+                    `${restaurant.name} | Pedidos360`,
 
-                description: restaurant.description,
+                description:
+                    restaurant.description,
 
                 url,
 
-                siteName: "Pedidos360",
+                siteName:
+                    "Pedidos360",
 
-                locale: "es_CO",
+                locale:
+                    "es_CO",
 
-                type: "website",
+                type:
+                    "website",
 
                 images: [
                     {
@@ -74,17 +83,23 @@ export async function generateMetadata({
                         alt: restaurant.name,
                     },
                 ],
+
             },
 
             twitter: {
 
-                card: "summary_large_image",
+                card:
+                    "summary_large_image",
 
-                title: `${restaurant.name} | Pedidos360`,
+                title:
+                    `${restaurant.name} | Pedidos360`,
 
-                description: restaurant.description,
+                description:
+                    restaurant.description,
 
-                images: [image],
+                images: [
+                    image,
+                ],
 
             },
 
@@ -94,9 +109,14 @@ export async function generateMetadata({
 
         return {
 
-            title: "Pedidos360",
+            metadataBase:
+                new URL("https://pedidos360.shop"),
 
-            description: "Haz tu pedido en línea.",
+            title:
+                "Pedidos360",
+
+            description:
+                "Haz tu pedido en línea.",
 
         };
 
@@ -141,7 +161,8 @@ export default async function RestaurantPage({
 
             categories,
 
-            products: availableProducts,
+            products:
+                availableProducts,
 
             hours,
 

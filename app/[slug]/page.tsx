@@ -38,9 +38,6 @@ export async function generateMetadata({
         const restaurant =
             await getRestaurantBySlug(slug);
 
-        const image = restaurant.logo?.trim()
-            ? restaurant.logo
-            : "https://pedidos360.shop/logo-demo.png";
 
         const url =
             `https://pedidos360.shop/${slug}`;
@@ -75,12 +72,14 @@ export async function generateMetadata({
                 type:
                     "website",
 
+
+
                 images: [
                     {
-                        url: image,
-                        width: 512,
-                        height: 512,
-                        alt: restaurant.name,
+                        url: `https://pedidos360.shop/${slug}/opengraph-image`,
+                        width: 1200,
+                        height: 630,
+                        alt: `${restaurant.name} | Pedidos360`,
                     },
                 ],
 
@@ -98,9 +97,8 @@ export async function generateMetadata({
                     restaurant.description,
 
                 images: [
-                    image,
+                    `https://pedidos360.shop/${slug}/opengraph-image`,
                 ],
-
             },
 
         };

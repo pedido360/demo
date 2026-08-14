@@ -54,7 +54,11 @@ export async function updateSession(request: NextRequest) {
         }
     );
 
+    console.time("P360 - auth.getUser");
+
     await supabase.auth.getUser();
+
+    console.timeEnd("P360 - auth.getUser");
 
     return response;
 }

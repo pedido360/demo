@@ -444,7 +444,7 @@ export const products: Product[] = [
         name: "Coca-Cola 400 ml",
         description: "Bebida gaseosa.",
         price: 5000,
-        image: "/images/products/drink.jpg",
+        image: "/images/products/cocacola.jpg",
         featured: false,
     },
 
@@ -454,7 +454,7 @@ export const products: Product[] = [
         name: "Colombiana 400 ml",
         description: "Bebida gaseosa.",
         price: 5000,
-        image: "/images/products/drink.jpg",
+        image: "/images/products/colombiana-400ml.jpg",
         featured: false,
     },
 
@@ -464,7 +464,7 @@ export const products: Product[] = [
         name: "Sprite 400 ml",
         description: "Bebida gaseosa.",
         price: 5000,
-        image: "/images/products/drink.jpg",
+        image: "/images/products/SPRITE.webp",
         featured: false,
     },
 
@@ -474,7 +474,7 @@ export const products: Product[] = [
         name: "Agua",
         description: "Agua embotellada.",
         price: 4000,
-        image: "/images/products/drink.jpg",
+        image: "/images/products/agua-400.jpeg",
         featured: false,
     },
 

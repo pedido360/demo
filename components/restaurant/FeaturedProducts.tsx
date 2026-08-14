@@ -19,7 +19,6 @@ export default function FeaturedProducts({
     }
 
     return (
-
         <section className="w-full px-4 py-5">
 
             <div className="mb-4 flex items-center justify-between">
@@ -53,7 +52,7 @@ export default function FeaturedProducts({
                                     src={product.image}
                                     alt={product.name}
                                     fill
-                                    unoptimized
+                                    sizes="80px"
                                     className="object-cover"
                                 />
 
@@ -102,7 +101,5 @@ export default function FeaturedProducts({
             </div>
 
         </section>
-
     );
-
 }

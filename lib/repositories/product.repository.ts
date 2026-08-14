@@ -59,27 +59,30 @@ export async function getProducts(
         throw new Error(error.message);
     }
 
-    const products: Product[] = [];
+    const products = await Promise.all(
+        (data ?? []).map(async (row) => {
 
-    for (const row of data ?? []) {
+            const product = mapProduct(row);
 
-        const product = mapProduct(row);
+            const [
+                ingredients,
+                extras,
+                variants,
+            ] = await Promise.all([
+                getIngredients(product.id),
+                getExtras(product.id),
+                getVariants(product.id),
+            ]);
 
-        product.ingredients =
-            await getIngredients(product.id);
+            product.ingredients = ingredients;
+            product.extras = extras;
+            product.variants = variants;
 
-        product.extras =
-            await getExtras(product.id);
-
-        product.variants =
-            await getVariants(product.id);
-
-        products.push(product);
-
-    }
+            return product;
+        })
+    );
 
     return products;
-
 }
 
 export async function createProduct(
@@ -115,8 +118,6 @@ export async function createProduct(
         throw new Error(error.message);
     }
 
-
-
     const created = mapProduct(data);
 
     await replaceVariants(
@@ -134,7 +135,6 @@ export async function createProduct(
         product.variants ?? [];
 
     return created;
-
 }
 
 export async function updateProduct(
@@ -184,7 +184,6 @@ export async function updateProduct(
         product.variants ?? [];
 
     return updated;
-
 }
 
 export async function deleteProduct(
@@ -200,7 +199,6 @@ export async function deleteProduct(
         console.error(error);
         throw new Error(error.message);
     }
-
 }
 
 export async function pauseProduct(
@@ -218,7 +216,6 @@ export async function pauseProduct(
         console.error(error);
         throw new Error(error.message);
     }
-
 }
 
 export async function resumeProduct(
@@ -236,5 +233,4 @@ export async function resumeProduct(
         console.error(error);
         throw new Error(error.message);
     }
-
 }

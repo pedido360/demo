@@ -38,7 +38,6 @@ export async function generateMetadata({
         const restaurant =
             await getRestaurantBySlug(slug);
 
-
         const url =
             `https://pedidos360.shop/${slug}`;
 
@@ -72,8 +71,6 @@ export async function generateMetadata({
                 type:
                     "website",
 
-
-
                 images: [
                     {
                         url: `https://pedidos360.shop/${slug}/opengraph-image`,
@@ -99,6 +96,7 @@ export async function generateMetadata({
                 images: [
                     `https://pedidos360.shop/${slug}/opengraph-image`,
                 ],
+
             },
 
         };
@@ -133,24 +131,19 @@ export default async function RestaurantPage({
         const restaurant =
             await getRestaurantBySlug(slug);
 
-        const categories =
-            await getCategories(
-                restaurant.id
-            );
-
-        const products =
-            await getProducts(
-                restaurant.id
-            );
+        const [
+            categories,
+            products,
+            hours,
+        ] = await Promise.all([
+            getCategories(restaurant.id),
+            getProducts(restaurant.id),
+            getRestaurantHours(restaurant.id),
+        ]);
 
         const availableProducts =
             products.filter(
-                product => product.isAvailable
-            );
-
-        const hours =
-            await getRestaurantHours(
-                restaurant.id
+                (product) => product.isAvailable
             );
 
         const data: RestaurantPageData = {

@@ -8,12 +8,14 @@ import RestaurantHero from "./RestaurantHero";
 import FeaturedProducts from "./FeaturedProducts";
 import Categories from "./Categories";
 import CallToAction from "./CallToAction";
+import PromotionBanner from "./PromotionBanner";
 
 import ProductGrid from "@/components/products/ProductGrid";
 
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
 import CartDrawer from "@/components/cart/CartDrawer";
 import PoweredBy from "./PoweredBy";
+
 import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
 
 interface RestaurantContentProps {
@@ -53,6 +55,16 @@ export default function RestaurantContent({
         selectedCategory,
     ]);
 
+    const promotionProduct =
+        data.restaurant.slug ===
+            "la-arroceria-colombiana"
+            ? data.products.find(
+                (product) =>
+                    product.id ===
+                    "65dff65e-6b8d-495a-abbf-77343ec11169"
+            )
+            : undefined;
+
     return (
 
         <>
@@ -88,8 +100,6 @@ export default function RestaurantContent({
 
                         </div>
 
-
-
                         <div>
 
                             <h3 className="text-lg font-semibold text-orange-700">
@@ -101,8 +111,6 @@ export default function RestaurantContent({
                             </p>
 
                         </div>
-
-
 
                         <div>
 
@@ -133,6 +141,12 @@ export default function RestaurantContent({
                 selectedCategory={selectedCategory}
             />
 
+            {promotionProduct && (
+                <PromotionBanner
+                    product={promotionProduct}
+                />
+            )}
+
             <FeaturedProducts
                 products={data.products}
             />
@@ -160,6 +174,7 @@ export default function RestaurantContent({
                     setCartOpen(false)
                 }
             />
+
         </>
 
     );

@@ -8,6 +8,11 @@ import ProductCard from "./ProductCard";
 import ProductDrawer from "@/components/product/ProductDrawer";
 import { useCart } from "@/hooks/useCart";
 
+import {
+    WEDNESDAY_PROMOTION_PRODUCT_ID,
+    isWednesdayPromotionActive,
+} from "@/lib/utils/isWednesdayPromotionActive";
+
 interface ProductGridProps {
     products: Product[];
     selectedCategory: string;
@@ -57,7 +62,27 @@ export default function ProductGrid({
                 open={drawerOpen}
                 onClose={() => setDrawerOpen(false)}
                 onAdd={(selection) => {
+
+                    if (
+                        selection.product.id ===
+                        WEDNESDAY_PROMOTION_PRODUCT_ID
+                    ) {
+
+                        if (
+                            !isWednesdayPromotionActive()
+                        ) {
+
+                            alert(
+                                "⏰ Esta promoción está disponible los miércoles después de las 2:00 P.M. No está disponible en enero ni diciembre."
+                            );
+
+                            return;
+                        }
+
+                    }
+
                     addToCart(selection);
+
                     setDrawerOpen(false);
                 }}
             />

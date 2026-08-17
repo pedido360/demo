@@ -107,6 +107,19 @@ export default function RestaurantInfoForm({
 
                 <div>
 
+                    <Label>Barrio</Label>
+
+                    <Input
+                        name="neighborhood"
+                        placeholder="Ej. Cabecera"
+                        value={restaurant.neighborhood ?? ""}
+                        onChange={handleChange}
+                    />
+
+                </div>
+
+                <div>
+
                     <Label required>Departamento</Label>
 
                     <Input

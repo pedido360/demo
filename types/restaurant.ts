@@ -13,9 +13,8 @@ export interface Restaurant {
     whatsapp: string;
 
     address: string;
-
+    neighborhood?: string;
     city: string;
-
     department: string;
 
     isOpen: boolean;

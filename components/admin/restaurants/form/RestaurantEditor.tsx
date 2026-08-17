@@ -127,6 +127,8 @@ export default function RestaurantEditor({
 
         address: "",
 
+        neighborhood: "",
+
         city: "",
 
         department: "",

@@ -16,6 +16,7 @@ function mapRestaurant(data: any): Restaurant {
         whatsapp: data.whatsapp,
 
         address: data.address,
+        neighborhood: data.neighborhood ?? undefined,
         city: data.city,
         department: data.department,
 
@@ -55,6 +56,7 @@ export async function createRestaurant(
             whatsapp: restaurant.whatsapp,
 
             address: restaurant.address,
+            neighborhood: restaurant.neighborhood ?? null,
             city: restaurant.city,
             department: restaurant.department,
 
@@ -150,6 +152,7 @@ export async function updateRestaurant(
             whatsapp: restaurant.whatsapp,
 
             address: restaurant.address,
+            neighborhood: restaurant.neighborhood ?? null,
             city: restaurant.city,
             department: restaurant.department,
 

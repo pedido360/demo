@@ -154,6 +154,12 @@ export default function RestaurantHero({
                         {restaurant.address}
                     </p>
 
+                    {restaurant.neighborhood && (
+                        <p className="mt-2 text-base font-medium text-gray-700">
+                            Barrio {restaurant.neighborhood}
+                        </p>
+                    )}
+
                     <p className="mt-2 text-base">
                         {restaurant.city}
                     </p>

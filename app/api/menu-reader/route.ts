@@ -1,19 +1,37 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: Request) {
     try {
-        const formData = await request.formData();
+        const apiKey =
+            process.env.OPENAI_API_KEY;
 
-        const file = formData.get("file");
+        if (!apiKey) {
+            return Response.json(
+                {
+                    error:
+                        "La API de OpenAI no está configurada.",
+                },
+                {
+                    status: 500,
+                }
+            );
+        }
+
+        const openai = new OpenAI({
+            apiKey,
+        });
+
+        const formData =
+            await request.formData();
+
+        const file =
+            formData.get("file");
 
         if (!(file instanceof File)) {
             return Response.json(
                 {
-                    error: "No se recibió ninguna imagen.",
+                    error:
+                        "No se recibió ninguna imagen.",
                 },
                 {
                     status: 400,
@@ -24,7 +42,8 @@ export async function POST(request: Request) {
         if (!file.type.startsWith("image/")) {
             return Response.json(
                 {
-                    error: "El archivo debe ser una imagen.",
+                    error:
+                        "El archivo debe ser una imagen.",
                 },
                 {
                     status: 400,
@@ -32,27 +51,30 @@ export async function POST(request: Request) {
             );
         }
 
-        const arrayBuffer = await file.arrayBuffer();
+        const arrayBuffer =
+            await file.arrayBuffer();
 
-        const base64 = Buffer.from(arrayBuffer).toString(
-            "base64"
-        );
+        const base64 =
+            Buffer
+                .from(arrayBuffer)
+                .toString("base64");
 
         const imageDataUrl =
             `data:${file.type};base64,${base64}`;
 
-        const response = await openai.responses.create({
-            model: "gpt-5.6-luna",
+        const response =
+            await openai.responses.create({
+                model: "gpt-5.6-luna",
 
-            input: [
-                {
-                    role: "user",
+                input: [
+                    {
+                        role: "user",
 
-                    content: [
-                        {
-                            type: "input_text",
+                        content: [
+                            {
+                                type: "input_text",
 
-                            text: `
+                                text: `
 Transcribe literalmente TODO el texto visible en esta imagen.
 
 REGLAS OBLIGATORIAS:
@@ -71,21 +93,23 @@ REGLAS OBLIGATORIAS:
 - Si una parte realmente no puede leerse, escribe [ILEGIBLE].
 - Devuelve únicamente el texto transcrito.
 - No agregues explicaciones antes ni después.
-                            `.trim(),
-                        },
+                                `.trim(),
+                            },
 
-                        {
-                            type: "input_image",
-                            image_url: imageDataUrl,
-                            detail: "high",
-                        },
-                    ],
-                },
-            ],
-        });
+                            {
+                                type: "input_image",
+                                image_url:
+                                    imageDataUrl,
+                                detail: "high",
+                            },
+                        ],
+                    },
+                ],
+            });
 
         return Response.json({
-            text: response.output_text,
+            text:
+                response.output_text,
         });
     } catch (error) {
         console.error(
@@ -95,7 +119,8 @@ REGLAS OBLIGATORIAS:
 
         return Response.json(
             {
-                error: "No fue posible procesar el menú.",
+                error:
+                    "No fue posible procesar el menú.",
             },
             {
                 status: 500,

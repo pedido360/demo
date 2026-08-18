@@ -24,6 +24,8 @@ import {
 
 import {
     createCategory,
+    updateCategory,
+    deleteCategory,
 } from "@/lib/repositories/category.repository";
 
 import {
@@ -55,11 +57,15 @@ export default function SmartMenu({
     const [selectedCategoryId, setSelectedCategoryId] =
         useState<string | null>(null);
 
+
     const [creatingProduct, setCreatingProduct] =
         useState(false);
 
     const [creatingCategory, setCreatingCategory] =
         useState(false);
+
+    const [editingCategory, setEditingCategory] =
+        useState<Category | null>(null);
 
     const [search, setSearch] =
         useState("");
@@ -129,6 +135,104 @@ export default function SmartMenu({
 
         }
 
+    }
+
+    async function handleEditCategory(
+        data: Omit<Category, "id" | "emoji">
+    ) {
+
+        if (!editingCategory) {
+            return;
+        }
+
+        try {
+
+            const updated =
+                await updateCategory({
+                    ...editingCategory,
+                    ...data,
+                    emoji: getCategoryEmoji(
+                        data.name
+                    ),
+                });
+
+            setCategoryList(previous =>
+                previous.map(category =>
+                    category.id === updated.id
+                        ? updated
+                        : category
+                )
+            );
+
+            setEditingCategory(null);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "No fue posible actualizar la categoría."
+            );
+
+        }
+    }
+
+    async function handleDeleteCategory(
+        categoryId: string
+    ) {
+        const category =
+            categoryList.find(
+                item => item.id === categoryId
+            );
+
+        if (!category) {
+            return;
+        }
+
+        const group =
+            menu.find(
+                item =>
+                    item.category.id === categoryId
+            );
+
+        const productCount =
+            group?.products.length ?? 0;
+
+        if (productCount > 0) {
+            alert(
+                `No puedes eliminar "${category.name}" porque tiene ${productCount} producto${productCount === 1 ? "" : "s"} asociado${productCount === 1 ? "" : "s"}.`
+            );
+
+            return;
+        }
+
+        const confirmed =
+            window.confirm(
+                `¿Eliminar la categoría "${category.name}"?\n\nEsta acción no se puede deshacer.`
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await deleteCategory(categoryId);
+
+            setCategoryList(previous =>
+                previous.filter(
+                    item => item.id !== categoryId
+                )
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "No fue posible eliminar la categoría."
+            );
+        }
     }
 
     async function handleCreateProduct(
@@ -236,16 +340,21 @@ export default function SmartMenu({
 
     }
 
-    if (creatingCategory) {
+    if (creatingCategory || editingCategory) {
 
         return (
 
             <CategoryForm
-                category={null}
-                onSave={handleCreateCategory}
-                onCancel={() =>
-                    setCreatingCategory(false)
+                category={editingCategory}
+                onSave={
+                    editingCategory
+                        ? handleEditCategory
+                        : handleCreateCategory
                 }
+                onCancel={() => {
+                    setCreatingCategory(false);
+                    setEditingCategory(null);
+                }}
             />
 
         );
@@ -367,6 +476,13 @@ export default function SmartMenu({
                                 setCreatingProduct(true);
 
                             }}
+                            onEditCategory={(category) => {
+                                setEditingCategory(category);
+                            }}
+
+                            onDeleteCategory={
+                                handleDeleteCategory
+                            }
                         />
 
                     ))

@@ -1,4 +1,5 @@
 const CATEGORY_EMOJIS: Record<string, string> = {
+    // 🍔 Comida rápida
     hamburguesa: "🍔",
     hamburguesas: "🍔",
 
@@ -10,28 +11,11 @@ const CATEGORY_EMOJIS: Record<string, string> = {
     "hot dog": "🌭",
     "hot dogs": "🌭",
 
-    bebida: "🥤",
-    bebidas: "🥤",
-    gaseosa: "🥤",
-    gaseosas: "🥤",
-    refresco: "🥤",
-    refrescos: "🥤",
+    sandwich: "🥪",
+    sandwiches: "🥪",
 
-    jugo: "🧃",
-    jugos: "🧃",
-
-    papa: "🍟",
-    papas: "🍟",
-    acompanamiento: "🍟",
-    acompanamientos: "🍟",
-
-    pollo: "🍗",
-    pollos: "🍗",
-
-    carne: "🥩",
-    carnes: "🥩",
-
-    sushi: "🍣",
+    wrap: "🌯",
+    wraps: "🌯",
 
     taco: "🌮",
     tacos: "🌮",
@@ -39,23 +23,19 @@ const CATEGORY_EMOJIS: Record<string, string> = {
     burrito: "🌯",
     burritos: "🌯",
 
-    ensalada: "🥗",
-    ensaladas: "🥗",
+    // 🍗 Carnes y platos fuertes
+    pollo: "🍗",
+    pollos: "🍗",
 
-    postre: "🍰",
-    postres: "🍰",
+    carne: "🥩",
+    carnes: "🥩",
 
-    helado: "🍦",
-    helados: "🍦",
+    parrilla: "🔥",
+    parrillada: "🔥",
+    parrilladas: "🔥",
 
-    cafe: "☕",
-    cafes: "☕",
-
-    desayuno: "🍳",
-    desayunos: "🍳",
-
-    pasta: "🍝",
-    pastas: "🍝",
+    costilla: "🍖",
+    costillas: "🍖",
 
     pescado: "🐟",
     pescados: "🐟",
@@ -63,22 +43,129 @@ const CATEGORY_EMOJIS: Record<string, string> = {
     marisco: "🦐",
     mariscos: "🦐",
 
-    empanada: "🥟",
-    empanadas: "🥟",
+    // 🍚 Arroces y comida oriental
+    arroz: "🍚",
+    arroces: "🍚",
 
+    sushi: "🍣",
+
+    oriental: "🥢",
+    orientales: "🥢",
+
+    asiatico: "🥢",
+    asiaticos: "🥢",
+
+    // 🍝 Pastas
+    pasta: "🍝",
+    pastas: "🍝",
+
+    lasana: "🍝",
+    lasanas: "🍝",
+
+    // 🥗 Ensaladas y acompañamientos
+    ensalada: "🥗",
+    ensaladas: "🥗",
+
+    papa: "🍟",
+    papas: "🍟",
+
+    acompanamiento: "🍟",
+    acompanamientos: "🍟",
+
+    entrada: "🥗",
+    entradas: "🥗",
+
+    // 🫓 Comida colombiana / latinoamericana
     arepa: "🫓",
     arepas: "🫓",
 
+    empanada: "🥟",
+    empanadas: "🥟",
+
+    tamal: "🫔",
+    tamales: "🫔",
+
+    // 🍳 Desayunos
+    desayuno: "🍳",
+    desayunos: "🍳",
+
+    brunch: "🍳",
+
+    // 🥖 Panadería
     pan: "🥖",
+    panes: "🥖",
+
     panaderia: "🥖",
 
-    parrilla: "🔥",
+    bakery: "🥖",
 
-    combo: "🎁",
-    combos: "🎁",
+    // 🍰 Postres
+    postre: "🍰",
+    postres: "🍰",
+
+    torta: "🍰",
+    tortas: "🍰",
+
+    pastel: "🍰",
+    pasteles: "🍰",
+
+    helado: "🍦",
+    helados: "🍦",
+
+    // ☕ Cafetería
+    cafe: "☕",
+    cafes: "☕",
+
+    capuchino: "☕",
+    capuchinos: "☕",
+
+    // 🥤 Bebidas
+    bebida: "🥤",
+    bebidas: "🥤",
+
+    gaseosa: "🥤",
+    gaseosas: "🥤",
+
+    refresco: "🥤",
+    refrescos: "🥤",
+
+    jugo: "🧃",
+    jugos: "🧃",
+
+    limonada: "🍋",
+    limonadas: "🍋",
+
+    cerveza: "🍺",
+    cervezas: "🍺",
+
+    vino: "🍷",
+    vinos: "🍷",
+
+    // 🎁 Combos y promociones
+    combo: "🍱",
+    combos: "🍱",
 
     promocion: "⭐",
     promociones: "⭐",
+
+    promo: "⭐",
+    promos: "⭐",
+
+    especial: "✨",
+    especiales: "✨",
+
+    // 🍽️ Categorías generales
+    plato: "🍽️",
+    platos: "🍽️",
+
+    menu: "🍽️",
+    menus: "🍽️",
+
+    almuerzo: "🍛",
+    almuerzos: "🍛",
+
+    cena: "🍽️",
+    cenas: "🍽️",
 };
 
 function normalize(text: string): string {

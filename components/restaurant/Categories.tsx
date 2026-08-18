@@ -26,17 +26,17 @@ export default function Categories({
     }
 
     return (
-
         <section
             id="menu"
             className="w-full px-4 py-5"
         >
-
             <div className="mb-4 flex items-center justify-between">
 
                 <button
+                    type="button"
                     onClick={() => scroll("left")}
                     className="hidden h-9 w-9 items-center justify-center rounded-full bg-white shadow md:flex"
+                    aria-label="Categorías anteriores"
                 >
                     <ChevronLeft size={18} />
                 </button>
@@ -46,8 +46,10 @@ export default function Categories({
                 </h2>
 
                 <button
+                    type="button"
                     onClick={() => scroll("right")}
                     className="hidden h-9 w-9 items-center justify-center rounded-full bg-white shadow md:flex"
+                    aria-label="Más categorías"
                 >
                     <ChevronRight size={18} />
                 </button>
@@ -56,35 +58,40 @@ export default function Categories({
 
             <div
                 ref={scrollRef}
-                className="flex gap-3 overflow-x-auto pb-2"
+                className="flex gap-4 overflow-x-auto pb-3"
                 style={{
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                 }}
             >
                 {categories.map((category) => {
-                    const active = selectedCategory === category.id;
+                    const active =
+                        selectedCategory === category.id;
 
                     return (
                         <button
                             key={category.id}
-                            onClick={() => onSelectCategory(category.id)}
-                            className="flex min-w-[84px] flex-col items-center"
+                            type="button"
+                            onClick={() =>
+                                onSelectCategory(category.id)
+                            }
+                            className="flex w-24 shrink-0 flex-col items-center"
                         >
                             <div
-                                className={`flex h-16 w-16 items-center justify-center rounded-full text-2xl shadow transition-all duration-300 ${active
-                                    ? "bg-red-600 text-white"
-                                    : "bg-white hover:shadow-lg"
+                                className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-2xl shadow transition-all duration-300 ${active
+                                        ? "bg-red-600 text-white"
+                                        : "bg-white hover:shadow-lg"
                                     }`}
                             >
                                 {category.emoji}
                             </div>
 
                             <span
-                                className={`mt-2 text-sm ${active
-                                    ? "font-semibold text-red-600"
-                                    : "text-gray-700"
+                                className={`mt-2 w-full truncate text-center text-sm ${active
+                                        ? "font-semibold text-red-600"
+                                        : "text-gray-700"
                                     }`}
+                                title={category.name}
                             >
                                 {category.name}
                             </span>
@@ -92,7 +99,6 @@ export default function Categories({
                     );
                 })}
             </div>
-
         </section>
     );
 }

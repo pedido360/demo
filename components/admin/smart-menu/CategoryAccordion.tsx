@@ -15,6 +15,12 @@ interface CategoryAccordionProps {
     onProductClick: (product: Product) => void;
     onToggleProduct: (id: string) => void;
     onCreateProduct?: (categoryId: string) => void;
+    onEditCategory?: (
+        category: MenuCategory["category"]
+    ) => void;
+    onDeleteCategory?: (
+        categoryId: string
+    ) => void;
 }
 
 export default function CategoryAccordion({
@@ -22,6 +28,8 @@ export default function CategoryAccordion({
     onProductClick,
     onToggleProduct,
     onCreateProduct,
+    onEditCategory,
+    onDeleteCategory,
 }: CategoryAccordionProps) {
 
     const [open, setOpen] = useState(true);
@@ -35,6 +43,16 @@ export default function CategoryAccordion({
                 productCount={group.products.length}
                 open={open}
                 onToggle={() => setOpen(!open)}
+                onEdit={() =>
+                    onEditCategory?.(
+                        group.category
+                    )
+                }
+                onDelete={() =>
+                    onDeleteCategory?.(
+                        group.category.id
+                    )
+                }
             />
 
             {open && (

@@ -394,6 +394,7 @@ export default function RestaurantEditor({
                     <>
 
                         <CategoryEditor
+                            restaurantId={restaurant.id}
                             categories={categories}
                             setCategories={setCategories}
                         />

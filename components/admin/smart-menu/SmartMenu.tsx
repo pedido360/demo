@@ -80,17 +80,36 @@ export default function SmartMenu({
 
     const filteredProducts = useMemo(() => {
 
-        if (!search.trim()) {
+        const value = search
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
+        if (!value) {
             return productList;
         }
 
-        const value = search.toLowerCase();
+        return productList.filter(product => {
 
-        return productList.filter(product =>
-            product.name
-                .toLowerCase()
-                .includes(value)
-        );
+            const name =
+                product.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase();
+
+            const description =
+                product.description
+                    ?.normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase() ?? "";
+
+            return (
+                name.includes(value) ||
+                description.includes(value)
+            );
+
+        });
 
     }, [productList, search]);
 

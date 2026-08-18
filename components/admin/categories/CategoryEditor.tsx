@@ -5,6 +5,12 @@ import Card from "@/components/ui/Card";
 
 import { getCategoryEmoji } from "@/lib/getCategoryEmoji";
 
+import {
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/lib/repositories/category.repository";
+
 import type { Category } from "@/types/category";
 
 import CategoryForm from "./CategoryForm";
@@ -13,11 +19,13 @@ import CategoryList from "./CategoryList";
 import { Dispatch, SetStateAction, useState } from "react";
 
 interface CategoryEditorProps {
+  restaurantId: string;
   categories: Category[];
   setCategories: Dispatch<SetStateAction<Category[]>>;
 }
 
 export default function CategoryEditor({
+  restaurantId,
   categories,
   setCategories,
 }: CategoryEditorProps) {
@@ -37,47 +45,82 @@ export default function CategoryEditor({
     setShowForm(true);
   }
 
-  function handleDelete(id: string) {
-    setCategories((prev) =>
-      prev.filter(
-        (category) => category.id !== id
-      )
-    );
-  }
+  async function handleDelete(id: string) {
+    try {
+      await deleteCategory(id);
 
-  function handleSave(
-    data: Omit<Category, "id" | "emoji">
-  ) {
-    if (editingCategory) {
       setCategories((prev) =>
-        prev.map((category) =>
-          category.id === editingCategory.id
-            ? {
-              ...category,
-              ...data,
-              emoji: getCategoryEmoji(
-                data.name
-              ),
-            }
-            : category
+        prev.filter(
+          (category) => category.id !== id
         )
       );
-    } else {
-      setCategories((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
+
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        "No fue posible eliminar la categoría."
+      );
+    }
+  }
+
+  async function handleSave(
+  data: Omit<Category, "id" | "emoji">
+) {
+  try {
+
+    if (editingCategory) {
+
+      const updatedCategory =
+        await updateCategory({
+          ...editingCategory,
+          ...data,
           emoji: getCategoryEmoji(
             data.name
           ),
-          ...data,
-        },
+        });
+
+      setCategories((prev) =>
+        prev.map((category) =>
+          category.id ===
+          editingCategory.id
+            ? updatedCategory
+            : category
+        )
+      );
+
+    } else {
+
+      const newCategory =
+        await createCategory(
+          restaurantId,
+          {
+            id: "",
+            emoji: getCategoryEmoji(
+              data.name
+            ),
+            ...data,
+          }
+        );
+
+      setCategories((prev) => [
+        ...prev,
+        newCategory,
       ]);
     }
 
     setEditingCategory(null);
     setShowForm(false);
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "No fue posible guardar la categoría."
+    );
   }
+}
 
   function handleCancel() {
     setEditingCategory(null);

@@ -16,11 +16,13 @@ import {
 interface ProductGridProps {
     products: Product[];
     selectedCategory: string;
+    searchActive?: boolean;
 }
 
 export default function ProductGrid({
     products,
     selectedCategory,
+    searchActive = false,
 }: ProductGridProps) {
     const [selectedProduct, setSelectedProduct] =
         useState<Product | null>(null);
@@ -30,9 +32,12 @@ export default function ProductGrid({
 
     const { addToCart } = useCart();
 
-    const filteredProducts = products.filter(
-        (product) => product.categoryId === selectedCategory
-    );
+    const filteredProducts = searchActive
+        ? products
+        : products.filter(
+            (product) =>
+                product.categoryId === selectedCategory
+        );
 
     function handleSelectProduct(product: Product) {
         setSelectedProduct(product);
@@ -42,11 +47,28 @@ export default function ProductGrid({
     return (
         <>
             <section className="w-full px-4 py-6">
+
                 <h2 className="mb-5 text-2xl font-bold text-gray-900">
-                    Productos
+                    {searchActive
+                        ? "Resultados de búsqueda"
+                        : "Productos"}
                 </h2>
 
+                {searchActive &&
+                    filteredProducts.length === 0 && (
+                        <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+                            <p className="text-lg font-semibold text-gray-700">
+                                😕 No encontramos productos
+                            </p>
+
+                            <p className="mt-2 text-sm text-gray-500">
+                                Intenta buscar con otro nombre.
+                            </p>
+                        </div>
+                    )}
+
                 <div className="space-y-3">
+
                     {filteredProducts.map((product) => (
                         <ProductCard
                             key={product.id}
@@ -54,7 +76,9 @@ export default function ProductGrid({
                             onSelect={handleSelectProduct}
                         />
                     ))}
+
                 </div>
+
             </section>
 
             <ProductDrawer

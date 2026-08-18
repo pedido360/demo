@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { RestaurantPageData } from "@/types/restaurant-page";
 
@@ -10,6 +10,7 @@ import Categories from "./Categories";
 import CallToAction from "./CallToAction";
 import PromotionBanner from "./PromotionBanner";
 
+import SearchBar from "@/components/admin/smart-menu/SearchBar";
 import ProductGrid from "@/components/products/ProductGrid";
 
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
@@ -31,6 +32,9 @@ export default function RestaurantContent({
 
     const [cartOpen, setCartOpen] =
         useState(false);
+
+    const [search, setSearch] =
+        useState("");
 
     const isOpen =
         data.restaurant.slug === "demo"
@@ -65,8 +69,50 @@ export default function RestaurantContent({
             )
             : undefined;
 
-    return (
+    const filteredProducts = useMemo(() => {
 
+        const value = search
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
+        if (!value) {
+            return data.products.filter(
+                (product) =>
+                    product.categoryId ===
+                    selectedCategory
+            );
+        }
+
+        return data.products.filter((product) => {
+
+            const name =
+                product.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase();
+
+            const description =
+                product.description
+                    ?.normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase() ?? "";
+
+            return (
+                name.includes(value) ||
+                description.includes(value)
+            );
+
+        });
+
+    }, [
+        data.products,
+        selectedCategory,
+        search,
+    ]);
+
+    return (
         <>
 
             <RestaurantHero
@@ -136,9 +182,35 @@ export default function RestaurantContent({
                 onSelectCategory={setSelectedCategory}
             />
 
+            <section className="mx-auto max-w-2xl px-5 py-2">
+
+                <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4 shadow-sm">
+
+                    <div className="mb-3 text-center">
+
+                        <h2 className="text-lg font-bold text-orange-700">
+                            🔎 ¿Qué estás buscando?
+                        </h2>
+
+                        <p className="mt-1 text-sm text-gray-600">
+                            Busca cualquier producto del menú.
+                        </p>
+
+                    </div>
+
+                    <SearchBar
+                        value={search}
+                        onChange={setSearch}
+                    />
+
+                </div>
+
+            </section>
+
             <ProductGrid
-                products={data.products}
+                products={filteredProducts}
                 selectedCategory={selectedCategory}
+                searchActive={search.trim() !== ""}
             />
 
             {promotionProduct && (
@@ -152,9 +224,7 @@ export default function RestaurantContent({
             />
 
             {data.restaurant.slug === "demo" && (
-
                 <CallToAction />
-
             )}
 
             <PoweredBy />
@@ -176,7 +246,5 @@ export default function RestaurantContent({
             />
 
         </>
-
     );
-
 }

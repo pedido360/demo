@@ -36,6 +36,9 @@ export default function RestaurantContent({
     const [search, setSearch] =
         useState("");
 
+    const [productDrawerOpen, setProductDrawerOpen] =
+        useState(false);
+
     const isOpen =
         data.restaurant.slug === "demo"
             ? true
@@ -211,6 +214,7 @@ export default function RestaurantContent({
                 products={filteredProducts}
                 selectedCategory={selectedCategory}
                 searchActive={search.trim() !== ""}
+                onDrawerChange={setProductDrawerOpen}
             />
 
             {promotionProduct && (
@@ -233,8 +237,8 @@ export default function RestaurantContent({
                 onClick={() =>
                     setCartOpen(true)
                 }
+                hidden={productDrawerOpen}
             />
-
             <CartDrawer
                 restaurant={data.restaurant}
                 hours={data.hours}

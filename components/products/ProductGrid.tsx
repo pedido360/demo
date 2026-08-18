@@ -17,13 +17,16 @@ interface ProductGridProps {
     products: Product[];
     selectedCategory: string;
     searchActive?: boolean;
+    onDrawerChange?: (open: boolean) => void;
 }
 
 export default function ProductGrid({
     products,
     selectedCategory,
     searchActive = false,
+    onDrawerChange,
 }: ProductGridProps) {
+
     const [selectedProduct, setSelectedProduct] =
         useState<Product | null>(null);
 
@@ -36,12 +39,26 @@ export default function ProductGrid({
         ? products
         : products.filter(
             (product) =>
-                product.categoryId === selectedCategory
+                product.categoryId ===
+                selectedCategory
         );
 
     function handleSelectProduct(product: Product) {
+
         setSelectedProduct(product);
+
         setDrawerOpen(true);
+
+        onDrawerChange?.(true);
+    }
+
+    function handleCloseDrawer() {
+
+        setDrawerOpen(false);
+
+        onDrawerChange?.(false);
+
+        setSelectedProduct(null);
     }
 
     return (
@@ -57,6 +74,7 @@ export default function ProductGrid({
                 {searchActive &&
                     filteredProducts.length === 0 && (
                         <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+
                             <p className="text-lg font-semibold text-gray-700">
                                 😕 No encontramos productos
                             </p>
@@ -64,17 +82,20 @@ export default function ProductGrid({
                             <p className="mt-2 text-sm text-gray-500">
                                 Intenta buscar con otro nombre.
                             </p>
+
                         </div>
                     )}
 
                 <div className="space-y-3">
 
                     {filteredProducts.map((product) => (
+
                         <ProductCard
                             key={product.id}
                             product={product}
                             onSelect={handleSelectProduct}
                         />
+
                     ))}
 
                 </div>
@@ -84,7 +105,7 @@ export default function ProductGrid({
             <ProductDrawer
                 product={selectedProduct}
                 open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
+                onClose={handleCloseDrawer}
                 onAdd={(selection) => {
 
                     if (
@@ -107,7 +128,7 @@ export default function ProductGrid({
 
                     addToCart(selection);
 
-                    setDrawerOpen(false);
+                    handleCloseDrawer();
                 }}
             />
         </>

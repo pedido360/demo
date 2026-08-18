@@ -5,15 +5,19 @@ import { useCart } from "@/hooks/useCart";
 
 interface FloatingCartButtonProps {
     onClick: () => void;
+    hidden?: boolean;
 }
 
 export default function FloatingCartButton({
     onClick,
+    hidden = false,
 }: FloatingCartButtonProps) {
 
     const { totalItems } = useCart();
 
-    if (totalItems === 0) return null;
+    if (totalItems === 0 || hidden) {
+        return null;
+    }
 
     return (
         <button
@@ -27,7 +31,7 @@ export default function FloatingCartButton({
                 items-center
                 gap-3
                 rounded-full
-                bg-red-600
+                bg-green-600
                 px-5
                 py-3
                 text-white
@@ -35,7 +39,7 @@ export default function FloatingCartButton({
                 transition-all
                 duration-300
                 hover:scale-105
-                hover:bg-red-700
+                hover:bg-green-700
                 animate-cart-attention
             "
         >
@@ -53,7 +57,7 @@ export default function FloatingCartButton({
                     items-center
                     justify-center
                     rounded-full
-                    bg-red-800
+                    bg-green-800
                     px-2
                     text-sm
                     font-bold

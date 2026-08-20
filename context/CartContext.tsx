@@ -10,96 +10,222 @@ import {
 
 import { ProductSelection } from "@/types/product";
 
+
 interface CartContextType {
+
     items: ProductSelection[];
 
-    addToCart: (item: ProductSelection) => void;
-    removeFromCart: (index: number) => void;
+    addToCart: (
+        item: ProductSelection
+    ) => void;
+
+    removeFromCart: (
+        index: number
+    ) => void;
+
     clearCart: () => void;
 
     totalItems: number;
+
     totalPrice: number;
+
 }
 
-const CartContext = createContext<CartContextType | null>(null);
+
+const CartContext =
+    createContext<CartContextType | null>(
+        null
+    );
+
 
 interface CartProviderProps {
+
     children: ReactNode;
+
 }
 
-export function CartProvider({ children }: CartProviderProps) {
 
-    const [items, setItems] = useState<ProductSelection[]>([]);
+export function CartProvider({
+    children,
+}: CartProviderProps) {
 
-    function addToCart(item: ProductSelection) {
-        setItems((current) => [...current, item]);
+    const [
+        items,
+        setItems,
+    ] = useState<
+        ProductSelection[]
+    >([]);
+
+
+    function addToCart(
+        item: ProductSelection
+    ) {
+
+        setItems(
+            current => [
+                ...current,
+                item,
+            ]
+        );
+
     }
 
-    function removeFromCart(index: number) {
-        setItems((current) => current.filter((_, i) => i !== index));
+
+    function removeFromCart(
+        index: number
+    ) {
+
+        setItems(
+            current =>
+                current.filter(
+                    (_, i) =>
+                        i !== index
+                )
+        );
+
     }
+
 
     function clearCart() {
+
         setItems([]);
+
     }
 
-    const totalItems = useMemo(
-        () =>
-            items.reduce(
-                (total, item) => total + item.quantity,
-                0
-            ),
-        [items]
-    );
 
-    const totalPrice = useMemo(
-        () =>
-            items.reduce((total, item) => {
-
-                const extrasTotal = (item.extras ?? []).reduce(
-                    (sum, extra) => sum + extra.price,
+    const totalItems =
+        useMemo(
+            () =>
+                items.reduce(
+                    (
+                        total,
+                        item
+                    ) =>
+                        total +
+                        item.quantity,
                     0
-                );
+                ),
+            [items]
+        );
 
-                const productPrice =
-                    item.variant?.price ??
-                    item.product.price;
 
-                return (
-                    total +
-                    (productPrice + extrasTotal) *
-                    item.quantity
-                );
+    const totalPrice =
+        useMemo(
+            () =>
+                items.reduce(
+                    (
+                        total,
+                        item
+                    ) => {
 
-            }, 0),
-        [items]
-    );
+                        /*
+                         * MENÚ DEL DÍA
+                         *
+                         * El precio viene
+                         * del tamaño elegido.
+                         */
+
+                        if (
+                            item.dailyMenu
+                        ) {
+
+                            return (
+                                total +
+                                item.dailyMenu
+                                    .size
+                                    .price *
+                                item.quantity
+                            );
+
+                        }
+
+
+                        /*
+                         * PRODUCTO NORMAL
+                         */
+
+                        const extrasTotal =
+                            (
+                                item.extras ??
+                                []
+                            ).reduce(
+                                (
+                                    sum,
+                                    extra
+                                ) =>
+                                    sum +
+                                    extra.price,
+                                0
+                            );
+
+
+                        const productPrice =
+                            item.variant?.price ??
+                            item.product.price;
+
+
+                        return (
+                            total +
+                            (
+                                productPrice +
+                                extrasTotal
+                            ) *
+                            item.quantity
+                        );
+
+                    },
+                    0
+                ),
+            [items]
+        );
+
 
     return (
+
         <CartContext.Provider
             value={{
+
                 items,
+
                 addToCart,
+
                 removeFromCart,
+
                 clearCart,
+
                 totalItems,
+
                 totalPrice,
+
             }}
         >
+
             {children}
+
         </CartContext.Provider>
+
     );
+
 }
+
 
 export function useCartContext() {
 
-    const context = useContext(CartContext);
+    const context =
+        useContext(
+            CartContext
+        );
+
 
     if (!context) {
+
         throw new Error(
             "useCartContext debe usarse dentro de CartProvider."
         );
+
     }
 
+
     return context;
+
 }

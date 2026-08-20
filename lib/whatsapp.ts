@@ -19,12 +19,15 @@ export function buildWhatsAppMessage(
 
     const now = new Date();
 
-    const date = now.toLocaleDateString("es-CO");
+    const date =
+        now.toLocaleDateString("es-CO");
 
-    const time = now.toLocaleTimeString("es-CO", {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
+    const time =
+        now.toLocaleTimeString("es-CO", {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
 
     lines.push("🛎️ *NUEVO PEDIDO*");
     lines.push(`🕒 ${date} • ${time}`);
@@ -38,9 +41,18 @@ export function buildWhatsAppMessage(
     lines.push("━━━━━━━━━━━━━━━━━━━━");
     lines.push("");
 
-    lines.push(`👤 Nombre: ${order.customerName}`);
-    lines.push(`📍 Dirección: ${order.address}`);
-    lines.push(`💳 Pago: ${order.paymentMethod}`);
+    lines.push(
+        `👤 Nombre: ${order.customerName}`
+    );
+
+    lines.push(
+        `📍 Dirección: ${order.address}`
+    );
+
+    lines.push(
+        `💳 Pago: ${order.paymentMethod}`
+    );
+
 
     if (
         order.paymentMethod === "Efectivo" &&
@@ -53,15 +65,23 @@ export function buildWhatsAppMessage(
 
     }
 
-    if (order.observations.trim()) {
+
+    if (
+        order.observations.trim()
+    ) {
 
         lines.push("");
 
-        lines.push("📝 Observaciones generales:");
+        lines.push(
+            "📝 Observaciones generales:"
+        );
 
-        lines.push(order.observations);
+        lines.push(
+            order.observations
+        );
 
     }
+
 
     lines.push("");
     lines.push("━━━━━━━━━━━━━━━━━━━━");
@@ -69,77 +89,250 @@ export function buildWhatsAppMessage(
     lines.push("━━━━━━━━━━━━━━━━━━━━");
     lines.push("");
 
-    items.forEach((item, index) => {
 
-        const extrasTotal =
-            (item.extras ?? []).reduce(
-                (total, extra) => total + extra.price,
-                0
-            );
+    items.forEach(
+        (item, index) => {
 
-        const productPrice =
-            item.variant?.price ??
-            item.product.price;
+            /*
+             * ====================================================
+             * MENÚ DEL DÍA
+             * ====================================================
+             */
 
-        const subtotal =
-            (productPrice + extrasTotal) *
-            item.quantity;
+            if (item.dailyMenu) {
 
-        lines.push(
-            `${index + 1}. 🍽️ *${item.product.name}*`
-        );
+                const menu =
+                    item.dailyMenu;
 
-        lines.push(
-            `Cantidad: ${item.quantity}`
-        );
+                const subtotal =
+                    menu.size.price *
+                    item.quantity;
 
-        if (item.variant) {
-
-            lines.push(
-                `📏 Presentación: ${item.variant.label}`
-            );
-
-        }
-
-        if ((item.extras ?? []).length > 0) {
-
-            lines.push("");
-
-            lines.push("➕ Extras:");
-
-            item.extras.forEach(extra => {
 
                 lines.push(
-                    `   ✓ ${extra.name}`
+                    `${index + 1}. 🍽️ *${item.product.name}*`
                 );
 
-            });
+                lines.push(
+                    `Cantidad: ${item.quantity}`
+                );
 
-        }
+                lines.push(
+                    `📏 Tamaño: ${menu.size.label}`
+                );
 
-        if (item.notes?.trim()) {
+
+                if (menu.soup) {
+
+                    lines.push(
+                        `🍲 Sopa: ${menu.soup.name}`
+                    );
+
+                }
+
+
+                if (
+                    menu.secos.length > 0
+                ) {
+
+                    lines.push("");
+
+                    lines.push(
+                        "🍛 Seco:"
+                    );
+
+                    menu.secos.forEach(
+                        seco => {
+
+                            lines.push(
+                                `   ✓ ${seco.name}`
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                if (menu.principle) {
+
+                    lines.push(
+                        `🥣 Principio: ${menu.principle.name}`
+                    );
+
+                }
+
+
+                if (menu.protein) {
+
+                    lines.push(
+                        `🥩 Proteína: ${menu.protein.name}`
+                    );
+
+                }
+
+
+                if (menu.drink) {
+
+                    lines.push(
+                        `🥤 Bebida: ${menu.drink.name}`
+                    );
+
+                }
+
+
+                if (menu.dessert) {
+
+                    lines.push(
+                        `🍰 Postre: ${menu.dessert.name}`
+                    );
+
+                }
+
+
+                if (
+                    menu.notes?.trim()
+                ) {
+
+                    lines.push("");
+
+                    lines.push(
+                        "📝 Observaciones:"
+                    );
+
+                    lines.push(
+                        menu.notes
+                    );
+
+                }
+
+
+                lines.push("");
+
+                lines.push(
+                    `Subtotal: $${subtotal.toLocaleString("es-CO")}`
+                );
+
+                lines.push("");
+                lines.push(
+                    "────────────────────"
+                );
+                lines.push("");
+
+                return;
+
+            }
+
+
+            /*
+             * ====================================================
+             * PRODUCTO NORMAL
+             * ====================================================
+             */
+
+            const extrasTotal =
+                (item.extras ?? []).reduce(
+                    (
+                        total,
+                        extra
+                    ) =>
+                        total +
+                        extra.price,
+                    0
+                );
+
+
+            const productPrice =
+                item.variant?.price ??
+                item.product.price;
+
+
+            const subtotal =
+                (
+                    productPrice +
+                    extrasTotal
+                ) *
+                item.quantity;
+
+
+            lines.push(
+                `${index + 1}. 🍽️ *${item.product.name}*`
+            );
+
+            lines.push(
+                `Cantidad: ${item.quantity}`
+            );
+
+
+            if (item.variant) {
+
+                lines.push(
+                    `📏 Presentación: ${item.variant.label}`
+                );
+
+            }
+
+
+            if (
+                (item.extras ?? []).length > 0
+            ) {
+
+                lines.push("");
+
+                lines.push(
+                    "➕ Extras:"
+                );
+
+                item.extras.forEach(
+                    extra => {
+
+                        lines.push(
+                            `   ✓ ${extra.name}`
+                        );
+
+                    }
+                );
+
+            }
+
+
+            if (
+                item.notes?.trim()
+            ) {
+
+                lines.push("");
+
+                lines.push(
+                    "📝 Observaciones:"
+                );
+
+                lines.push(
+                    item.notes
+                );
+
+            }
+
 
             lines.push("");
 
-            lines.push("📝 Observaciones:");
+            lines.push(
+                `Subtotal: $${subtotal.toLocaleString("es-CO")}`
+            );
 
-            lines.push(item.notes);
+            lines.push("");
+            lines.push(
+                "────────────────────"
+            );
+            lines.push("");
 
         }
+    );
 
-        lines.push("");
 
-        lines.push(
-            `Subtotal: $${subtotal.toLocaleString("es-CO")}`
-        );
+    lines.push(
+        "💰 *TOTAL PRODUCTOS*"
+    );
 
-        lines.push("");
-        lines.push("────────────────────");
-        lines.push("");
-
-    });
-
-    lines.push("💰 *TOTAL PRODUCTOS*");
     lines.push(
         `$${totalPrice.toLocaleString("es-CO")}`
     );
@@ -148,11 +341,16 @@ export function buildWhatsAppMessage(
     lines.push("━━━━━━━━━━━━━━━━━━━━");
     lines.push("");
 
-    lines.push("🙏 Muchas gracias.");
+    lines.push(
+        "🙏 Muchas gracias."
+    );
+
     lines.push("");
+
     lines.push(
         "Quedo atento a la confirmación del valor del domicilio y al despacho de mi pedido."
     );
+
 
     return lines.join("\n");
 

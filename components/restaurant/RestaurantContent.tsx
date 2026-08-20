@@ -17,6 +17,7 @@ import FloatingCartButton from "@/components/cart/FloatingCartButton";
 import CartDrawer from "@/components/cart/CartDrawer";
 import PoweredBy from "./PoweredBy";
 
+
 import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
 
 interface RestaurantContentProps {
@@ -215,6 +216,7 @@ export default function RestaurantContent({
                 selectedCategory={selectedCategory}
                 searchActive={search.trim() !== ""}
                 onDrawerChange={setProductDrawerOpen}
+                dailyMenu={data.dailyMenu}
             />
 
             {promotionProduct && (
@@ -232,6 +234,7 @@ export default function RestaurantContent({
             )}
 
             <PoweredBy />
+
 
             <FloatingCartButton
                 onClick={() =>

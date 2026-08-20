@@ -21,6 +21,14 @@ import {
     getRestaurantHours,
 } from "@/lib/repositories/restaurant-hours.repository";
 
+import {
+    getRestaurantDailyMenuClient,
+} from "@/lib/services/daily-menu.service";
+
+import {
+    getColombiaDate,
+} from "@/lib/utils/getColombiaDate";
+
 interface RestaurantPageProps {
     params: Promise<{
         slug: string;
@@ -135,10 +143,25 @@ export default async function RestaurantPage({
             categories,
             products,
             hours,
+            dailyMenu,
         ] = await Promise.all([
-            getCategories(restaurant.id),
-            getProducts(restaurant.id),
-            getRestaurantHours(restaurant.id),
+
+            getCategories(
+                restaurant.id
+            ),
+
+            getProducts(
+                restaurant.id
+            ),
+
+            getRestaurantHours(
+                restaurant.id
+            ),
+
+            getRestaurantDailyMenuClient(
+                restaurant.id,
+                getColombiaDate()
+            ),
         ]);
 
         const availableProducts =
@@ -156,6 +179,8 @@ export default async function RestaurantPage({
                 availableProducts,
 
             hours,
+
+            dailyMenu,
 
         };
 

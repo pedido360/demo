@@ -15,6 +15,8 @@ import SearchBar from "./SearchBar";
 import CategoryAccordion from "./CategoryAccordion";
 import ProductEditor from "./ProductEditor"
 
+import DailyMenuEditor from "@/components/admin/daily-menu/DailyMenuEditor";
+
 import CategoryForm from "@/components/admin/categories/CategoryForm";
 import ProductForm from "@/components/admin/products/ProductForm";
 
@@ -66,6 +68,9 @@ export default function SmartMenu({
 
     const [editingCategory, setEditingCategory] =
         useState<Category | null>(null);
+
+    const [showDailyMenu, setShowDailyMenu] =
+        useState(false);
 
     const [search, setSearch] =
         useState("");
@@ -422,6 +427,20 @@ export default function SmartMenu({
 
     }
 
+    if (showDailyMenu) {
+
+        return (
+
+            <DailyMenuEditor
+                restaurantId={restaurantId}
+                products={productList}
+                onBack={() => setShowDailyMenu(false)}
+            />
+
+        );
+
+    }
+
     return (
 
         <section className="overflow-hidden rounded-2xl border border-orange-200 bg-orange-50">
@@ -448,7 +467,7 @@ export default function SmartMenu({
 
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 flex flex-wrap gap-3">
 
                     <button
                         type="button"
@@ -456,6 +475,14 @@ export default function SmartMenu({
                         className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
                     >
                         + Nueva categoría
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setShowDailyMenu(true)}
+                        className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                    >
+                        🍽️ Menú del Día
                     </button>
 
                 </div>

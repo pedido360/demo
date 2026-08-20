@@ -18,6 +18,9 @@ function mapProduct(data: any): Product {
 
         name: data.name,
 
+        productType:
+            data.product_type ?? "normal",
+
         description: data.description ?? "",
 
         image: data.image ?? "",
@@ -276,6 +279,9 @@ export async function createProduct(
             is_featured: product.featured,
 
             is_available: product.isAvailable,
+
+            product_type:
+                product.productType ?? "normal",
         })
         .select()
         .single();

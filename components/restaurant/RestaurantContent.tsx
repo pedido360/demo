@@ -325,6 +325,7 @@ export default function RestaurantContent({
 
             <FeaturedProducts
                 products={data.products}
+                dailyMenu={data.dailyMenu}
             />
 
             {data.restaurant.slug === "demo" && (

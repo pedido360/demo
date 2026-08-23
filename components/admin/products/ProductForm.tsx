@@ -48,6 +48,8 @@ export default function ProductForm({
 
     const [form, setForm] = useState<Product>(emptyProduct);
 
+    const [allDays, setAllDays] = useState(true);
+
     const [ingredientName, setIngredientName] = useState('');
 
     const [extraName, setExtraName] = useState('');
@@ -61,17 +63,29 @@ export default function ProductForm({
 
         if (product) {
 
-            setForm(product);
+            setForm({
+                ...product,
+                availableDays:
+                    product.availableDays ?? [],
+            });
+
+            setAllDays(
+                !product.availableDays ||
+                product.availableDays.length === 0
+            );
 
         } else {
 
             setForm({
                 ...emptyProduct,
-                categoryId: initialCategoryId ?? "",
+                categoryId:
+                    initialCategoryId ?? "",
+                availableDays: [],
             });
 
-        }
+            setAllDays(true);
 
+        }
     }, [product, initialCategoryId]);
 
     function updateField<K extends keyof Product>(
@@ -99,12 +113,43 @@ export default function ProductForm({
     }
 
     function handleSubmit(e: FormEvent) {
+
         e.preventDefault();
 
+
+        const availableDays =
+            form.availableDays ?? [];
+
+
+        if (
+            !allDays &&
+            availableDays.length === 0
+        ) {
+
+            alert(
+                "Selecciona al menos un día de disponibilidad."
+            );
+
+            return;
+
+        }
+
+
         onSave({
+
             ...form,
-            id: form.id || crypto.randomUUID(),
+
+            id:
+                form.id ||
+                crypto.randomUUID(),
+
+            availableDays:
+                allDays
+                    ? []
+                    : availableDays,
+
         });
+
     }
 
     function addIngredient() {
@@ -346,6 +391,152 @@ export default function ProductForm({
                         <span>Disponible</span>
 
                     </label>
+
+                    <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+
+                        <div className="mb-3">
+
+                            <p className="font-semibold text-gray-900">
+                                📅 Días de disponibilidad
+                            </p>
+
+                            <p className="mt-1 text-sm text-gray-500">
+                                Define en qué días de la semana se puede vender este producto.
+                            </p>
+
+                        </div>
+
+
+                        <label className="flex items-center gap-3">
+
+                            <input
+                                type="checkbox"
+                                checked={allDays}
+                                onChange={(e) => {
+
+                                    const checked =
+                                        e.target.checked;
+
+                                    setAllDays(
+                                        checked
+                                    );
+
+                                    if (checked) {
+
+                                        updateField(
+                                            'availableDays',
+                                            []
+                                        );
+
+                                    }
+
+                                }}
+                            />
+
+                            <span className="font-medium">
+                                Disponible todos los días
+                            </span>
+
+                        </label>
+
+
+                        {!allDays && (
+
+                            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+
+                                {[
+                                    {
+                                        value: 1,
+                                        label: 'Lunes',
+                                    },
+                                    {
+                                        value: 2,
+                                        label: 'Martes',
+                                    },
+                                    {
+                                        value: 3,
+                                        label: 'Miércoles',
+                                    },
+                                    {
+                                        value: 4,
+                                        label: 'Jueves',
+                                    },
+                                    {
+                                        value: 5,
+                                        label: 'Viernes',
+                                    },
+                                    {
+                                        value: 6,
+                                        label: 'Sábado',
+                                    },
+                                    {
+                                        value: 0,
+                                        label: 'Domingo',
+                                    },
+                                ].map((day) => {
+
+                                    const selected =
+                                        (
+                                            form.availableDays ??
+                                            []
+                                        ).includes(
+                                            day.value
+                                        );
+
+
+                                    return (
+
+                                        <label
+                                            key={day.value}
+                                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 hover:border-orange-300"
+                                        >
+
+                                            <input
+                                                type="checkbox"
+                                                checked={selected}
+                                                onChange={(e) => {
+
+                                                    const current =
+                                                        form.availableDays ??
+                                                        [];
+
+                                                    const next =
+                                                        e.target.checked
+
+                                                            ? [
+                                                                ...current,
+                                                                day.value,
+                                                            ]
+
+                                                            : current.filter(
+                                                                value =>
+                                                                    value !==
+                                                                    day.value
+                                                            );
+
+                                                    updateField(
+                                                        'availableDays',
+                                                        next
+                                                    );
+
+                                                }}
+                                            />
+
+                                            <span className="text-sm font-medium">
+                                                {day.label}
+                                            </span>
+
+                                        </label>
+
+                                    );
+
+                                })}
+
+                            </div>
+
+                        )}
+
+                    </div>
 
                 </div>
 

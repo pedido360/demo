@@ -52,6 +52,8 @@ export interface Product {
 
     isAvailable?: boolean;
 
+    availableDays?: number[];
+
     ingredients?: Ingredient[];
 
     extras?: Extra[];

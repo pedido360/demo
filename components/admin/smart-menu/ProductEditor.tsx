@@ -275,6 +275,145 @@ export default function ProductEditor({
 
                 <section className="rounded-xl border border-gray-200 p-6">
 
+                    <h2 className="mb-2 text-lg font-semibold">
+                        📅 Días de disponibilidad
+                    </h2>
+
+                    <p className="mb-4 text-sm text-gray-500">
+                        Define en qué días de la semana se puede vender este producto.
+                    </p>
+
+                    <label className="flex items-center gap-3">
+
+                        <input
+                            type="checkbox"
+                            checked={
+                                !editableProduct.availableDays ||
+                                editableProduct.availableDays.length === 0
+                            }
+                            onChange={(event) => {
+
+                                if (
+                                    event.target.checked
+                                ) {
+
+                                    updateField(
+                                        "availableDays",
+                                        []
+                                    );
+
+                                }
+
+                            }}
+                            className="h-5 w-5"
+                        />
+
+                        <span className="font-medium">
+                            Disponible todos los días
+                        </span>
+
+                    </label>
+
+
+                    {editableProduct.availableDays &&
+                        editableProduct.availableDays.length > 0 && (
+
+                            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+
+                                {[
+                                    {
+                                        value: 1,
+                                        label: "Lunes",
+                                    },
+                                    {
+                                        value: 2,
+                                        label: "Martes",
+                                    },
+                                    {
+                                        value: 3,
+                                        label: "Miércoles",
+                                    },
+                                    {
+                                        value: 4,
+                                        label: "Jueves",
+                                    },
+                                    {
+                                        value: 5,
+                                        label: "Viernes",
+                                    },
+                                    {
+                                        value: 6,
+                                        label: "Sábado",
+                                    },
+                                    {
+                                        value: 0,
+                                        label: "Domingo",
+                                    },
+                                ].map(day => {
+
+                                    const selected =
+                                        editableProduct.availableDays?.includes(
+                                            day.value
+                                        ) ?? false;
+
+
+                                    return (
+
+                                        <label
+                                            key={day.value}
+                                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 hover:border-orange-300"
+                                        >
+
+                                            <input
+                                                type="checkbox"
+                                                checked={selected}
+                                                onChange={(event) => {
+
+                                                    const current =
+                                                        editableProduct.availableDays ??
+                                                        [];
+
+                                                    const next =
+                                                        event.target.checked
+
+                                                            ? [
+                                                                ...current,
+                                                                day.value,
+                                                            ]
+
+                                                            : current.filter(
+                                                                value =>
+                                                                    value !==
+                                                                    day.value
+                                                            );
+
+
+                                                    updateField(
+                                                        "availableDays",
+                                                        next
+                                                    );
+
+                                                }}
+                                            />
+
+                                            <span className="text-sm font-medium">
+                                                {day.label}
+                                            </span>
+
+                                        </label>
+
+                                    );
+
+                                })}
+
+                            </div>
+
+                        )}
+
+                </section>
+
+                <section className="rounded-xl border border-gray-200 p-6">
+
                     <h2 className="mb-4 text-lg font-semibold">
                         ⚙ Estado
                     </h2>
@@ -322,11 +461,29 @@ export default function ProductEditor({
                     </Button>
 
                     <Button
-                        onClick={() => onSave(editableProduct)}
+                        onClick={() => {
+
+                            const availableDays =
+                                editableProduct.availableDays ?? [];
+
+                            if (
+                                availableDays.length === 0
+                            ) {
+
+                                alert(
+                                    "Este producto quedará disponible todos los días."
+                                );
+
+                            }
+
+                            onSave(
+                                editableProduct
+                            );
+
+                        }}
                     >
                         Guardar cambios
                     </Button>
-
                 </div>
 
             </div>

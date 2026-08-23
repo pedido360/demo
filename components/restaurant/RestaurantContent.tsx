@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { RestaurantPageData } from "@/types/restaurant-page";
+import { Product } from "@/types/product";
 
 import RestaurantHero from "./RestaurantHero";
 import FeaturedProducts from "./FeaturedProducts";
@@ -16,7 +17,6 @@ import ProductGrid from "@/components/products/ProductGrid";
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
 import CartDrawer from "@/components/cart/CartDrawer";
 import PoweredBy from "./PoweredBy";
-
 
 import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
 
@@ -63,6 +63,60 @@ export default function RestaurantContent({
         selectedCategory,
     ]);
 
+    function isProductAvailableToday(
+        product: Product
+    ): boolean {
+
+        const availableDays =
+            product.availableDays ?? [];
+
+        // Sin días configurados =
+        // disponible todos los días.
+        if (
+            availableDays.length === 0
+        ) {
+
+            return true;
+
+        }
+
+        const weekday =
+            new Intl.DateTimeFormat(
+                "en-US",
+                {
+                    timeZone:
+                        "America/Bogota",
+                    weekday:
+                        "short",
+                }
+            ).format(
+                new Date()
+            );
+
+        const dayMap: Record<
+            string,
+            number
+        > = {
+
+            Sun: 0,
+            Mon: 1,
+            Tue: 2,
+            Wed: 3,
+            Thu: 4,
+            Fri: 5,
+            Sat: 6,
+
+        };
+
+        const today =
+            dayMap[weekday];
+
+        return availableDays.includes(
+            today
+        );
+
+    }
+
     const promotionProduct =
         data.restaurant.slug ===
             "la-arroceria-colombiana"
@@ -75,40 +129,84 @@ export default function RestaurantContent({
 
     const filteredProducts = useMemo(() => {
 
-        const value = search
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .trim();
+        const value =
+            search
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                )
+                .toLowerCase()
+                .trim();
+
+        /*
+         * Sin búsqueda:
+         *
+         * Filtramos por categoría
+         * y disponibilidad del día.
+         */
 
         if (!value) {
+
             return data.products.filter(
                 (product) =>
                     product.categoryId ===
-                    selectedCategory
+                    selectedCategory &&
+                    isProductAvailableToday(
+                        product
+                    )
             );
+
         }
 
-        return data.products.filter((product) => {
+        /*
+         * Con búsqueda:
+         *
+         * Primero descartamos productos
+         * que no están disponibles hoy.
+         *
+         * Después buscamos por nombre
+         * o descripción.
+         */
 
-            const name =
-                product.name
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .toLowerCase();
+        return data.products.filter(
+            (product) => {
 
-            const description =
-                product.description
-                    ?.normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .toLowerCase() ?? "";
+                if (
+                    !isProductAvailableToday(
+                        product
+                    )
+                ) {
 
-            return (
-                name.includes(value) ||
-                description.includes(value)
-            );
+                    return false;
 
-        });
+                }
+
+                const name =
+                    product.name
+                        .normalize("NFD")
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ""
+                        )
+                        .toLowerCase();
+
+                const description =
+                    product.description
+                        ?.normalize("NFD")
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ""
+                        )
+                        .toLowerCase() ?? "";
+
+                return (
+                    name.includes(value) ||
+                    description.includes(value)
+                );
+
+            }
+        );
 
     }, [
         data.products,
@@ -235,13 +333,13 @@ export default function RestaurantContent({
 
             <PoweredBy />
 
-
             <FloatingCartButton
                 onClick={() =>
                     setCartOpen(true)
                 }
                 hidden={productDrawerOpen}
             />
+
             <CartDrawer
                 restaurant={data.restaurant}
                 hours={data.hours}

@@ -7,36 +7,58 @@ import {
 } from "@/types/product-variant";
 
 import {
+    replaceProductAvailableDays,
+} from "@/lib/repositories/product-availability.repository";
+
+import {
     replaceVariants,
 } from "@/lib/repositories/product-variant.repository";
 
 function mapProduct(data: any): Product {
+
     return {
-        id: data.id,
 
-        categoryId: data.category_id,
+        id:
+            data.id,
 
-        name: data.name,
+        categoryId:
+            data.category_id,
+
+        name:
+            data.name,
 
         productType:
             data.product_type ?? "normal",
 
-        description: data.description ?? "",
+        description:
+            data.description ?? "",
 
-        image: data.image ?? "",
+        image:
+            data.image ?? "",
 
-        price: Number(data.price),
+        price:
+            Number(data.price),
 
-        featured: data.is_featured,
+        featured:
+            data.is_featured,
 
-        isAvailable: data.is_available,
+        isAvailable:
+            data.is_available,
 
-        ingredients: [],
+        availableDays:
+            [],
 
-        extras: [],
+        ingredients:
+            [],
 
-        variants: [],
+        extras:
+            [],
+
+        variants:
+            [],
+
     };
+
 }
 
 function mapIngredient(data: any) {
@@ -67,98 +89,177 @@ function mapVariant(data: any): ProductVariant {
         sortOrder: data.sort_order,
     };
 }
-
 export async function getProducts(
     restaurantId: string
 ): Promise<Product[]> {
 
-    const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("restaurant_id", restaurantId)
-        .order("sort_order", {
-            ascending: true,
-        });
+    const { data, error } =
+        await supabase
+            .from("products")
+            .select("*")
+            .eq(
+                "restaurant_id",
+                restaurantId
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            );
+
 
     if (error) {
+
         console.error(error);
-        throw new Error(error.message);
+
+        throw new Error(
+            error.message
+        );
+
     }
 
-    const products = (data ?? []).map(mapProduct);
 
-    if (products.length === 0) {
+    const products =
+        (data ?? []).map(
+            mapProduct
+        );
+
+
+    if (
+        products.length === 0
+    ) {
+
         return [];
+
     }
 
-    const productIds = products.map(
-        (product) => product.id
-    );
+
+    const productIds =
+        products.map(
+            product =>
+                product.id
+        );
+
 
     /*
-     * Cargamos ingredientes, extras y variantes
-     * de todos los productos en paralelo.
+     * Cargamos ingredientes,
+     * extras, variantes y
+     * disponibilidad semanal.
      */
 
     const [
         ingredientsResult,
         extrasResult,
         variantsResult,
+        availableDaysResults,
     ] = await Promise.all([
 
         supabase
             .from("ingredients")
             .select("*")
-            .in("product_id", productIds)
-            .order("sort_order", {
-                ascending: true,
-            }),
+            .in(
+                "product_id",
+                productIds
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
 
         supabase
             .from("extras")
             .select("*")
-            .in("product_id", productIds)
-            .order("sort_order", {
-                ascending: true,
-            }),
+            .in(
+                "product_id",
+                productIds
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
 
         supabase
             .from("product_variants")
             .select("*")
-            .in("product_id", productIds)
-            .order("sort_order", {
-                ascending: true,
-            }),
+            .in(
+                "product_id",
+                productIds
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
+
+        supabase
+            .from("product_available_days")
+            .select(
+                "product_id, day_of_week"
+            )
+            .in(
+                "product_id",
+                productIds
+            ),
+
+
 
     ]);
 
-    if (ingredientsResult.error) {
-        console.error(ingredientsResult.error);
+
+    if (
+        ingredientsResult.error
+    ) {
+
+        console.error(
+            ingredientsResult.error
+        );
+
         throw new Error(
             ingredientsResult.error.message
         );
+
     }
 
-    if (extrasResult.error) {
-        console.error(extrasResult.error);
+
+    if (
+        extrasResult.error
+    ) {
+
+        console.error(
+            extrasResult.error
+        );
+
         throw new Error(
             extrasResult.error.message
         );
+
     }
 
-    if (variantsResult.error) {
-        console.error(variantsResult.error);
+
+    if (
+        variantsResult.error
+    ) {
+
+        console.error(
+            variantsResult.error
+        );
+
         throw new Error(
             variantsResult.error.message
         );
+
     }
 
-    /*
-     * Agrupamos los resultados por product_id.
-     */
 
     const ingredientsByProduct =
         new Map<string, any[]>();
+
 
     for (
         const ingredient
@@ -170,9 +271,13 @@ export async function getProducts(
                 ingredient.product_id
             ) ?? [];
 
+
         list.push(
-            mapIngredient(ingredient)
+            mapIngredient(
+                ingredient
+            )
         );
+
 
         ingredientsByProduct.set(
             ingredient.product_id,
@@ -181,8 +286,10 @@ export async function getProducts(
 
     }
 
+
     const extrasByProduct =
         new Map<string, any[]>();
+
 
     for (
         const extra
@@ -194,9 +301,13 @@ export async function getProducts(
                 extra.product_id
             ) ?? [];
 
+
         list.push(
-            mapExtra(extra)
+            mapExtra(
+                extra
+            )
         );
+
 
         extrasByProduct.set(
             extra.product_id,
@@ -205,8 +316,13 @@ export async function getProducts(
 
     }
 
+
     const variantsByProduct =
-        new Map<string, ProductVariant[]>();
+        new Map<
+            string,
+            ProductVariant[]
+        >();
+
 
     for (
         const variant
@@ -218,9 +334,13 @@ export async function getProducts(
                 variant.product_id
             ) ?? [];
 
+
         list.push(
-            mapVariant(variant)
+            mapVariant(
+                variant
+            )
         );
+
 
         variantsByProduct.set(
             variant.product_id,
@@ -229,30 +349,72 @@ export async function getProducts(
 
     }
 
-    /*
-     * Completamos cada producto.
-     */
 
-    for (const product of products) {
+    const availableDaysByProduct =
+        new Map<
+            string,
+            number[]
+        >();
+
+
+    for (
+        const row
+        of availableDaysResults.data ?? []
+    ) {
+
+        const days =
+            availableDaysByProduct.get(
+                row.product_id
+            ) ?? [];
+
+
+        days.push(
+            Number(
+                row.day_of_week
+            )
+        );
+
+
+        availableDaysByProduct.set(
+            row.product_id,
+            days
+        );
+
+    }
+
+    for (
+        const product
+        of products
+    ) {
 
         product.ingredients =
             ingredientsByProduct.get(
                 product.id
             ) ?? [];
 
+
         product.extras =
             extrasByProduct.get(
                 product.id
             ) ?? [];
+
 
         product.variants =
             variantsByProduct.get(
                 product.id
             ) ?? [];
 
+
+        product.availableDays =
+            availableDaysByProduct.get(
+                product.id
+            ) ?? [];
+
     }
 
+
     return products;
+
 }
 
 export async function createProduct(
@@ -291,21 +453,32 @@ export async function createProduct(
         throw new Error(error.message);
     }
 
-    const created = mapProduct(data);
+    const created = mapProduct(
+        data
+    );
 
     await replaceVariants(
         created.id,
         product.variants ?? []
     );
 
+    await replaceProductAvailableDays(
+        created.id,
+        product.availableDays ?? []
+    );
+
     created.ingredients =
         product.ingredients ?? [];
+
 
     created.extras =
         product.extras ?? [];
 
     created.variants =
         product.variants ?? [];
+
+    created.availableDays =
+        product.availableDays ?? [];
 
     return created;
 }
@@ -340,11 +513,18 @@ export async function updateProduct(
         throw new Error(error.message);
     }
 
-    const updated = mapProduct(data);
+    const updated = mapProduct(
+        data
+    );
 
     await replaceVariants(
         updated.id,
         product.variants ?? []
+    );
+
+    await replaceProductAvailableDays(
+        updated.id,
+        product.availableDays ?? []
     );
 
     updated.ingredients =
@@ -355,6 +535,9 @@ export async function updateProduct(
 
     updated.variants =
         product.variants ?? [];
+
+    updated.availableDays =
+        product.availableDays ?? [];
 
     return updated;
 }

@@ -2,15 +2,77 @@ import Image from "next/image";
 
 import { Product } from "@/types/product";
 
+import { DailyMenuClient } from "@/types/daily-menu";
+
+
 interface ProductCardProps {
     product: Product;
-    onSelect: (product: Product) => void;
+
+    onSelect: (
+        product: Product
+    ) => void;
+
+    dailyMenu?: DailyMenuClient | null;
 }
 
+
 export default function ProductCard({
+
     product,
+
     onSelect,
+
+    dailyMenu,
+
 }: ProductCardProps) {
+
+
+    const isDailyMenu =
+        product.productType ===
+        "daily_menu";
+
+
+    const dailyMenuPrices =
+        isDailyMenu &&
+            dailyMenu
+            ? dailyMenu.sizes
+                .filter(
+                    size =>
+                        size.isAvailable
+                )
+                .map(
+                    size =>
+                        Number(
+                            size.price
+                        )
+                )
+                .filter(
+                    price =>
+                        Number.isFinite(
+                            price
+                        )
+                )
+            : [];
+
+
+    const dailyMenuPrice =
+        dailyMenuPrices.length > 0
+            ? Math.min(
+                ...dailyMenuPrices
+            )
+            : null;
+
+
+    const priceLabel =
+        isDailyMenu &&
+            dailyMenuPrice !== null
+            ? `Desde $${dailyMenuPrice.toLocaleString(
+                "es-CO"
+            )}`
+            : `$${product.price.toLocaleString(
+                "es-CO"
+            )}`;
+
 
     return (
 
@@ -40,6 +102,7 @@ export default function ProductCard({
 
             </div>
 
+
             {/* Información */}
 
             <div className="min-w-0 flex-1">
@@ -54,16 +117,22 @@ export default function ProductCard({
 
             </div>
 
+
             {/* Precio y botón */}
 
             <div className="ml-2 flex flex-col items-end justify-between self-stretch">
 
                 <span className="whitespace-nowrap text-base font-bold text-red-600">
-                    ${product.price.toLocaleString("es-CO")}
+                    {priceLabel}
                 </span>
 
+
                 <button
-                    onClick={() => onSelect(product)}
+                    onClick={() =>
+                        onSelect(
+                            product
+                        )
+                    }
                     className="flex flex-col items-center justify-center text-red-600 transition-transform hover:scale-105"
                 >
 

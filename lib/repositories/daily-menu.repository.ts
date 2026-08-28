@@ -81,6 +81,9 @@ function mapDailyMenu(
         menuDate:
             data.menu_date,
 
+        image:
+            data.image ?? null,
+
         isPublished:
             data.is_published,
 
@@ -415,7 +418,8 @@ export async function createDailyMenu(
 export async function updateDailyMenu(
     id: string,
     menuDate: string,
-    isPublished: boolean
+    isPublished: boolean,
+    image: string | null
 ): Promise<DailyMenu> {
 
     const { data, error } =
@@ -428,6 +432,9 @@ export async function updateDailyMenu(
 
                 is_published:
                     isPublished,
+
+                image:
+                    image,
 
                 updated_at:
                     new Date().toISOString(),
@@ -676,7 +683,8 @@ export async function saveDailyMenu(
     await updateDailyMenu(
         menu.id,
         menu.menuDate,
-        menu.isPublished
+        menu.isPublished,
+        menu.image
     );
 
     await replaceDailyMenuItems(

@@ -18,6 +18,15 @@ import {
     createDailyMenuOption,
 } from "@/lib/repositories/daily-menu-option.repository";
 
+import ImageUploader from "@/components/ui/ImageUploader";
+
+import {
+    uploadDailyMenuImage,
+} from "@/lib/services/daily-menu-image-upload.service";
+
+import {
+    supabase,
+} from "@/lib/supabase";
 
 interface DailyMenuFormProps {
 
@@ -48,12 +57,46 @@ export default function DailyMenuForm({
     const [draft, setDraft] =
         useState<DailyMenu>(menu);
 
+    const [menuCoverUrl, setMenuCoverUrl] =
+        useState<string>("");
+
+    useMemo(
+        () => {
+
+            const coverPath =
+                `restaurants/${restaurantId}/daily-menu/${menu.id}/cover.webp`;
+
+            const {
+                data,
+            } =
+                supabase.storage
+                    .from(
+                        "restaurant-images"
+                    )
+                    .getPublicUrl(
+                        coverPath
+                    );
+
+            setMenuCoverUrl(
+                data.publicUrl
+            );
+
+        },
+        [
+            restaurantId,
+            menu.id,
+        ]
+    );
+
 
     const [options, setOptions] =
         useState<DailyMenuOption[]>([]);
 
 
     const [saving, setSaving] =
+        useState(false);
+
+    const [uploadingImage, setUploadingImage] =
         useState(false);
 
 
@@ -642,6 +685,60 @@ export default function DailyMenuForm({
 
     }
 
+    async function handleMenuImageUpload(
+        file: File | null
+    ) {
+
+        if (!file) {
+
+            return;
+
+        }
+
+
+        try {
+
+            setUploadingImage(
+                true
+            );
+
+            setError(
+                null
+            );
+
+
+            await uploadDailyMenuImage(
+                restaurantId,
+                draft.id,
+                file
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Error subiendo imagen del Menú del Día:",
+                error
+            );
+
+
+            setError(
+
+                error instanceof Error
+                    ? error.message
+                    : "No fue posible subir la imagen."
+
+            );
+
+        } finally {
+
+            setUploadingImage(
+                false
+            );
+
+        }
+
+    }
 
     function addSize() {
 
@@ -1354,6 +1451,48 @@ export default function DailyMenuForm({
                             draft.menuDate
                         )}
 
+                    </p>
+
+                </div>
+
+            </Card>
+
+            <Card
+
+                title="🖼️ Imagen del Menú"
+
+                description="Esta imagen será utilizada como fotografía principal de la pieza gráfica del Menú del Día."
+
+            >
+
+                <div className="space-y-4">
+
+                    <ImageUploader
+
+                        label="Imagen del Menú"
+
+                        value={
+                            menuCoverUrl
+                        }
+
+                        onChange={
+                            handleMenuImageUpload
+                        }
+
+                    />
+
+                    {uploadingImage && (
+
+                        <p className="text-sm text-gray-500">
+                            Subiendo imagen...
+                        </p>
+
+                    )}
+
+                    <p className="text-xs text-gray-500">
+                        Recomendamos una fotografía horizontal,
+                        clara y relacionada con el plato o la
+                        especialidad del restaurante.
                     </p>
 
                 </div>

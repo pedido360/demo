@@ -30,6 +30,10 @@ import {
     getOrCreateDailyMenuProduct,
 } from "@/lib/services/daily-menu-product.service";
 
+import {
+    generateDailyMenuImageAction,
+} from "@/app/actions/daily-menu-image.action";
+
 
 interface DailyMenuEditorProps {
 
@@ -270,12 +274,55 @@ export default function DailyMenuEditor({
 
             const saved =
                 await saveRestaurantDailyMenu(
-
                     restaurantId,
-
                     menu
-
                 );
+
+
+            let generatedMenu =
+                saved;
+
+
+            try {
+
+                await generateDailyMenuImageAction(
+                    restaurantId,
+                    saved.id
+                );
+
+
+                const refreshedMenus =
+                    await getRestaurantDailyMenus(
+                        restaurantId
+                    );
+
+
+                const refreshedMenu =
+                    refreshedMenus.find(
+                        item =>
+                            item.id ===
+                            saved.id
+                    );
+
+
+                if (
+                    refreshedMenu
+                ) {
+
+                    generatedMenu =
+                        refreshedMenu;
+
+                }
+
+            } catch (imageError) {
+
+                console.error(
+                    "No fue posible generar la imagen del Menú del Día:",
+                    imageError
+                );
+
+            }
+
 
             setSuccessMessage(
                 menu.isPublished
@@ -293,9 +340,9 @@ export default function DailyMenuEditor({
                         .map(
                             item =>
                                 item.id ===
-                                    saved.id
+                                    generatedMenu.id
 
-                                    ? saved
+                                    ? generatedMenu
 
                                     : item
                         )
@@ -311,8 +358,9 @@ export default function DailyMenuEditor({
 
 
             setEditingMenu(
-                null
+                generatedMenu
             );
+
 
         } catch (error) {
 
@@ -556,6 +604,29 @@ export default function DailyMenuEditor({
 
     if (editingMenu) {
 
+        const downloadDate =
+            new Date(
+                `${editingMenu.menuDate}T12:00:00`
+            );
+
+
+        const downloadFileName =
+            `Menu-del-Dia-${String(
+                downloadDate.getDate()
+            ).padStart(
+                2,
+                "0"
+            )
+            }-${String(
+                downloadDate.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            )
+            }-${downloadDate.getFullYear()
+            }-Pedidos360.webp`;
+
+
         return (
 
             <div className="space-y-4">
@@ -613,12 +684,171 @@ export default function DailyMenuEditor({
 
                 </Card>
 
+
+                {editingMenu.image && (
+
+                    <Card
+
+                        title="🖼️ Imagen del Menú del Día"
+
+                        description="Esta es la pieza gráfica generada para esta fecha."
+
+                    >
+
+                        <div className="space-y-4">
+
+                            <div className="flex justify-center rounded-2xl border border-gray-200 bg-gray-50 p-4 shadow-sm">
+
+                                <img
+                                    src={
+                                        editingMenu.image
+                                    }
+                                    alt="Imagen del Menú del Día"
+                                    className="
+                                        block
+                                        h-auto
+                                        max-h-[720px]
+                                        w-auto
+                                        max-w-full
+                                        rounded-xl
+                                        object-contain
+                                    "
+                                />
+
+                            </div>
+
+
+                            <button
+
+                                type="button"
+
+                                onClick={
+                                    async () => {
+
+                                        try {
+
+                                            const response =
+                                                await fetch(
+                                                    editingMenu.image!
+                                                );
+
+
+                                            if (
+                                                !response.ok
+                                            ) {
+
+                                                throw new Error(
+                                                    "No fue posible descargar la imagen."
+                                                );
+
+                                            }
+
+
+                                            const blob =
+                                                await response.blob();
+
+
+                                            const blobUrl =
+                                                URL.createObjectURL(
+                                                    blob
+                                                );
+
+
+                                            const link =
+                                                document.createElement(
+                                                    "a"
+                                                );
+
+
+                                            link.href =
+                                                blobUrl;
+
+
+                                            link.download =
+                                                downloadFileName;
+
+
+                                            document.body.appendChild(
+                                                link
+                                            );
+
+
+                                            link.click();
+
+
+                                            link.remove();
+
+
+                                            URL.revokeObjectURL(
+                                                blobUrl
+                                            );
+
+                                        } catch (
+                                        downloadError
+                                        ) {
+
+                                            console.error(
+                                                "No fue posible descargar la imagen:",
+                                                downloadError
+                                            );
+
+                                        }
+
+                                    }
+                                }
+
+                                className="
+                                    flex
+                                    w-full
+                                    items-center
+                                    justify-center
+                                    gap-2
+                                    rounded-xl
+                                    bg-green-700
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-bold
+                                    text-white
+                                    shadow-sm
+                                    transition
+                                    hover:bg-green-800
+                                    active:scale-[0.99]
+                                "
+
+                            >
+
+                                <span
+                                    aria-hidden="true"
+                                    className="text-lg"
+                                >
+                                    ↓
+                                </span>
+
+                                Descargar imagen
+
+                            </button>
+
+
+                            <p className="text-center text-xs text-gray-500">
+
+                                Archivo:
+                                {" "}
+                                {downloadFileName}
+
+                            </p>
+
+                        </div>
+
+                    </Card>
+
+                )}
+
             </div>
 
         );
 
     }
-
 
     return (
 

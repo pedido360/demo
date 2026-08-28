@@ -1,5 +1,6 @@
 import {
     DailyMenu,
+    DailyMenuClient,
     DailyMenuItem,
     DailyMenuSection,
 } from "@/types/daily-menu";
@@ -412,6 +413,8 @@ export async function publishRestaurantDailyMenu(
         );
 
 
+
+
     if (
         menu.restaurantId !==
         restaurantId
@@ -457,7 +460,6 @@ export async function deleteRestaurantDailyMenu(
             menuId
         );
 
-
     if (
         menu.restaurantId !==
         restaurantId
@@ -479,20 +481,7 @@ export async function deleteRestaurantDailyMenu(
 export async function getRestaurantDailyMenuClient(
     restaurantId: string,
     menuDate: string
-): Promise<{
-    id: string;
-    restaurantId: string;
-    menuProductId: string;
-    menuDate: string;
-    isPublished: boolean;
-    sizes: DailyMenu["sizes"];
-    options: {
-        id: string;
-        section: DailyMenuSection;
-        name: string;
-        sortOrder: number;
-    }[];
-} | null> {
+): Promise<DailyMenuClient | null> {
 
     const menu =
         await getPublishedDailyMenu(
@@ -568,6 +557,9 @@ export async function getRestaurantDailyMenuClient(
 
         isPublished:
             menu.isPublished,
+
+        image:
+            menu.image,
 
         sizes:
             menu.sizes,

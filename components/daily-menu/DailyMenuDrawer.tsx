@@ -50,14 +50,12 @@ interface DailyMenuDrawerProps {
 export default function DailyMenuDrawer({
 
     menu,
-
     open,
-
     onClose,
-
     onAdd,
 
 }: DailyMenuDrawerProps) {
+
 
     const [mounted, setMounted] =
         useState(false);
@@ -151,6 +149,7 @@ export default function DailyMenuDrawer({
             [menu]
         );
 
+
     const principleOptions =
         useMemo(
             () =>
@@ -210,6 +209,7 @@ export default function DailyMenuDrawer({
     const selectedSoup =
         soupOptions[0];
 
+
     const selectedPrincipleObject =
         principleOptions.find(
             option =>
@@ -262,6 +262,7 @@ export default function DailyMenuDrawer({
             proteinOptions.length === 0 ||
             !!selectedProteinObject
         );
+
 
     function handleAdd() {
 
@@ -410,6 +411,70 @@ export default function DailyMenuDrawer({
                         </p>
 
 
+                        {/* ==================================================
+                            PIEZA GRÁFICA DEL MENÚ
+                            Solo aplica al Menú del Día.
+                            La imagen ya generada por el restaurante
+                            se muestra completa antes del formulario.
+                           ================================================== */}
+
+                        {menu.image && (
+
+                            <section className="mt-6">
+
+                                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-sm">
+
+                                    <img
+                                        src={
+                                            menu.image
+                                        }
+                                        alt="Menú del Día"
+                                        className="block h-auto w-full object-contain"
+                                    />
+
+                                </div>
+
+
+                                <div
+                                    className="
+        mt-3
+        rounded-xl
+        border
+        border-green-100
+        bg-green-50
+        px-4
+        py-3
+        text-center
+    "
+                                >
+                                    <p
+                                        className="
+            text-sm
+            font-bold
+            text-green-900
+        "
+                                    >
+                                        🍽️ Arma tu Menú del Día
+                                    </p>
+
+                                    <p
+                                        className="
+            mt-1
+            text-xs
+            leading-5
+            text-green-800
+        "
+                                    >
+                                        Selecciona los componentes que deseas,
+                                        elige tu tamaño y agrega el menú a tu pedido.
+                                    </p>
+                                </div>
+
+                            </section>
+
+                        )}
+
+
                         {/* TAMAÑO */}
 
                         <section className="mt-8">
@@ -419,6 +484,7 @@ export default function DailyMenuDrawer({
                                 📏 Tamaño del menú
 
                             </h3>
+
 
                             <div className="space-y-3">
 
@@ -584,6 +650,7 @@ export default function DailyMenuDrawer({
 
                         </section>
 
+
                         {/* PRINCIPIO */}
 
                         <section className="mt-8">
@@ -608,20 +675,20 @@ export default function DailyMenuDrawer({
                                         <label
                                             key={option.id}
                                             className={`
-                        flex
-                        cursor-pointer
-                        items-center
-                        gap-3
-                        rounded-xl
-                        border
-                        p-4
-                        transition
-                        ${selectedPrinciple ===
+                                                flex
+                                                cursor-pointer
+                                                items-center
+                                                gap-3
+                                                rounded-xl
+                                                border
+                                                p-4
+                                                transition
+                                                ${selectedPrinciple ===
                                                     option.id
                                                     ? "border-orange-500 bg-orange-50"
                                                     : "border-gray-200"
                                                 }
-                    `}
+                                            `}
                                         >
 
                                             <input

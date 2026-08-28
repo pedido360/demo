@@ -68,6 +68,8 @@ export interface DailyMenu {
 
     menuDate: string;
 
+    image: string | null;
+
     isPublished: boolean;
 
     createdAt: string;
@@ -105,6 +107,8 @@ export interface DailyMenuClient {
     menuDate: string;
 
     isPublished: boolean;
+
+    image: string | null;
 
     sizes: DailyMenuSize[];
 

@@ -590,3 +590,31 @@ export async function resumeProduct(
         throw new Error(error.message);
     }
 }
+
+export async function updateProductImage(
+    productId: string,
+    image: string
+): Promise<void> {
+
+    const { error } =
+        await supabase
+            .from("products")
+            .update({
+                image,
+            })
+            .eq(
+                "id",
+                productId
+            );
+
+    if (error) {
+
+        console.error(error);
+
+        throw new Error(
+            error.message
+        );
+
+    }
+
+}

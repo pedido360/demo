@@ -10,131 +10,163 @@ export default function Screenshots() {
     return (
         <section
             id="demo"
-            className="bg-gradient-to-b from-gray-50 to-white py-24"
+            className="bg-gray-50 py-16 sm:py-20 lg:py-24"
         >
-            <div className="mx-auto max-w-7xl px-6">
 
-                {/* Header */}
+            <div className="mx-auto max-w-7xl px-5 sm:px-6">
 
-                <div className="mx-auto max-w-3xl text-center">
+                {/* =====================================================
+                    ENCABEZADO
+                ===================================================== */}
 
-                    <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
-                        Así trabaja Pedidos360
+                <div className="mx-auto max-w-2xl text-center">
+
+                    <span className="inline-flex rounded-full border border-green-200 bg-green-50 px-4 py-2 text-xs font-bold text-green-700 sm:text-sm">
+                        Mira cómo funciona
                     </span>
 
-                    <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
-                        Los pedidos, directo a tu WhatsApp.
+
+                    <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
+
+                        Tu cliente pide.
+
+                        <br />
+
+                        <span className="text-orange-500">
+                            Tú recibes.
+                        </span>
+
                     </h2>
 
-                    <p className="mt-6 text-lg leading-8 text-gray-600">
-                        Tus clientes hacen su pedido desde el menú digital y tú lo
-                        recibes organizado en WhatsApp, listo para confirmar. Todo
-                        ocurre de forma automática para que puedas atender más rápido
-                        y con menos errores.
+
+                    <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg">
+                        Una experiencia sencilla para tu cliente y pedidos
+                        mucho más fáciles de gestionar para ti.
                     </p>
 
                 </div>
 
-                {/* Flow */}
 
-                <div className="mt-20 grid items-center gap-10 lg:grid-cols-3">
+                {/* =====================================================
+                    FLUJO
+                ===================================================== */}
 
-                    {/* Cliente */}
+                <div className="mx-auto mt-10 grid max-w-6xl items-center gap-5 sm:mt-14 lg:grid-cols-[1fr_auto_1fr] lg:gap-7">
 
-                    <div className="rounded-[32px] bg-white p-8 shadow-xl ring-1 ring-gray-100">
+
+                    {/* =================================================
+                        CLIENTE
+                    ================================================= */}
+
+                    <div className="rounded-[28px] bg-white p-5 shadow-xl ring-1 ring-gray-100 sm:rounded-[32px] sm:p-7">
 
                         <div className="flex items-center gap-3">
 
-                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100">
-                                <Smartphone className="h-7 w-7 text-orange-600" />
+                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100">
+                                <Smartphone className="h-6 w-6 text-orange-600" />
                             </div>
+
 
                             <div>
 
-                                <p className="text-sm text-gray-500">
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 sm:text-xs">
                                     Cliente
                                 </p>
 
                                 <h3 className="text-xl font-bold text-gray-900">
-                                    Menú Digital
+                                    Menú digital
                                 </h3>
 
                             </div>
 
                         </div>
 
-                        <div className="mt-8 space-y-4">
 
-                            <div className="rounded-2xl bg-orange-50 p-4">
-                                🍔 Burger BBQ
-                            </div>
+                        {/* Productos */}
 
-                            <div className="rounded-2xl bg-orange-50 p-4">
-                                🍟 Papas Grandes
-                            </div>
+                        <div className="mt-6 space-y-3">
 
-                            <div className="rounded-2xl bg-orange-50 p-4">
-                                🥤 Coca-Cola
-                            </div>
+                            <ProductRow
+                                emoji="🍗"
+                                name="Pollo a la plancha"
+                                quantity="x1"
+                            />
+
+                            <ProductRow
+                                emoji="🍚"
+                                name="Arroz + ensalada"
+                                quantity="x1"
+                            />
+
+                            <ProductRow
+                                emoji="🥤"
+                                name="Jugo natural"
+                                quantity="x1"
+                            />
 
                         </div>
 
-                        <button className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-500 py-4 font-semibold text-white">
+
+                        {/* Botón */}
+
+                        <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-orange-500 py-3.5 text-sm font-bold text-white shadow-sm">
+
                             <ShoppingCart className="h-5 w-5" />
-                            Confirmar pedido
-                        </button>
+
+                            Enviar pedido
+
+                        </div>
 
                     </div>
 
-                    {/* Centro */}
 
-                    <div className="flex flex-col items-center justify-center text-center">
+                    {/* =================================================
+                        CONEXIÓN
+                    ================================================= */}
 
-                        {/* Flecha escritorio */}
+                    <div className="flex flex-col items-center justify-center">
 
-                        <ArrowRight className="hidden h-16 w-16 text-orange-400 lg:block" />
+                        <ArrowRight className="hidden h-12 w-12 text-orange-400 lg:block" />
 
-                        {/* Flecha móvil superior */}
 
-                        <ArrowRight className="h-12 w-12 rotate-90 text-orange-400 lg:hidden" />
+                        <div className="my-3 rounded-2xl border border-orange-200 bg-orange-50 px-5 py-3 text-center shadow-sm lg:my-4">
 
-                        <div className="mt-6 rounded-3xl border border-orange-200 bg-orange-50 px-8 py-6 shadow-sm">
-
-                            <div className="text-4xl">
+                            <div className="text-xl">
                                 ⚡
                             </div>
 
-                            <h3 className="mt-4 text-xl font-bold text-orange-700">
+                            <p className="mt-1 text-sm font-bold text-orange-700">
                                 Pedido enviado
-                                <br />
-                                automáticamente
-                            </h3>
+                            </p>
 
-                            <p className="mt-3 text-sm text-orange-600">
-                                Sin hacer nada.
+                            <p className="text-[11px] text-orange-600">
+                                Automáticamente
                             </p>
 
                         </div>
 
-                        {/* Flecha móvil inferior */}
 
-                        <ArrowRight className="mt-6 h-12 w-12 rotate-90 text-orange-400 lg:hidden" />
+                        <ArrowRight className="h-9 w-9 rotate-90 text-orange-400 lg:hidden" />
 
                     </div>
 
-                    {/* Restaurante */}
 
-                    <div className="rounded-[32px] bg-[#25D366] p-8 text-white shadow-2xl">
+                    {/* =================================================
+                        WHATSAPP
+                    ================================================= */}
+
+                    <div className="rounded-[28px] bg-[#25D366] p-5 text-white shadow-xl sm:rounded-[32px] sm:p-7">
 
                         <div className="flex items-center gap-3">
 
-                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
-                                <MessageCircle className="h-7 w-7" />
+                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20">
+                                <MessageCircle className="h-6 w-6" />
                             </div>
+
 
                             <div>
 
-                                <p className="text-sm opacity-80">
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-white/70 sm:text-xs">
                                     Restaurante
                                 </p>
 
@@ -146,37 +178,71 @@ export default function Screenshots() {
 
                         </div>
 
-                        <div className="mt-8 rounded-3xl bg-white p-6 text-gray-800">
 
-                            <p className="font-bold">
-                                🍔 Nuevo pedido
-                            </p>
+                        {/* Pedido recibido */}
+
+                        <div className="mt-6 rounded-2xl bg-white p-5 text-gray-800">
+
+                            <div className="flex items-center justify-between">
+
+                                <p className="font-bold">
+                                    🍽️ Nuevo pedido
+                                </p>
+
+                                <span className="rounded-full bg-green-100 px-2.5 py-1 text-[10px] font-bold text-green-700">
+                                    NUEVO
+                                </span>
+
+                            </div>
+
 
                             <div className="mt-4 space-y-2 text-sm">
 
-                                <p>👤 Carlos Pérez</p>
-
-                                <p>• Burger BBQ x1</p>
-
-                                <p>• Papas Grandes x1</p>
-
-                                <p>• Coca-Cola x1</p>
-
-                                <p className="pt-2 font-bold">
-                                    Total: $24.80
+                                <p className="text-gray-500">
+                                    👤 Cliente
                                 </p>
+
+                                <p>
+                                    • Pollo a la plancha x1
+                                </p>
+
+                                <p>
+                                    • Arroz + ensalada x1
+                                </p>
+
+                                <p>
+                                    • Jugo natural x1
+                                </p>
+
+                            </div>
+
+
+                            <div className="mt-4 border-t border-gray-100 pt-4">
+
+                                <div className="flex items-center justify-between">
+
+                                    <span className="text-sm text-gray-500">
+                                        Total
+                                    </span>
+
+                                    <strong className="text-lg font-extrabold">
+                                        $25.000
+                                    </strong>
+
+                                </div>
 
                             </div>
 
                         </div>
 
-                        <div className="mt-6 flex items-center gap-3 rounded-2xl bg-white/15 p-4">
 
-                            <CheckCircle2 className="h-6 w-6" />
+                        {/* Confirmación */}
 
-                            <span className="font-medium">
-                                Pedido listo para confirmar
-                            </span>
+                        <div className="mt-5 flex items-center gap-2 text-sm font-semibold">
+
+                            <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
+
+                            Pedido listo para confirmar
 
                         </div>
 
@@ -184,7 +250,57 @@ export default function Screenshots() {
 
                 </div>
 
+
+                {/* =====================================================
+                    MENSAJE FINAL
+                ===================================================== */}
+
+                <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-12">
+
+                    <p className="text-base font-bold text-gray-800 sm:text-lg">
+                        Sin llamadas. Sin mensajes desordenados.
+                        <span className="text-orange-500">
+                            {" "}Solo pedidos.
+                        </span>
+                    </p>
+
+                </div>
+
             </div>
+
         </section>
+    );
+}
+
+
+function ProductRow({
+    emoji,
+    name,
+    quantity,
+}: {
+    emoji: string;
+    name: string;
+    quantity: string;
+}) {
+    return (
+
+        <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-3">
+
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-white text-lg shadow-sm">
+                {emoji}
+            </div>
+
+
+            <p className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700">
+                {name}
+            </p>
+
+
+            <span className="flex-shrink-0 text-xs font-bold text-gray-400">
+                {quantity}
+            </span>
+
+        </div>
+
     );
 }

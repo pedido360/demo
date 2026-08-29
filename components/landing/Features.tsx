@@ -2,47 +2,33 @@ import {
     MenuSquare,
     ShoppingCart,
     MessageCircle,
-    BarChart3,
-    Smartphone,
-    BellRing,
+    QrCode,
 } from "lucide-react";
 
 const features = [
     {
         icon: MenuSquare,
-        title: "Menú digital inteligente",
+        title: "Menú digital",
         description:
-            "Actualiza productos, precios y promociones en segundos. Tus clientes siempre ven la versión correcta.",
+            "Productos, precios e imágenes siempre actualizados.",
     },
     {
         icon: ShoppingCart,
         title: "Pedidos organizados",
         description:
-            "Cada pedido llega estructurado, evitando errores y reduciendo el tiempo de atención.",
+            "Cada pedido llega estructurado y listo para revisar.",
     },
     {
         icon: MessageCircle,
-        title: "Integración con WhatsApp",
+        title: "WhatsApp",
         description:
-            "El restaurante recibe pedidos listos para confirmar directamente desde WhatsApp.",
+            "Recibe los pedidos directamente donde ya trabaja tu restaurante.",
     },
     {
-        icon: BellRing,
-        title: "Notificaciones instantáneas",
+        icon: QrCode,
+        title: "Comparte y vende",
         description:
-            "Nunca vuelvas a perder un pedido por responder demasiado tarde.",
-    },
-    {
-        icon: Smartphone,
-        title: "Funciona en cualquier celular",
-        description:
-            "Tus clientes no necesitan descargar ninguna aplicación para hacer un pedido.",
-    },
-    {
-        icon: BarChart3,
-        title: "Más control para tu negocio",
-        description:
-            "Organiza tus pedidos y brinda una experiencia más profesional desde el primer día.",
+            "Un enlace y un QR para llevar tu menú a mesas, redes y clientes.",
     },
 ];
 
@@ -50,57 +36,141 @@ export default function Features() {
     return (
         <section
             id="funciones"
-            className="bg-gray-50 py-24"
+            className="bg-white py-16 sm:py-20 lg:py-24"
         >
-            <div className="mx-auto max-w-7xl px-6">
 
-                {/* Header */}
+            <div className="mx-auto max-w-7xl px-5 sm:px-6">
+
+                {/* =====================================================
+                    ENCABEZADO
+                ===================================================== */}
+
                 <div className="mx-auto max-w-3xl text-center">
 
                     <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
-                        Todo lo que necesitas
+                        ¿Qué es Pedidos360?
                     </span>
 
-                    <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
-                        Diseñado para vender más y trabajar menos.
+
+                    <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
+
+                        Tu menú convertido
+                        <br className="sm:hidden" />
+                        {" "}
+                        en un canal de pedidos.
+
                     </h2>
 
-                    <p className="mt-6 text-lg leading-8 text-gray-600">
-                        Pedidos360 automatiza las tareas repetitivas para que puedas
-                        dedicar más tiempo a preparar pedidos y atender mejor a tus clientes.
+
+                    <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg sm:leading-8">
+
+                        Tus clientes consultan, eligen y piden desde su celular.
+                        Tú recibes todo organizado en WhatsApp.
+
                     </p>
 
                 </div>
 
-                {/* Cards */}
-                <div className="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+                {/* =====================================================
+                    FUNCIONES
+                ===================================================== */}
+
+                <div className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2 lg:grid-cols-4">
 
                     {features.map((feature) => {
+
                         const Icon = feature.icon;
 
                         return (
+
                             <div
                                 key={feature.title}
-                                className="group rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:ring-orange-200 lg:text-left"
+                                className="
+                                    group
+                                    rounded-3xl
+                                    border
+                                    border-gray-100
+                                    bg-gray-50
+                                    p-6
+                                    transition-all
+                                    duration-300
+                                    hover:-translate-y-1
+                                    hover:bg-white
+                                    hover:shadow-xl
+                                    sm:p-7
+                                "
                             >
-                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition-all duration-300 group-hover:bg-orange-500 group-hover:text-white lg:mx-0">
-                                    <Icon className="h-8 w-8" />
+
+                                {/* Icono */}
+
+                                <div
+                                    className="
+                                        flex
+                                        h-12
+                                        w-12
+                                        items-center
+                                        justify-center
+                                        rounded-2xl
+                                        bg-orange-100
+                                        text-orange-600
+                                        transition-colors
+                                        duration-300
+                                        group-hover:bg-orange-500
+                                        group-hover:text-white
+                                        sm:h-14
+                                        sm:w-14
+                                    "
+                                >
+
+                                    <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+
                                 </div>
 
-                                <h3 className="mt-6 text-xl font-bold text-gray-900">
+
+                                {/* Título */}
+
+                                <h3 className="mt-5 text-lg font-bold text-gray-900 sm:text-xl">
+
                                     {feature.title}
+
                                 </h3>
 
-                                <p className="mt-4 leading-7 text-gray-600">
+
+                                {/* Descripción */}
+
+                                <p className="mt-2 text-sm leading-6 text-gray-600 sm:text-base">
+
                                     {feature.description}
+
                                 </p>
+
                             </div>
+
                         );
+
                     })}
 
                 </div>
 
+
+                {/* =====================================================
+                    FRASE DE CIERRE
+                ===================================================== */}
+
+                <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-14">
+
+                    <p className="text-base font-semibold text-gray-800 sm:text-lg">
+
+                        Una sola experiencia para que tu cliente
+                        pueda descubrir, elegir y pedir.
+
+                    </p>
+
+                </div>
+
             </div>
+
         </section>
     );
 }

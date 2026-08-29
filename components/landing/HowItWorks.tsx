@@ -1,28 +1,30 @@
 import {
+    Settings2,
     QrCode,
-    Smartphone,
     MessageCircle,
-    ArrowDown,
 } from "lucide-react";
 
 const steps = [
     {
+        number: "01",
+        icon: Settings2,
+        title: "Configura",
+        description:
+            "Crea tu menú, productos y opciones del Menú del Día.",
+    },
+    {
+        number: "02",
         icon: QrCode,
-        title: "Comparte tu menú",
+        title: "Comparte",
         description:
-            "Publica tu enlace o código QR en mesas, redes sociales o WhatsApp. Tus clientes acceden al menú en segundos.",
+            "Publica tu enlace o código QR en mesas, redes y WhatsApp.",
     },
     {
-        icon: Smartphone,
-        title: "El cliente hace su pedido",
-        description:
-            "Explora el menú, agrega productos al carrito y confirma su pedido desde cualquier celular.",
-    },
-    {
+        number: "03",
         icon: MessageCircle,
-        title: "Recíbelo en WhatsApp",
+        title: "Recibe",
         description:
-            "El pedido llega organizado y listo para confirmar, sin llamadas ni mensajes desordenados.",
+            "Tu cliente hace el pedido y tú lo recibes organizado.",
     },
 ];
 
@@ -30,84 +32,110 @@ export default function HowItWorks() {
     return (
         <section
             id="como-funciona"
-            className="bg-white py-24"
+            className="bg-white py-16 sm:py-20 lg:py-24"
         >
-            <div className="mx-auto max-w-7xl px-6">
 
-                {/* Header */}
-                <div className="mx-auto max-w-3xl text-center">
+            <div className="mx-auto max-w-6xl px-5 sm:px-6">
 
-                    <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
-                        Cómo funciona
+                {/* =====================================================
+                    ENCABEZADO
+                ===================================================== */}
+
+                <div className="mx-auto max-w-2xl text-center">
+
+                    <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-xs font-bold text-orange-600 sm:text-sm">
+                        Así de sencillo
                     </span>
 
-                    <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
-                        Tres pasos. Cero complicaciones.
+
+                    <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
+                        Del menú al pedido.
                     </h2>
 
-                    <p className="mt-6 text-lg leading-8 text-gray-600">
-                        En pocos minutos tendrás un menú digital listo para recibir
-                        pedidos de forma organizada directamente en WhatsApp.
+
+                    <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg sm:leading-8">
+                        Tres pasos y tu restaurante está listo para recibir pedidos.
                     </p>
 
                 </div>
 
-                {/* Steps */}
-                <div className="mt-20 grid gap-8 lg:grid-cols-3">
 
-                    {steps.map((step, index) => {
+                {/* =====================================================
+                    PASOS
+                ===================================================== */}
+
+                <div className="mt-10 grid gap-4 sm:mt-14 md:grid-cols-3 md:gap-6">
+
+                    {steps.map((step) => {
+
                         const Icon = step.icon;
 
                         return (
+
                             <div
-                                key={step.title}
-                                className="relative rounded-3xl border border-gray-100 bg-white p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl lg:text-left"
+                                key={step.number}
+                                className="
+                                    relative
+                                    rounded-3xl
+                                    border
+                                    border-gray-100
+                                    bg-gray-50
+                                    p-6
+                                    sm:p-8
+                                "
                             >
 
-                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg lg:mx-0">
-                                    <Icon className="h-8 w-8" />
+                                {/* Número + icono */}
+
+                                <div className="flex items-center justify-between">
+
+                                    <span className="text-sm font-extrabold text-orange-500">
+                                        {step.number}
+                                    </span>
+
+
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-orange-500 shadow-sm sm:h-12 sm:w-12">
+
+                                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+
+                                    </div>
+
                                 </div>
 
-                                <div className="mx-auto mt-8 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-600 lg:mx-0">
-                                    {index + 1}
-                                </div>
 
-                                <h3 className="mt-6 text-2xl font-bold text-gray-900">
+                                <h3 className="mt-6 text-xl font-bold text-gray-900 sm:text-2xl">
                                     {step.title}
                                 </h3>
 
-                                <p className="mt-4 leading-7 text-gray-600">
+
+                                <p className="mt-2 text-sm leading-6 text-gray-600 sm:text-base">
                                     {step.description}
                                 </p>
 
-                                {index < steps.length - 1 && (
-                                    <div className="absolute -right-4 top-1/2 hidden -translate-y-1/2 lg:block">
-                                        <ArrowDown className="h-8 w-8 rotate-[-90deg] text-orange-300" />
-                                    </div>
-                                )}
-
                             </div>
+
                         );
+
                     })}
 
                 </div>
 
-                {/* Mensaje final */}
 
-                <div className="mt-20 rounded-[32px] bg-gray-50 p-10 text-center">
+                {/* =====================================================
+                    FRASE FINAL
+                ===================================================== */}
 
-                    <h3 className="text-3xl font-bold text-gray-900">
-                        Tu restaurante recibe pedidos más rápido.
-                    </h3>
+                <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-12">
 
-                    <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-gray-600">
-                        Sin instalar aplicaciones, sin procesos complicados y sin
-                        depender de múltiples conversaciones para atender a tus clientes.
+                    <p className="text-base font-bold text-gray-800 sm:text-lg">
+                        Sin aplicaciones para tus clientes.
+                        Sin procesos complicados.
                     </p>
 
                 </div>
 
             </div>
+
         </section>
     );
 }

@@ -1,176 +1,381 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+    ArrowRight,
+    CheckCircle2,
+} from "lucide-react";
 
 const benefits = [
-    "Menú digital completamente personalizado",
-    "Configuración de tu restaurante",
-    "Código QR listo para compartir",
-    "Pedidos organizados directamente en WhatsApp",
+    "Menú digital personalizado",
+    "Pedidos organizados en WhatsApp",
+    "Código QR para compartir",
+    "Constructor de Menú del Día",
 ];
 
 const whatsappUrl =
-    "https://wa.me/573184377576?text=Hola%20👋%0A%0AQuiero%20iniciar%20con%20Pedidos360%20para%20mi%20restaurante.%0A%0AMe%20gustaría%20coordinar%20la%20contratación%20del%20servicio%20y%20comenzar%20la%20personalización%20de%20mi%20menú%20digital.%0A%0AQuedo%20atento%20para%20iniciar%20el%20proceso.";
+    "https://wa.me/573184377576?text=Hola%20👋%0A%0AQuiero%20conocer%20Pedidos360%20para%20mi%20restaurante.%0A%0AMe%20gustaría%20conocer%20cómo%20funciona%20y%20coordinar%20el%20inicio.%0A%0AQuedo%20atento.";
 
 export default function Pricing() {
-    const [starting, setStarting] = useState(false);
+
+    const [starting, setStarting] =
+        useState(false);
+
 
     useEffect(() => {
-        if (!starting) return;
 
-        const timer = setTimeout(() => {
-            window.open(whatsappUrl, "_blank");
-            setStarting(false);
-        }, 1800);
+        if (!starting) {
+            return;
+        }
 
-        return () => clearTimeout(timer);
+
+        const timer =
+            setTimeout(() => {
+
+                window.open(
+                    whatsappUrl,
+                    "_blank"
+                );
+
+                setStarting(false);
+
+            }, 1200);
+
+
+        return () => {
+            clearTimeout(timer);
+        };
+
     }, [starting]);
+
 
     return (
         <>
+
+            {/* =====================================================
+                CTA PRINCIPAL
+            ===================================================== */}
+
             <section
                 id="empezar"
-                className="bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 py-24"
+                className="
+                    bg-gradient-to-br
+                    from-orange-500
+                    via-orange-600
+                    to-red-600
+                    py-16
+                    sm:py-20
+                    lg:py-24
+                "
             >
-                <div className="mx-auto max-w-7xl px-6">
-                    <div className="overflow-hidden rounded-[40px] bg-white shadow-2xl">
-                        <div className="grid lg:grid-cols-2">
-                            {/* Información */}
 
-                            <div className="p-10 lg:p-14">
-                                <span className="inline-flex rounded-full bg-orange-100 px-4 py-2 text-sm font-semibold text-orange-600">
-                                    El siguiente paso empieza aquí 🚀
+                <div className="mx-auto max-w-5xl px-5 sm:px-6">
+
+                    <div
+                        className="
+                            overflow-hidden
+                            rounded-[32px]
+                            bg-gray-950
+                            text-white
+                            shadow-2xl
+                            sm:rounded-[40px]
+                        "
+                    >
+
+                        <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
+
+                            {/* =================================================
+                                MENSAJE
+                            ================================================= */}
+
+                            <div className="p-8 sm:p-10 lg:p-14">
+
+                                <span
+                                    className="
+                                        inline-flex
+                                        rounded-full
+                                        border
+                                        border-orange-400/30
+                                        bg-orange-500/10
+                                        px-4
+                                        py-2
+                                        text-xs
+                                        font-bold
+                                        text-orange-300
+                                        sm:text-sm
+                                    "
+                                >
+                                    Empieza hoy 🚀
                                 </span>
 
-                                <h2 className="mt-6 text-center text-4xl font-extrabold leading-tight text-gray-900 md:text-5xl lg:text-left">
-                                    Hoy empieza la transformación digital de tu
-                                    restaurante.
+
+                                <h2
+                                    className="
+                                        mt-5
+                                        text-3xl
+                                        font-extrabold
+                                        leading-tight
+                                        sm:text-4xl
+                                        md:text-5xl
+                                    "
+                                >
+
+                                    Tu restaurante,
+
+                                    <br />
+
+                                    <span className="text-orange-400">
+                                        listo para recibir pedidos.
+                                    </span>
+
                                 </h2>
 
-                                <p className="mt-6 text-center text-lg leading-8 text-gray-600 lg:text-left">
-                                    Ya conoces cómo funciona Pedidos360. Ahora
-                                    solo queda un paso: coordinar la
-                                    implementación de tu restaurante para que
-                                    muy pronto estés recibiendo pedidos
-                                    organizados directamente por WhatsApp.
+
+                                <p
+                                    className="
+                                        mt-5
+                                        max-w-xl
+                                        text-base
+                                        leading-7
+                                        text-gray-300
+                                        sm:text-lg
+                                        sm:leading-8
+                                    "
+                                >
+                                    Nosotros configuramos tu restaurante,
+                                    personalizamos tu menú y te acompañamos
+                                    para que empieces a recibir pedidos.
                                 </p>
 
-                                <div className="mt-10 space-y-5">
+
+                                {/* BENEFICIOS */}
+
+                                <div className="mt-7 grid gap-3 sm:mt-9 sm:gap-4">
+
                                     {benefits.map((item) => (
+
                                         <div
                                             key={item}
                                             className="flex items-center gap-3"
                                         >
-                                            <CheckCircle2 className="h-6 w-6 text-green-500" />
 
-                                            <span className="text-gray-700">
+                                            <CheckCircle2
+                                                className="
+                                                    h-5
+                                                    w-5
+                                                    flex-shrink-0
+                                                    text-green-400
+                                                "
+                                            />
+
+                                            <span className="text-sm text-gray-200 sm:text-base">
                                                 {item}
                                             </span>
+
                                         </div>
+
                                     ))}
+
                                 </div>
+
                             </div>
 
-                            {/* CTA */}
 
-                            <div className="flex flex-col justify-center bg-gray-900 p-10 text-white lg:p-14">
-                                <span className="text-center text-sm font-semibold uppercase tracking-[0.3em] text-orange-400 lg:text-left">
-                                    Comencemos
-                                </span>
+                            {/* =================================================
+                                CTA
+                            ================================================= */}
 
-                                <h3 className="mt-5 text-center text-4xl font-bold lg:text-left">
-                                    Activa tu Pedidos360.
-                                </h3>
+                            <div
+                                className="
+                                    flex
+                                    flex-col
+                                    justify-center
+                                    bg-white
+                                    p-8
+                                    text-gray-900
+                                    sm:p-10
+                                    lg:p-10
+                                "
+                            >
 
-                                <p className="mt-6 text-center text-lg leading-8 text-gray-300 lg:text-left">
-                                    Después de hacer clic coordinaremos contigo
-                                    la contratación del servicio, la
-                                    personalización de tu restaurante y la
-                                    puesta en marcha de tu menú digital.
+                                <p className="text-center text-xs font-extrabold uppercase tracking-[0.2em] text-orange-500 lg:text-left">
+                                    Hablemos
                                 </p>
 
-                                <button
-                                    onClick={() => setStarting(true)}
-                                    className="mt-10 flex items-center justify-center gap-3 rounded-2xl bg-orange-500 px-8 py-5 text-lg font-bold transition duration-300 hover:scale-105 hover:bg-orange-400"
-                                >
-                                    Activar mi Pedidos360
 
-                                    <ArrowRight className="h-6 w-6" />
+                                <h3
+                                    className="
+                                        mt-3
+                                        text-center
+                                        text-2xl
+                                        font-extrabold
+                                        sm:text-3xl
+                                        lg:text-left
+                                    "
+                                >
+                                    ¿Quieres Pedidos360?
+                                </h3>
+
+
+                                <p
+                                    className="
+                                        mt-3
+                                        text-center
+                                        text-sm
+                                        leading-6
+                                        text-gray-600
+                                        sm:text-base
+                                        sm:leading-7
+                                        lg:text-left
+                                    "
+                                >
+                                    Escríbenos y te contamos cómo llevar
+                                    Pedidos360 a tu restaurante.
+                                </p>
+
+
+                                <button
+                                    type="button"
+                                    onClick={() => setStarting(true)}
+                                    className="
+                                        mt-7
+                                        flex
+                                        w-full
+                                        items-center
+                                        justify-center
+                                        gap-3
+                                        rounded-2xl
+                                        bg-orange-500
+                                        px-6
+                                        py-4
+                                        text-base
+                                        font-extrabold
+                                        text-white
+                                        shadow-lg
+                                        transition
+                                        hover:bg-orange-400
+                                        hover:shadow-xl
+                                        active:scale-[0.99]
+                                    "
+                                >
+
+                                    Hablar con Pedidos360
+
+                                    <ArrowRight className="h-5 w-5" />
+
                                 </button>
 
-                                <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
-                                    <p className="font-semibold text-white">
-                                        ¿Qué pasará después?
-                                    </p>
 
-                                    <ul className="mt-4 space-y-3 text-sm text-gray-300">
-                                        <li>
-                                            ✅ Coordinaremos la contratación.
-                                        </li>
+                                <p className="mt-4 text-center text-xs text-gray-400">
+                                    Atención personalizada por WhatsApp.
+                                </p>
 
-                                        <li>
-                                            ✅ Personalizaremos tu restaurante.
-                                        </li>
-
-                                        <li>
-                                            ✅ Configuraremos tu menú digital.
-                                        </li>
-
-                                        <li>
-                                            ✅ Comenzarás a recibir pedidos.
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
+
                         </div>
+
                     </div>
 
-                    {/* Cierre */}
 
-                    <div className="mt-20 text-center">
-                        <h3 className="text-3xl font-bold text-white">
-                            Bienvenido a la nueva forma de recibir pedidos.
-                        </h3>
+                    {/* =====================================================
+                        CIERRE
+                    ===================================================== */}
 
-                        <p className="mt-4 text-lg text-orange-100">
-                            Bienvenido a{" "}
-                            <span className="font-bold">
-                                Pedidos360.
-                            </span>
+                    <div className="mt-8 text-center sm:mt-10">
+
+                        <p className="text-lg font-bold text-white">
+                            Pedidos360
                         </p>
+
+                        <p className="mt-1 text-sm text-orange-100">
+                            Tu menú. Tus pedidos. Tu restaurante.
+                        </p>
+
                     </div>
+
                 </div>
+
             </section>
 
-            {/* Modal */}
+
+            {/* =====================================================
+                MODAL
+            ===================================================== */}
 
             {starting && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md">
-                    <div className="mx-6 max-w-lg rounded-[36px] bg-white p-12 text-center shadow-2xl">
-                        <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-orange-100 text-5xl">
+
+                <div
+                    className="
+                        fixed
+                        inset-0
+                        z-50
+                        flex
+                        items-center
+                        justify-center
+                        bg-black/75
+                        px-5
+                        backdrop-blur-sm
+                    "
+                >
+
+                    <div
+                        className="
+                            w-full
+                            max-w-md
+                            rounded-[32px]
+                            bg-white
+                            p-8
+                            text-center
+                            shadow-2xl
+                            sm:p-10
+                        "
+                    >
+
+                        <div
+                            className="
+                                mx-auto
+                                flex
+                                h-20
+                                w-20
+                                items-center
+                                justify-center
+                                rounded-full
+                                bg-orange-100
+                                text-4xl
+                            "
+                        >
                             🚀
                         </div>
 
-                        <h2 className="mt-8 text-4xl font-extrabold text-gray-900">
-                            ¡Excelente decisión!
+
+                        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+                            ¡Vamos a empezar!
                         </h2>
 
-                        <p className="mt-6 text-lg leading-8 text-gray-600">
-                            Ahora vamos a coordinar la contratación y la
-                            personalización de tu restaurante.
+
+                        <p className="mt-4 text-sm leading-6 text-gray-600 sm:text-base sm:leading-7">
+                            Estamos preparando tu contacto con
+                            Pedidos360 por WhatsApp.
                         </p>
 
-                        <div className="mt-10 h-2 overflow-hidden rounded-full bg-gray-200">
-                            <div className="h-full w-full origin-left animate-pulse rounded-full bg-orange-500" />
+
+                        <div className="mt-7 h-2 overflow-hidden rounded-full bg-gray-200">
+
+                            <div className="h-full w-full animate-pulse rounded-full bg-orange-500" />
+
                         </div>
 
-                        <p className="mt-6 text-sm text-gray-500">
+
+                        <p className="mt-4 text-sm text-gray-500">
                             Abriendo WhatsApp...
                         </p>
+
                     </div>
+
                 </div>
+
             )}
+
         </>
     );
 }

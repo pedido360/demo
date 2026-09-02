@@ -510,4 +510,16 @@ export const products: Product[] = [
             },
         ],
     },
+
+    {
+        id: "daily-menu-demo",
+        categoryId: "daily-menu",
+        name: "Menú del Día",
+        productType: "daily_menu",
+        description:
+            "Arma tu menú con sopa, seco, principio, proteína, bebida y postre.",
+        price: 25000,
+        image: "",
+        featured: true,
+    },
 ];

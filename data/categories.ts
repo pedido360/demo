@@ -2,6 +2,13 @@ import { Category } from "@/types/category";
 
 export const categories: Category[] = [
     {
+        id: "daily-menu",
+        name: "Menú del Día",
+        description: "",
+        emoji: "🍲",
+        isActive: true,
+    },
+    {
         id: "1",
         name: "Hamburguesas",
         description: "",

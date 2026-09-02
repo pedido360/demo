@@ -76,7 +76,7 @@ export default function ProductCard({
 
     return (
 
-        <article className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+        <article className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md">
 
             {/* Imagen */}
 
@@ -107,7 +107,13 @@ export default function ProductCard({
 
             <div className="min-w-0 flex-1">
 
-                <h3 className="truncate text-[15px] font-semibold text-gray-900">
+                <h3
+                    className={
+                        isDailyMenu
+                            ? "line-clamp-2 text-[15px] font-semibold leading-5 text-gray-900"
+                            : "truncate text-[15px] font-semibold text-gray-900"
+                    }
+                >
                     {product.name}
                 </h3>
 
@@ -120,9 +126,15 @@ export default function ProductCard({
 
             {/* Precio y botón */}
 
-            <div className="ml-2 flex flex-col items-end justify-between self-stretch">
+            <div className="ml-1 flex w-[82px] flex-shrink-0 flex-col items-end justify-between self-stretch">
 
-                <span className="whitespace-nowrap text-base font-bold text-red-600">
+                <span
+                    className={
+                        isDailyMenu
+                            ? "text-right text-sm font-bold leading-5 text-red-600"
+                            : "whitespace-nowrap text-base font-bold text-red-600"
+                    }
+                >
                     {priceLabel}
                 </span>
 

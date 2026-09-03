@@ -47,10 +47,49 @@ export default function RestaurantContent({
 
     useEffect(() => {
 
+        if (data.categories.length === 0) {
+            return;
+        }
+
+        const hash =
+            window.location.hash;
+
         if (
-            data.categories.length > 0 &&
-            !selectedCategory
+            data.restaurant.slug === "demo" &&
+            hash === "#menu-del-dia-demo"
         ) {
+
+            const dailyMenuCategory =
+                data.categories.find(
+                    (category) =>
+                        category.id === "daily-menu"
+                );
+
+            if (dailyMenuCategory) {
+
+                setSelectedCategory(
+                    dailyMenuCategory.id
+                );
+
+                setTimeout(() => {
+
+                    document
+                        .getElementById(
+                            "menu-del-dia-demo"
+                        )
+                        ?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                        });
+
+                }, 100);
+
+                return;
+            }
+
+        }
+
+        if (!selectedCategory) {
 
             setSelectedCategory(
                 data.categories[0].id
@@ -60,8 +99,10 @@ export default function RestaurantContent({
 
     }, [
         data.categories,
+        data.restaurant.slug,
         selectedCategory,
     ]);
+
 
     function isProductAvailableToday(
         product: Product
@@ -278,11 +319,13 @@ export default function RestaurantContent({
 
             </section>
 
-            <Categories
-                categories={data.categories}
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-            />
+            <section id="menu-del-dia-demo">
+                <Categories
+                    categories={data.categories}
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={setSelectedCategory}
+                />
+            </section>
 
             <section className="mx-auto max-w-2xl px-5 py-2">
 

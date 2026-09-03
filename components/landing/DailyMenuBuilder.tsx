@@ -1,3 +1,6 @@
+import Image from "next/image";
+import DailyMenuFlow from "@/components/demo/DailyMenuFlow";
+
 import {
     ArrowRight,
     CheckCircle2,
@@ -5,8 +8,11 @@ import {
     Utensils,
 } from "lucide-react";
 
+
 export default function DailyMenuBuilder() {
+
     return (
+
         <section
             id="menu-del-dia"
             className="
@@ -30,6 +36,7 @@ export default function DailyMenuBuilder() {
             <div className="relative mx-auto max-w-7xl px-5 sm:px-6">
 
                 <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+
 
                     {/* =====================================================
                         INFORMACIÓN
@@ -114,7 +121,8 @@ export default function DailyMenuBuilder() {
                                 "Sopas, secos y principios",
                                 "Proteínas, bebidas y postres",
                                 "Tamaños y precios personalizados",
-                                "El cliente elige sus componentes",
+                                "El sistema configura el menú del dia y crea la imagen para descargar",
+                                "El cliente elige sus componentes y hace el pedido",
                             ].map((item) => (
 
                                 <div
@@ -140,7 +148,7 @@ export default function DailyMenuBuilder() {
                         <div className="mt-8 flex justify-center lg:justify-start">
 
                             <a
-                                href="/demo"
+                                href="/demo#menu-del-dia-demo"
                                 className="
                                     inline-flex
                                     w-full
@@ -161,7 +169,7 @@ export default function DailyMenuBuilder() {
                                 "
                             >
 
-                                Ver cómo funciona
+                                Ver cómo funciona para tus clientes
 
                                 <ArrowRight className="h-5 w-5" />
 
@@ -169,158 +177,157 @@ export default function DailyMenuBuilder() {
 
                         </div>
 
+                        <div className="mt-4">
+                            <DailyMenuFlow />
+                        </div>
+
                     </div>
 
 
                     {/* =====================================================
-                        CONSTRUCTOR VISUAL
+                        VISTA DEL PRODUCTO
                     ===================================================== */}
 
-                    <div className="relative mx-auto w-full max-w-xl">
+                    <div className="relative mx-auto w-full max-w-md sm:max-w-lg">
 
                         <div
                             className="
+                                overflow-hidden
                                 rounded-[28px]
                                 border
                                 border-white/10
                                 bg-white
-                                p-4
                                 shadow-2xl
                                 sm:rounded-[32px]
-                                sm:p-6
                             "
                         >
 
-                            {/* CABECERA */}
+                            {/* IMAGEN DEL MENÚ */}
 
-                            <div className="flex items-center justify-between border-b border-gray-100 pb-4 sm:pb-5">
+                            <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
 
-                                <div className="min-w-0">
+                                <Image
+                                    src="/images/products/daily-menu.jpg"
+                                    alt="Menú del Día de Pedidos360"
+                                    fill
+                                    sizes="(max-width: 640px) 100vw, 520px"
+                                    className="object-cover"
+                                />
 
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 sm:text-xs">
-                                        Pedidos360
-                                    </p>
+                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent p-5 sm:p-6">
 
-                                    <h3 className="mt-1 truncate text-xl font-extrabold text-gray-900 sm:text-2xl">
-                                        Menú del Día
-                                    </h3>
+                                    <div className="flex items-end justify-between gap-4">
 
-                                </div>
+                                        <div>
 
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80">
+                                                Menú del Día
+                                            </p>
 
-                                <div className="ml-3 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600 sm:h-12 sm:w-12 sm:rounded-2xl">
+                                            <h3 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">
+                                                Arma tu menú
+                                            </h3>
 
-                                    <Utensils className="h-5 w-5 sm:h-6 sm:w-6" />
+                                        </div>
+
+                                        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-white text-orange-600 shadow-lg">
+
+                                            <Utensils className="h-5 w-5" />
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
 
-                            {/* OPCIONES */}
+                            {/* SELECTOR */}
 
-                            <div className="mt-4 space-y-2.5 sm:mt-6 sm:space-y-3">
+                            <div className="p-5 sm:p-6">
 
-                                <BuilderRow
-                                    emoji="🥣"
-                                    title="Sopa"
-                                    value="Sopa del día"
-                                />
+                                <div className="flex items-center justify-between">
 
-                                <BuilderRow
-                                    emoji="🍚"
-                                    title="Principio"
-                                    value="Arroz + ensalada"
-                                />
+                                    <div>
 
-                                <BuilderRow
-                                    emoji="🍗"
-                                    title="Proteína"
-                                    value="Pollo a la plancha"
-                                />
+                                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
+                                            Personaliza
+                                        </p>
 
-                                <BuilderRow
-                                    emoji="🥤"
-                                    title="Bebida"
-                                    value="Jugo natural"
-                                />
+                                        <h3 className="mt-1 text-lg font-extrabold text-gray-900 sm:text-xl">
+                                            Elige tus favoritos
+                                        </h3>
 
-                                <BuilderRow
-                                    emoji="🍮"
-                                    title="Postre"
-                                    value="Postre del día"
-                                />
+                                    </div>
 
-                            </div>
-
-
-                            {/* PRECIO */}
-
-                            <div
-                                className="
-                                    mt-4
-                                    flex
-                                    items-center
-                                    justify-between
-                                    gap-3
-                                    rounded-2xl
-                                    bg-orange-50
-                                    px-4
-                                    py-3
-                                    sm:mt-5
-                                    sm:px-5
-                                    sm:py-4
-                                "
-                            >
-
-                                <div className="min-w-0">
-
-                                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 sm:text-xs">
-                                        Menú ejecutivo
-                                    </p>
-
-                                    <p className="mt-0.5 truncate text-xs font-medium text-gray-700 sm:text-sm">
-                                        Menú completo
-                                    </p>
+                                    <span className="rounded-full bg-green-50 px-3 py-1.5 text-[10px] font-bold text-green-700 sm:text-xs">
+                                        A tu gusto
+                                    </span>
 
                                 </div>
 
 
-                                <strong className="flex-shrink-0 text-xl font-extrabold text-orange-600 sm:text-2xl">
-                                    $25.000
-                                </strong>
+                                <div className="mt-4 grid grid-cols-2 gap-2.5">
 
-                            </div>
+                                    <MenuChoice
+                                        label="Proteína"
+                                        value="Pechuga a la plancha"
+                                        active
+                                    />
+
+                                    <MenuChoice
+                                        label="Bebida"
+                                        value="Jugo natural"
+                                    />
+
+                                    <MenuChoice
+                                        label="Principio"
+                                        value="Arroz + ensalada"
+                                    />
+
+                                    <MenuChoice
+                                        label="Postre"
+                                        value="Flan casero"
+                                    />
+
+                                </div>
 
 
-                            {/* ESTADO */}
+                                {/* PRECIO */}
 
-                            <div
-                                className="
-                                    mt-3
-                                    flex
-                                    items-center
-                                    justify-center
-                                    gap-2
-                                    rounded-2xl
-                                    bg-green-50
-                                    px-3
-                                    py-3
-                                    text-center
-                                    text-xs
-                                    font-bold
-                                    text-green-700
-                                    sm:mt-4
-                                    sm:px-4
-                                    sm:text-sm
-                                "
-                            >
+                                <div className="mt-4 flex items-center justify-between gap-4 rounded-2xl bg-orange-50 px-4 py-3.5">
 
-                                <CheckCircle2 className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5" />
+                                    <div>
 
-                                <span>
-                                    Tu cliente puede elegir sus componentes
-                                </span>
+                                        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                                            Menú completo
+                                        </p>
+
+                                        <p className="mt-0.5 text-xs font-medium text-gray-600">
+                                            Desde $22.000
+                                        </p>
+
+                                    </div>
+
+                                    <strong className="text-xl font-extrabold text-orange-600 sm:text-2xl">
+                                        $25.000
+                                    </strong>
+
+                                </div>
+
+
+                                {/* CTA VISUAL */}
+
+                                <div className="mt-3 flex items-center justify-center gap-2 rounded-2xl bg-orange-500 px-4 py-3.5 text-sm font-extrabold text-white">
+
+                                    <span>
+                                        Agregar al pedido
+                                    </span>
+
+                                    <ArrowRight className="h-4 w-4" />
+
+                                </div>
 
                             </div>
 
@@ -369,68 +376,49 @@ export default function DailyMenuBuilder() {
 }
 
 
-function BuilderRow({
-    emoji,
-    title,
+function MenuChoice({
+    label,
     value,
+    active = false,
 }: {
-    emoji: string;
-    title: string;
+    label: string;
     value: string;
+    active?: boolean;
 }) {
+
     return (
 
         <div
-            className="
-                flex
-                items-center
-                gap-3
-                rounded-xl
+            className={`
+                rounded-2xl
                 border
-                border-gray-100
-                bg-gray-50
                 px-3
-                py-2.5
-                sm:gap-4
-                sm:rounded-2xl
-                sm:px-4
-                sm:py-3
-            "
+                py-3
+                ${active
+                    ? "border-orange-200 bg-orange-50"
+                    : "border-gray-100 bg-gray-50"
+                }
+            `}
         >
 
-            <div
-                className="
-                    flex
-                    h-9
-                    w-9
-                    flex-shrink-0
-                    items-center
-                    justify-center
-                    rounded-lg
-                    bg-white
-                    text-lg
-                    shadow-sm
-                    sm:h-11
-                    sm:w-11
-                    sm:rounded-xl
-                    sm:text-xl
-                "
+            <p
+                className={`
+                    text-[9px]
+                    font-bold
+                    uppercase
+                    tracking-wide
+                    ${active
+                        ? "text-orange-600"
+                        : "text-gray-400"
+                    }
+                `}
             >
-                {emoji}
-            </div>
+                {label}
+            </p>
 
-
-            <div className="min-w-0">
-
-                <p className="text-[9px] font-bold uppercase tracking-wide text-gray-400 sm:text-[10px]">
-                    {title}
-                </p>
-
-                <p className="truncate text-xs font-bold text-gray-800 sm:text-sm">
-                    {value}
-                </p>
-
-            </div>
+            <p className="mt-1 line-clamp-1 text-xs font-bold text-gray-800">
+                {value}
+            </p>
 
         </div>
 

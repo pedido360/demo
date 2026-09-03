@@ -9,7 +9,11 @@ import PhoneMockup from "./PhoneMockup";
 
 export default function LandingHero() {
     return (
-        <section className="relative overflow-hidden bg-gradient-to-b from-orange-50 via-white to-white">
+
+        <section
+            id="inicio"
+            className="relative overflow-hidden bg-gradient-to-b from-orange-50 via-white to-white"
+        >
             <HeroBackground />
 
             <Container className="relative py-16 lg:py-24">

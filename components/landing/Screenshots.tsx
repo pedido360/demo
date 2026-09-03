@@ -1,8 +1,9 @@
+import Image from "next/image";
+
 import {
     ArrowRight,
     CheckCircle2,
     MessageCircle,
-    ShoppingCart,
     Smartphone,
 } from "lucide-react";
 
@@ -10,24 +11,61 @@ export default function Screenshots() {
     return (
         <section
             id="demo"
-            className="bg-gray-50 py-16 sm:py-20 lg:py-24"
+            className="
+                relative
+                overflow-hidden
+                bg-white
+                py-16
+                sm:py-20
+                lg:py-24
+            "
         >
 
-            <div className="mx-auto max-w-7xl px-5 sm:px-6">
+            {/* Separación visual */}
+
+            <div className="absolute inset-x-0 top-0 h-2 bg-gray-50" />
+
+            <div className="relative mx-auto max-w-7xl px-5 sm:px-6">
 
                 {/* =====================================================
                     ENCABEZADO
                 ===================================================== */}
 
-                <div className="mx-auto max-w-2xl text-center">
+                <div className="mx-auto max-w-3xl text-center">
 
-                    <span className="inline-flex rounded-full border border-green-200 bg-green-50 px-4 py-2 text-xs font-bold text-green-700 sm:text-sm">
-                        Mira cómo funciona
+                    <span
+                        className="
+                            inline-flex
+                            items-center
+                            gap-2
+                            rounded-full
+                            border
+                            border-green-200
+                            bg-green-50
+                            px-4
+                            py-2
+                            text-xs
+                            font-bold
+                            text-green-700
+                            sm:text-sm
+                        "
+                    >
+                        <MessageCircle className="h-4 w-4" />
+                        Así recibe tu restaurante
                     </span>
 
 
-                    <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
-
+                    <h2
+                        className="
+                            mt-5
+                            text-3xl
+                            font-extrabold
+                            tracking-tight
+                            text-gray-900
+                            sm:text-4xl
+                            md:text-5xl
+                        "
+                    >
                         Tu cliente pide.
 
                         <br />
@@ -35,13 +73,23 @@ export default function Screenshots() {
                         <span className="text-orange-500">
                             Tú recibes.
                         </span>
-
                     </h2>
 
 
-                    <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg">
-                        Una experiencia sencilla para tu cliente y pedidos
-                        mucho más fáciles de gestionar para ti.
+                    <p
+                        className="
+                            mx-auto
+                            mt-4
+                            max-w-2xl
+                            text-base
+                            leading-7
+                            text-gray-600
+                            sm:text-lg
+                            sm:leading-8
+                        "
+                    >
+                        Mira lo que ocurre desde que tu cliente entra
+                        a tu menú hasta que el pedido llega a tu restaurante.
                     </p>
 
                 </div>
@@ -51,69 +99,79 @@ export default function Screenshots() {
                     FLUJO
                 ===================================================== */}
 
-                <div className="mx-auto mt-10 grid max-w-6xl items-center gap-5 sm:mt-14 lg:grid-cols-[1fr_auto_1fr] lg:gap-7">
+                <div
+                    className="
+                        mx-auto
+                        mt-10
+                        grid
+                        max-w-6xl
+                        items-center
+                        gap-6
+                        sm:mt-14
+                        lg:grid-cols-[1fr_auto_1fr]
+                        lg:gap-8
+                    "
+                >
 
 
                     {/* =================================================
                         CLIENTE
                     ================================================= */}
 
-                    <div className="rounded-[28px] bg-white p-5 shadow-xl ring-1 ring-gray-100 sm:rounded-[32px] sm:p-7">
+                    <div className="overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-xl sm:rounded-[32px]">
 
-                        <div className="flex items-center gap-3">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
 
-                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100">
-                                <Smartphone className="h-6 w-6 text-orange-600" />
-                            </div>
-
-
-                            <div>
-
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 sm:text-xs">
-                                    Cliente
-                                </p>
-
-                                <h3 className="text-xl font-bold text-gray-900">
-                                    Menú digital
-                                </h3>
-
-                            </div>
-
-                        </div>
-
-
-                        {/* Productos */}
-
-                        <div className="mt-6 space-y-3">
-
-                            <ProductRow
-                                emoji="🍗"
-                                name="Pollo a la plancha"
-                                quantity="x1"
-                            />
-
-                            <ProductRow
-                                emoji="🍚"
-                                name="Arroz + ensalada"
-                                quantity="x1"
-                            />
-
-                            <ProductRow
-                                emoji="🥤"
-                                name="Jugo natural"
-                                quantity="x1"
+                            <Image
+                                src="/images/landing/pedidos360-cliente-menu.png"
+                                alt="Cliente realizando un pedido desde el menú digital de Pedidos360"
+                                fill
+                                sizes="(max-width: 1024px) 100vw, 520px"
+                                className="object-cover"
                             />
 
                         </div>
 
 
-                        {/* Botón */}
+                        <div className="p-5 sm:p-6">
 
-                        <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-orange-500 py-3.5 text-sm font-bold text-white shadow-sm">
+                            <div className="flex items-center gap-3">
 
-                            <ShoppingCart className="h-5 w-5" />
+                                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-orange-50 text-orange-600">
 
-                            Enviar pedido
+                                    <Smartphone className="h-5 w-5" />
+
+                                </div>
+
+
+                                <div>
+
+                                    <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 sm:text-xs">
+                                        Experiencia del cliente
+                                    </p>
+
+                                    <h3 className="text-xl font-extrabold text-gray-900">
+                                        Tu cliente pide
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <p className="mt-4 text-sm leading-6 text-gray-600 sm:text-base">
+                                Navega tu menú, elige productos, personaliza
+                                y confirma su pedido.
+                            </p>
+
+
+                            <div className="mt-4 flex items-center gap-2 text-sm font-bold text-green-700">
+
+                                <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
+
+                                Sin descargar ninguna aplicación.
+
+                            </div>
 
                         </div>
 
@@ -126,27 +184,38 @@ export default function Screenshots() {
 
                     <div className="flex flex-col items-center justify-center">
 
-                        <ArrowRight className="hidden h-12 w-12 text-orange-400 lg:block" />
+                        <div
+                            className="
+                                flex
+                                flex-col
+                                items-center
+                                rounded-3xl
+                                border
+                                border-orange-200
+                                bg-orange-50
+                                px-6
+                                py-5
+                                text-center
+                                shadow-sm
+                            "
+                        >
 
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-orange-500 shadow-sm">
 
-                        <div className="my-3 rounded-2xl border border-orange-200 bg-orange-50 px-5 py-3 text-center shadow-sm lg:my-4">
+                                <ArrowRight className="h-6 w-6 rotate-90 lg:rotate-0" />
 
-                            <div className="text-xl">
-                                ⚡
                             </div>
 
-                            <p className="mt-1 text-sm font-bold text-orange-700">
+
+                            <p className="mt-3 text-sm font-extrabold text-orange-700">
                                 Pedido enviado
                             </p>
 
-                            <p className="text-[11px] text-orange-600">
+                            <p className="mt-0.5 text-xs font-medium text-orange-600">
                                 Automáticamente
                             </p>
 
                         </div>
-
-
-                        <ArrowRight className="h-9 w-9 rotate-90 text-orange-400 lg:hidden" />
 
                     </div>
 
@@ -155,94 +224,60 @@ export default function Screenshots() {
                         WHATSAPP
                     ================================================= */}
 
-                    <div className="rounded-[28px] bg-[#25D366] p-5 text-white shadow-xl sm:rounded-[32px] sm:p-7">
+                    <div className="overflow-hidden rounded-[28px] border border-green-200 bg-white shadow-xl sm:rounded-[32px]">
 
-                        <div className="flex items-center gap-3">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
 
-                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20">
-                                <MessageCircle className="h-6 w-6" />
-                            </div>
-
-
-                            <div>
-
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-white/70 sm:text-xs">
-                                    Restaurante
-                                </p>
-
-                                <h3 className="text-xl font-bold">
-                                    WhatsApp
-                                </h3>
-
-                            </div>
+                            <Image
+                                src="/images/landing/pedidos360-whatsapp-pedido.png"
+                                alt="Restaurante recibiendo un pedido organizado de Pedidos360 por WhatsApp"
+                                fill
+                                sizes="(max-width: 1024px) 100vw, 520px"
+                                className="object-cover"
+                            />
 
                         </div>
 
 
-                        {/* Pedido recibido */}
+                        <div className="p-5 sm:p-6">
 
-                        <div className="mt-6 rounded-2xl bg-white p-5 text-gray-800">
+                            <div className="flex items-center gap-3">
 
-                            <div className="flex items-center justify-between">
+                                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-green-50 text-green-600">
 
-                                <p className="font-bold">
-                                    🍽️ Nuevo pedido
-                                </p>
+                                    <MessageCircle className="h-5 w-5" />
 
-                                <span className="rounded-full bg-green-100 px-2.5 py-1 text-[10px] font-bold text-green-700">
-                                    NUEVO
-                                </span>
-
-                            </div>
+                                </div>
 
 
-                            <div className="mt-4 space-y-2 text-sm">
+                                <div>
 
-                                <p className="text-gray-500">
-                                    👤 Cliente
-                                </p>
+                                    <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 sm:text-xs">
+                                        Restaurante
+                                    </p>
 
-                                <p>
-                                    • Pollo a la plancha x1
-                                </p>
-
-                                <p>
-                                    • Arroz + ensalada x1
-                                </p>
-
-                                <p>
-                                    • Jugo natural x1
-                                </p>
-
-                            </div>
-
-
-                            <div className="mt-4 border-t border-gray-100 pt-4">
-
-                                <div className="flex items-center justify-between">
-
-                                    <span className="text-sm text-gray-500">
-                                        Total
-                                    </span>
-
-                                    <strong className="text-lg font-extrabold">
-                                        $25.000
-                                    </strong>
+                                    <h3 className="text-xl font-extrabold text-gray-900">
+                                        Tú recibes por WhatsApp
+                                    </h3>
 
                                 </div>
 
                             </div>
 
-                        </div>
+
+                            <p className="mt-4 text-sm leading-6 text-gray-600 sm:text-base">
+                                El pedido llega completo y organizado
+                                directamente a tu WhatsApp.
+                            </p>
 
 
-                        {/* Confirmación */}
+                            <div className="mt-4 flex items-center gap-2 text-sm font-bold text-green-700">
 
-                        <div className="mt-5 flex items-center gap-2 text-sm font-semibold">
+                                <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
 
-                            <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
+                                Tú confirmas y continúas la atención.
 
-                            Pedido listo para confirmar
+                            </div>
 
                         </div>
 
@@ -255,13 +290,32 @@ export default function Screenshots() {
                     MENSAJE FINAL
                 ===================================================== */}
 
-                <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-12">
+                <div
+                    className="
+                        mx-auto
+                        mt-10
+                        max-w-2xl
+                        rounded-2xl
+                        border
+                        border-gray-200
+                        bg-gray-50
+                        px-5
+                        py-4
+                        text-center
+                        sm:mt-12
+                        sm:px-7
+                        sm:py-5
+                    "
+                >
 
                     <p className="text-base font-bold text-gray-800 sm:text-lg">
-                        Sin llamadas. Sin mensajes desordenados.
+
+                        Sin largas llamadas,chat infinitos y Sin mensajes desordenados.
+
                         <span className="text-orange-500">
                             {" "}Solo pedidos.
                         </span>
+
                     </p>
 
                 </div>
@@ -269,38 +323,5 @@ export default function Screenshots() {
             </div>
 
         </section>
-    );
-}
-
-
-function ProductRow({
-    emoji,
-    name,
-    quantity,
-}: {
-    emoji: string;
-    name: string;
-    quantity: string;
-}) {
-    return (
-
-        <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-3">
-
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-white text-lg shadow-sm">
-                {emoji}
-            </div>
-
-
-            <p className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700">
-                {name}
-            </p>
-
-
-            <span className="flex-shrink-0 text-xs font-bold text-gray-400">
-                {quantity}
-            </span>
-
-        </div>
-
     );
 }

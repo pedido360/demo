@@ -51,22 +51,16 @@ export default function Features() {
                         ¿Qué es Pedidos360?
                     </span>
 
-
                     <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
-
                         Tu menú convertido
                         <br className="sm:hidden" />
                         {" "}
                         en un canal de pedidos.
-
                     </h2>
 
-
                     <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg sm:leading-8">
-
                         Tus clientes consultan, eligen y piden desde su celular.
                         Tú recibes todo organizado en WhatsApp.
-
                     </p>
 
                 </div>
@@ -88,17 +82,23 @@ export default function Features() {
                                 key={feature.title}
                                 className="
                                     group
+                                    flex
+                                    flex-col
+                                    items-center
                                     rounded-3xl
                                     border
                                     border-gray-100
                                     bg-gray-50
-                                    p-6
+                                    px-6
+                                    py-8
+                                    text-center
                                     transition-all
                                     duration-300
                                     hover:-translate-y-1
                                     hover:bg-white
                                     hover:shadow-xl
-                                    sm:p-7
+                                    sm:px-7
+                                    sm:py-9
                                 "
                             >
 
@@ -107,8 +107,8 @@ export default function Features() {
                                 <div
                                     className="
                                         flex
-                                        h-12
-                                        w-12
+                                        h-14
+                                        w-14
                                         items-center
                                         justify-center
                                         rounded-2xl
@@ -118,12 +118,12 @@ export default function Features() {
                                         duration-300
                                         group-hover:bg-orange-500
                                         group-hover:text-white
-                                        sm:h-14
-                                        sm:w-14
+                                        sm:h-16
+                                        sm:w-16
                                     "
                                 >
 
-                                    <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                                    <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
 
                                 </div>
 
@@ -131,18 +131,14 @@ export default function Features() {
                                 {/* Título */}
 
                                 <h3 className="mt-5 text-lg font-bold text-gray-900 sm:text-xl">
-
                                     {feature.title}
-
                                 </h3>
 
 
                                 {/* Descripción */}
 
-                                <p className="mt-2 text-sm leading-6 text-gray-600 sm:text-base">
-
+                                <p className="mt-2 max-w-xs text-sm leading-6 text-gray-600 sm:text-base">
                                     {feature.description}
-
                                 </p>
 
                             </div>
@@ -161,10 +157,8 @@ export default function Features() {
                 <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-14">
 
                     <p className="text-base font-semibold text-gray-800 sm:text-lg">
-
                         Una sola experiencia para que tu cliente
                         pueda descubrir, elegir y pedir.
-
                     </p>
 
                 </div>

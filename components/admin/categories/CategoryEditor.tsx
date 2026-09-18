@@ -65,62 +65,68 @@ export default function CategoryEditor({
   }
 
   async function handleSave(
-  data: Omit<Category, "id" | "emoji">
-) {
-  try {
+    data: Omit<Category, "id" | "emoji">
+  ) {
+    try {
+      if (editingCategory) {
+        const updatedCategory =
+          restaurantId
+            ? await updateCategory({
+              ...editingCategory,
+              ...data,
+              emoji: getCategoryEmoji(data.name),
+            })
+            : {
+              ...editingCategory,
+              ...data,
+              emoji: getCategoryEmoji(data.name),
+            };
 
-    if (editingCategory) {
-
-      const updatedCategory =
-        await updateCategory({
-          ...editingCategory,
-          ...data,
-          emoji: getCategoryEmoji(
-            data.name
-          ),
-        });
-
-      setCategories((prev) =>
-        prev.map((category) =>
-          category.id ===
-          editingCategory.id
-            ? updatedCategory
-            : category
-        )
-      );
-
-    } else {
-
-      const newCategory =
-        await createCategory(
-          restaurantId,
-          {
-            id: "",
-            emoji: getCategoryEmoji(
-              data.name
-            ),
-            ...data,
-          }
+        setCategories((prev) =>
+          prev.map((category) =>
+            category.id === editingCategory.id
+              ? updatedCategory
+              : category
+          )
         );
+      } else {
+        const newCategory: Category = {
+          id: restaurantId
+            ? ""
+            : `temp-${crypto.randomUUID()}`,
+          emoji: getCategoryEmoji(data.name),
+          ...data,
+        };
 
-      setCategories((prev) => [
-        ...prev,
-        newCategory,
-      ]);
+        if (restaurantId) {
+          const savedCategory =
+            await createCategory(
+              restaurantId,
+              newCategory
+            );
+
+          setCategories((prev) => [
+            ...prev,
+            savedCategory,
+          ]);
+        } else {
+          setCategories((prev) => [
+            ...prev,
+            newCategory,
+          ]);
+        }
+      }
+
+      setEditingCategory(null);
+      setShowForm(false);
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        "No fue posible guardar la categoría."
+      );
     }
-
-    setEditingCategory(null);
-    setShowForm(false);
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "No fue posible guardar la categoría."
-    );
   }
-}
 
   function handleCancel() {
     setEditingCategory(null);

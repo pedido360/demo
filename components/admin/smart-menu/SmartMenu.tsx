@@ -437,7 +437,8 @@ export default function SmartMenu({
 
             <ExtraCatalog
                 restaurantId={restaurantId}
-                products={products}
+                categories={categoryList}
+                products={productList}
                 onBack={() => setShowExtraCatalog(false)}
             />
 

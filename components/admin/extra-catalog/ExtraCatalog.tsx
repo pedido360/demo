@@ -28,16 +28,19 @@ import {
     ProductExtraGroup,
 } from "@/types/extra-catalog";
 
+import { Category } from "@/types/category";
 import { Product } from "@/types/product";
 
 interface ExtraCatalogProps {
     restaurantId: string;
+    categories: Category[];
     products: Product[];
     onBack: () => void;
 }
 
 export default function ExtraCatalog({
     restaurantId,
+    categories,
     products,
     onBack,
 }: ExtraCatalogProps) {
@@ -396,6 +399,7 @@ export default function ExtraCatalog({
                         {showProductAssignments && editingGroup ? (
                             <ProductExtraGroups
                                 group={editingGroup}
+                                categories={categories}
                                 products={products}
                                 assignments={productAssignments}
                                 onSave={handleSaveProductAssignments}

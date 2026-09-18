@@ -9,10 +9,12 @@ import {
     ProductExtraGroup,
 } from "@/types/extra-catalog";
 
+import { Category } from "@/types/category";
 import { Product } from "@/types/product";
 
 interface ProductExtraGroupsProps {
     group: ExtraGroup;
+    categories: Category[];
     products: Product[];
     assignments: ProductExtraGroup[];
     onSave: (groups: ProductExtraGroup[]) => void;
@@ -21,6 +23,7 @@ interface ProductExtraGroupsProps {
 
 export default function ProductExtraGroups({
     group,
+    categories,
     products,
     assignments,
     onSave,
@@ -58,6 +61,22 @@ export default function ProductExtraGroups({
             product.isAvailable !== false
     );
 
+    const categoriesWithProducts = categories.filter(
+        (category) =>
+            availableProducts.some(
+                (product) => product.categoryId === category.id
+            )
+    );
+
+    const [selectedCategoryId, setSelectedCategoryId] =
+        useState<string | null>(
+            categoriesWithProducts[0]?.id ?? null
+        );
+
+    const selectedCategoryProducts = availableProducts.filter(
+        (product) => product.categoryId === selectedCategoryId
+    );
+
     return (
         <section className="rounded-2xl border border-gray-200 bg-white">
             <div className="border-b border-gray-200 px-6 py-5">
@@ -87,10 +106,80 @@ export default function ProductExtraGroups({
                         este grupo de extras.
                     </p>
                 </div>
+            ) : categoriesWithProducts.length === 0 ? (
+                <div className="px-6 py-10 text-center">
+                    <p className="text-sm text-gray-500">
+                        No hay categorías con productos disponibles.
+                    </p>
+                </div>
             ) : (
                 <>
+                    <div className="border-b border-gray-200 bg-gray-50 p-6">
+                        <p className="mb-3 text-sm font-medium text-gray-700">
+                            Primero selecciona una categoría
+                        </p>
+
+                        <div className="flex flex-wrap gap-2">
+                            {categoriesWithProducts.map((category) => {
+                                const categoryProductCount =
+                                    availableProducts.filter(
+                                        (product) =>
+                                            product.categoryId === category.id
+                                    ).length;
+
+                                const selectedCount =
+                                    availableProducts.filter(
+                                        (product) =>
+                                            product.categoryId === category.id &&
+                                            selectedIds.includes(product.id)
+                                    ).length;
+
+                                const selected =
+                                    category.id === selectedCategoryId;
+
+                                return (
+                                    <button
+                                        key={category.id}
+                                        type="button"
+                                        onClick={() =>
+                                            setSelectedCategoryId(category.id)
+                                        }
+                                        className={`rounded-xl border px-4 py-3 text-left transition ${
+                                            selected
+                                                ? "border-green-300 bg-green-50 text-green-800"
+                                                : "border-gray-200 bg-white text-gray-700 hover:border-green-300"
+                                        }`}
+                                    >
+                                        <span className="block text-sm font-semibold">
+                                            {category.emoji} {category.name}
+                                        </span>
+
+                                        <span className="mt-1 block text-xs text-gray-500">
+                                            {selectedCount > 0
+                                                ? `${selectedCount} de ${categoryProductCount} seleccionados`
+                                                : `${categoryProductCount} productos`}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="border-b border-gray-200 px-6 py-4">
+                        <h4 className="font-semibold text-gray-900">
+                            {categories.find(
+                                (category) =>
+                                    category.id === selectedCategoryId
+                            )?.name ?? "Productos"}
+                        </h4>
+
+                        <p className="mt-1 text-sm text-gray-500">
+                            Selecciona los productos de esta categoría.
+                        </p>
+                    </div>
+
                     <div className="grid gap-3 p-6 md:grid-cols-2">
-                        {availableProducts.map((product) => {
+                        {selectedCategoryProducts.map((product) => {
                             const selected = selectedIds.includes(product.id);
 
                             return (

@@ -151,6 +151,9 @@ export async function getProducts(
     const [
         ingredientsResult,
         extrasResult,
+        reusableExtraGroupsResult,
+        reusableExtraGroupItemsResult,
+        reusableExtrasResult,
         variantsResult,
         availableDaysResults,
     ] = await Promise.all([
@@ -175,6 +178,44 @@ export async function getProducts(
             .in(
                 "product_id",
                 productIds
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
+
+        supabase
+            .from("product_extra_groups")
+            .select("product_id, group_id, sort_order")
+            .in(
+                "product_id",
+                productIds
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
+
+        supabase
+            .from("extra_group_items")
+            .select("group_id, extra_id, sort_order")
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
+
+        supabase
+            .from("extra_catalog")
+            .select("*")
+            .eq(
+                "is_active",
+                true
             )
             .order(
                 "sort_order",
@@ -237,6 +278,51 @@ export async function getProducts(
 
         throw new Error(
             extrasResult.error.message
+        );
+
+    }
+
+
+    if (
+        reusableExtraGroupsResult.error
+    ) {
+
+        console.error(
+            reusableExtraGroupsResult.error
+        );
+
+        throw new Error(
+            reusableExtraGroupsResult.error.message
+        );
+
+    }
+
+
+    if (
+        reusableExtraGroupItemsResult.error
+    ) {
+
+        console.error(
+            reusableExtraGroupItemsResult.error
+        );
+
+        throw new Error(
+            reusableExtraGroupItemsResult.error.message
+        );
+
+    }
+
+
+    if (
+        reusableExtrasResult.error
+    ) {
+
+        console.error(
+            reusableExtrasResult.error
+        );
+
+        throw new Error(
+            reusableExtrasResult.error.message
         );
 
     }
@@ -312,6 +398,115 @@ export async function getProducts(
         extrasByProduct.set(
             extra.product_id,
             list
+        );
+
+    }
+
+
+    const reusableExtrasByProduct =
+        new Map<string, any[]>();
+
+
+    const groupItemsByGroup =
+        new Map<string, any[]>();
+
+
+    for (
+        const item
+        of reusableExtraGroupItemsResult.data ?? []
+    ) {
+
+        const list =
+            groupItemsByGroup.get(
+                item.group_id
+            ) ?? [];
+
+
+        list.push(
+            item
+        );
+
+
+        groupItemsByGroup.set(
+            item.group_id,
+            list
+        );
+
+    }
+
+
+    const reusableExtrasById =
+        new Map<string, any>();
+
+
+    for (
+        const extra
+        of reusableExtrasResult.data ?? []
+    ) {
+
+        reusableExtrasById.set(
+            extra.id,
+            extra
+        );
+
+    }
+
+
+    for (
+        const assignment
+        of reusableExtraGroupsResult.data ?? []
+    ) {
+
+        const productExtras =
+            reusableExtrasByProduct.get(
+                assignment.product_id
+            ) ?? [];
+
+
+        const groupItems =
+            groupItemsByGroup.get(
+                assignment.group_id
+            ) ?? [];
+
+
+        for (
+            const item
+            of groupItems
+        ) {
+
+            const extra =
+                reusableExtrasById.get(
+                    item.extra_id
+                );
+
+
+            if (!extra) {
+                continue;
+            }
+
+
+            if (
+                productExtras.some(
+                    existing =>
+                        existing.id === extra.id
+                )
+            ) {
+                continue;
+            }
+
+
+            productExtras.push(
+                mapExtra(
+                    extra
+                )
+            );
+
+        }
+
+
+        reusableExtrasByProduct.set(
+            assignment.product_id,
+            productExtras
         );
 
     }
@@ -393,10 +588,22 @@ export async function getProducts(
             ) ?? [];
 
 
-        product.extras =
+        const traditionalExtras =
             extrasByProduct.get(
                 product.id
             ) ?? [];
+
+
+        const reusableExtras =
+            reusableExtrasByProduct.get(
+                product.id
+            ) ?? [];
+
+
+        product.extras = [
+            ...traditionalExtras,
+            ...reusableExtras,
+        ];
 
 
         product.variants =

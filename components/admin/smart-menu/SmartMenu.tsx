@@ -16,6 +16,7 @@ import CategoryAccordion from "./CategoryAccordion";
 import ProductEditor from "./ProductEditor"
 
 import DailyMenuEditor from "@/components/admin/daily-menu/DailyMenuEditor";
+import ExtraCatalog from "@/components/admin/extra-catalog/ExtraCatalog";
 
 import CategoryForm from "@/components/admin/categories/CategoryForm";
 import ProductForm from "@/components/admin/products/ProductForm";
@@ -70,6 +71,9 @@ export default function SmartMenu({
         useState<Category | null>(null);
 
     const [showDailyMenu, setShowDailyMenu] =
+        useState(false);
+
+    const [showExtraCatalog, setShowExtraCatalog] =
         useState(false);
 
     const [search, setSearch] =
@@ -427,6 +431,20 @@ export default function SmartMenu({
 
     }
 
+    if (showExtraCatalog) {
+
+        return (
+
+            <ExtraCatalog
+                restaurantId={restaurantId}
+                products={products}
+                onBack={() => setShowExtraCatalog(false)}
+            />
+
+        );
+
+    }
+
     if (showDailyMenu) {
 
         return (
@@ -483,6 +501,14 @@ export default function SmartMenu({
                         className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
                     >
                         🍽️ Menú del Día
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setShowExtraCatalog(true)}
+                        className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+                    >
+                        🧀 Catálogo de extras
                     </button>
 
                 </div>

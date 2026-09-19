@@ -6,6 +6,7 @@ import { X, ArrowLeft } from "lucide-react";
 import { Restaurant } from "@/types/restaurant";
 
 import { buildWhatsAppMessage } from "@/lib/whatsapp";
+import { recordRestaurantMetric } from "@/lib/repositories/restaurant-metrics.repository";
 
 import { useCart } from "@/hooks/useCart";
 
@@ -66,7 +67,7 @@ export default function CartDrawer({
         address.trim() !== "";
 
 
-    function handleWhatsApp() {
+    async function handleWhatsApp() {
 
         if (!canSend) {
             return;
@@ -110,6 +111,11 @@ export default function CartDrawer({
 
         const url =
             `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+
+        await recordRestaurantMetric(
+            restaurant.id,
+            "whatsapp_order"
+        );
 
         window.open(url, "_blank");
 

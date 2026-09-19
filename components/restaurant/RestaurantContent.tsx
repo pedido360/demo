@@ -19,6 +19,7 @@ import CartDrawer from "@/components/cart/CartDrawer";
 import PoweredBy from "./PoweredBy";
 
 import { isRestaurantOpen } from "@/lib/utils/isRestaurantOpen";
+import { recordRestaurantMetric } from "@/lib/repositories/restaurant-metrics.repository";
 
 interface RestaurantContentProps {
     data: RestaurantPageData;
@@ -44,6 +45,15 @@ export default function RestaurantContent({
         data.restaurant.slug === "demo"
             ? true
             : isRestaurantOpen(data.hours ?? []);
+
+    useEffect(() => {
+
+        recordRestaurantMetric(
+            data.restaurant.id,
+            "menu_view"
+        );
+
+    }, [data.restaurant.id]);
 
     useEffect(() => {
 

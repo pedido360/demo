@@ -1,5 +1,8 @@
 "use client";
 
+"use client";
+
+import { useEffect, useState } from "react";
 import { Store } from "lucide-react";
 
 import EmptyState from "@/components/ui/feedback/EmptyState";
@@ -7,6 +10,10 @@ import EmptyState from "@/components/ui/feedback/EmptyState";
 import RestaurantCard from "./RestaurantCard";
 
 import { Restaurant } from "@/types/restaurant";
+import {
+    getRestaurantsMetrics,
+    RestaurantMetricsSummary,
+} from "@/lib/repositories/restaurant-metrics.repository";
 
 interface Props {
     restaurants: Restaurant[];
@@ -19,6 +26,44 @@ export default function RestaurantList({
     onDelete,
     onToggleStatus,
 }: Props) {
+    const [metrics, setMetrics] = useState<
+        Record<string, RestaurantMetricsSummary>
+    >({});
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadMetrics() {
+
+            const restaurantIds =
+                restaurants.map(
+                    (restaurant) =>
+                        restaurant.id
+                );
+
+            const result =
+                await getRestaurantsMetrics(
+                    restaurantIds
+                );
+
+            if (cancelled) {
+                return;
+            }
+
+            setMetrics(result);
+        }
+
+        if (restaurants.length > 0) {
+            loadMetrics();
+        } else {
+            setMetrics({});
+        }
+
+        return () => {
+            cancelled = true;
+        };
+    }, [restaurants]);
+
     if (restaurants.length === 0) {
         return (
             <EmptyState
@@ -40,6 +85,7 @@ export default function RestaurantList({
                 <RestaurantCard
                     key={restaurant.id}
                     restaurant={restaurant}
+                    metrics={metrics[restaurant.id]}
                     onDelete={onDelete}
                     onToggleStatus={onToggleStatus}
                 />

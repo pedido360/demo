@@ -18,15 +18,18 @@ import RestaurantStatusBadge from "./RestaurantStatusBadge";
 import RestaurantAccountStatusBadge from "./RestaurantAccountStatusBadge";
 
 import { Restaurant } from "@/types/restaurant";
+import { RestaurantMetricsSummary } from "@/lib/repositories/restaurant-metrics.repository";
 
 interface Props {
     restaurant: Restaurant;
+    metrics?: RestaurantMetricsSummary;
     onDelete?: (id: string) => void;
     onToggleStatus?: (restaurant: Restaurant) => void;
 }
 
 export default function RestaurantCard({
     restaurant,
+    metrics,
     onDelete,
     onToggleStatus,
 }: Props) {
@@ -94,6 +97,36 @@ export default function RestaurantCard({
                     <div className="flex items-center gap-2">
                         <MapPin size={18} />
                         <span>{restaurant.city}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 md:col-span-2">
+                        <span>
+                            👀 {metrics?.menuViews ?? 0} visitas
+                        </span>
+
+                        <span className="text-gray-300">
+                            |
+                        </span>
+
+                        <span>
+                            📲 {metrics?.whatsappOrders ?? 0} pedidos
+                        </span>
+
+                        <span className="text-gray-300">
+                            |
+                        </span>
+
+                        <span>
+                            📈{" "}
+                            {metrics?.menuViews
+                                ? (
+                                    (metrics.whatsappOrders /
+                                        metrics.menuViews) *
+                                    100
+                                ).toFixed(1)
+                                : "0.0"}
+                            %
+                        </span>
                     </div>
 
                     <div className="flex items-center gap-2">

@@ -3,7 +3,30 @@ import { Store, Plus } from "lucide-react";
 import Card from "@/components/ui/Card";
 import LinkButton from "@/components/ui/LinkButton";
 
-export default function DashboardPage() {
+import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
+import { getRestaurantMetrics } from "@/lib/repositories/restaurant-metrics.repository";
+
+export default async function DashboardPage() {
+    const profile = await getCurrentProfile();
+
+    const metrics = profile?.restaurant_id
+        ? await getRestaurantMetrics(
+            profile.restaurant_id
+        )
+        : {
+            menuViews: 0,
+            whatsappOrders: 0,
+        };
+
+    const conversion =
+        metrics.menuViews > 0
+            ? (
+                (metrics.whatsappOrders /
+                    metrics.menuViews) *
+                100
+            ).toFixed(1)
+            : "0.0";
+
     return (
         <div className="space-y-8">
             <div>
@@ -15,6 +38,45 @@ export default function DashboardPage() {
                     Bienvenido a Pedidos360.
                 </p>
             </div>
+
+            {profile?.restaurant_id && (
+                <Card
+                    title="Métricas de tu restaurante"
+                    description="Resumen de visitas y pedidos por WhatsApp."
+                >
+                    <div className="grid gap-4 sm:grid-cols-3">
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                            <p className="text-sm text-gray-500">
+                                👀 Visitas al menú
+                            </p>
+
+                            <p className="mt-2 text-3xl font-bold text-gray-900">
+                                {metrics.menuViews}
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                            <p className="text-sm text-gray-500">
+                                📲 Pedidos por WhatsApp
+                            </p>
+
+                            <p className="mt-2 text-3xl font-bold text-gray-900">
+                                {metrics.whatsappOrders}
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                            <p className="text-sm text-gray-500">
+                                📈 Conversión
+                            </p>
+
+                            <p className="mt-2 text-3xl font-bold text-gray-900">
+                                {conversion}%
+                            </p>
+                        </div>
+                    </div>
+                </Card>
+            )}
 
             <Card
                 title="Restaurantes"

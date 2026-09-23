@@ -139,6 +139,34 @@ export default async function RestaurantPage({
         const restaurant =
             await getRestaurantBySlug(slug);
 
+        if (restaurant.status === "paused") {
+            return (
+                <main className="flex min-h-screen items-center justify-center bg-gray-50 px-6">
+                    <div className="w-full max-w-lg rounded-3xl bg-white p-8 text-center shadow-sm">
+                        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-3xl">
+                            🛠️
+                        </div>
+
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            Restaurante en mantenimiento
+                        </h1>
+
+                        <p className="mt-3 text-gray-600">
+                            {restaurant.name} se encuentra temporalmente fuera de servicio.
+                        </p>
+
+                        <p className="mt-2 text-sm text-gray-500">
+                            Por favor, ponte en contacto con el administrador para obtener más información.
+                        </p>
+
+                        <div className="mt-6 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                            Gracias por tu comprensión.
+                        </div>
+                    </div>
+                </main>
+            );
+        }
+
         const [
             categories,
             products,

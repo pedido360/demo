@@ -4,6 +4,8 @@ import { restaurant } from "@/data/restaurant";
 interface OrderInfo {
     customerName: string;
     address: string;
+    restaurantAddress: string;
+    deliveryMethod: "Domicilio" | "Recoger";
     paymentMethod: string;
     cashChange: string;
     observations: string;
@@ -45,9 +47,23 @@ export function buildWhatsAppMessage(
         `👤 Nombre: ${order.customerName}`
     );
 
-    lines.push(
-        `📍 Dirección: ${order.address}`
-    );
+    if (order.deliveryMethod === "Domicilio") {
+        lines.push(
+            "🛵 Entrega: Domicilio"
+        );
+
+        lines.push(
+            `📍 Dirección: ${order.address}`
+        );
+    } else {
+        lines.push(
+            "🏪 Entrega: Recogida en punto físico"
+        );
+
+        lines.push(
+            `📍 Punto de recogida: ${order.restaurantAddress}`
+        );
+    }
 
     lines.push(
         `💳 Pago: ${order.paymentMethod}`
@@ -347,9 +363,15 @@ export function buildWhatsAppMessage(
 
     lines.push("");
 
-    lines.push(
-        "Quedo atento a la confirmación del valor del domicilio y al despacho de mi pedido."
-    );
+    if (order.deliveryMethod === "Domicilio") {
+        lines.push(
+            "Quedo atento a la confirmación del valor del domicilio y al despacho de mi pedido."
+        );
+    } else {
+        lines.push(
+            "Quedo atento a la confirmación de mi pedido y a la disponibilidad para recogerlo en el punto físico."
+        );
+    }
 
 
     return lines.join("\n");

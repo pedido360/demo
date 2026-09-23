@@ -415,6 +415,36 @@ export default function ProductEditor({
                 <section className="rounded-xl border border-gray-200 p-6">
 
                     <h2 className="mb-4 text-lg font-semibold">
+                        ⭐ Visibilidad
+                    </h2>
+
+                    <label className="flex items-center gap-3">
+                        <input
+                            type="checkbox"
+                            checked={editableProduct.featured ?? false}
+                            onChange={(event) =>
+                                updateField(
+                                    "featured",
+                                    event.target.checked
+                                )
+                            }
+                            className="h-5 w-5"
+                        />
+
+                        <span className="font-medium">
+                            Producto destacado
+                        </span>
+                    </label>
+
+                    <p className="mt-2 text-sm text-gray-500">
+                        Los productos destacados aparecen resaltados en el menú.
+                    </p>
+
+                </section>
+
+                <section className="rounded-xl border border-gray-200 p-6">
+
+                    <h2 className="mb-4 text-lg font-semibold">
                         ⚙ Estado
                     </h2>
 

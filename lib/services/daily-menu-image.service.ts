@@ -1217,31 +1217,36 @@ export async function generateDailyMenuImage(
      */
 
     const preparedSections =
-        sections.map(
-            section => {
+        sections
+            .map(
+                section => {
 
-                const names =
-                    grouped.get(
-                        section
-                    ) ??
-                    [];
+                    const names =
+                        grouped.get(
+                            section
+                        ) ??
+                        [];
 
-                return {
+                    return {
 
-                    section,
+                        section,
 
-                    lines:
-                        wrapText(
-                            names.join(
-                                " • "
+                        lines:
+                            wrapText(
+                                names.join(
+                                    " • "
+                                ),
+                                30
                             ),
-                            30
-                        ),
 
-                };
+                    };
 
-            }
-        );
+                }
+            )
+            .filter(
+                preparedSection =>
+                    preparedSection.lines.length > 0
+            );
 
 
     /*

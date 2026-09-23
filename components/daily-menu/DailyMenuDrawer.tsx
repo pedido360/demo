@@ -253,14 +253,28 @@ export default function DailyMenuDrawer({
 
     const canAdd =
         !!selectedSizeObject &&
-        !!selectedSoup &&
-        secoOptions.length >= 3 &&
-        secoOptions.length <= 4 &&
-        !!selectedPrincipleObject &&
-        !!selectedDrinkObject &&
+        (
+            soupOptions.length === 0 ||
+            !!selectedSoup
+        ) &&
+        (
+            secoOptions.length === 0 ||
+            (
+                secoOptions.length >= 3 &&
+                secoOptions.length <= 4
+            )
+        ) &&
+        (
+            principleOptions.length === 0 ||
+            !!selectedPrincipleObject
+        ) &&
         (
             proteinOptions.length === 0 ||
             !!selectedProteinObject
+        ) &&
+        (
+            drinkOptions.length === 0 ||
+            !!selectedDrinkObject
         );
 
 
@@ -561,16 +575,15 @@ export default function DailyMenuDrawer({
 
                         {/* SOPA FIJA */}
 
-                        <section className="mt-8">
+                        {soupOptions.length > 0 && (
 
-                            <h3 className="mb-3 text-lg font-semibold">
+                            <section className="mt-8">
 
-                                🍲 Sopa
+                                <h3 className="mb-3 text-lg font-semibold">
 
-                            </h3>
+                                    🍲 Sopa
 
-
-                            {selectedSoup ? (
+                                </h3>
 
                                 <div className="rounded-xl border border-green-200 bg-green-50 p-4">
 
@@ -582,7 +595,7 @@ export default function DailyMenuDrawer({
 
                                         <span className="font-medium text-gray-800">
 
-                                            {selectedSoup.name}
+                                            {selectedSoup?.name}
 
                                         </span>
 
@@ -590,135 +603,135 @@ export default function DailyMenuDrawer({
 
                                 </div>
 
-                            ) : (
+                            </section>
 
-                                <p className="rounded-xl bg-gray-50 p-4 text-sm text-gray-500">
-
-                                    No hay sopa configurada.
-
-                                </p>
-
-                            )}
-
-                        </section>
+                        )}
 
 
                         {/* SECOS FIJOS */}
 
-                        <section className="mt-8">
+                        {secoOptions.length > 0 && (
 
-                            <h3 className="mb-3 text-lg font-semibold">
+                            <section className="mt-8">
 
-                                🍛 Seco
+                                <h3 className="mb-3 text-lg font-semibold">
 
-                            </h3>
+                                    🍛 Seco
 
-
-                            <p className="mb-3 text-sm text-gray-500">
-
-                                Componentes incluidos en este menú.
-
-                            </p>
+                                </h3>
 
 
-                            <div className="space-y-3">
+                                <p className="mb-3 text-sm text-gray-500">
 
-                                {secoOptions.map(
-                                    option => (
+                                    Componentes incluidos en este menú.
 
-                                        <div
-                                            key={option.id}
-                                            className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4"
-                                        >
+                                </p>
 
-                                            <span className="text-green-600">
-                                                ✓
-                                            </span>
 
-                                            <span className="font-medium">
+                                <div className="space-y-3">
 
-                                                {option.name}
+                                    {secoOptions.map(
+                                        option => (
 
-                                            </span>
+                                            <div
+                                                key={option.id}
+                                                className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4"
+                                            >
 
-                                        </div>
+                                                <span className="text-green-600">
+                                                    ✓
+                                                </span>
 
-                                    )
-                                )}
+                                                <span className="font-medium">
 
-                            </div>
+                                                    {option.name}
 
-                        </section>
+                                                </span>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+                            </section>
+
+                        )}
 
 
                         {/* PRINCIPIO */}
 
-                        <section className="mt-8">
+                        {principleOptions.length > 0 && (
 
-                            <h3 className="mb-3 text-lg font-semibold">
+                            <section className="mt-8">
 
-                                🥣 Principio
+                                <h3 className="mb-3 text-lg font-semibold">
 
-                            </h3>
+                                    🥣 Principio
 
-                            <p className="mb-3 text-sm text-gray-500">
+                                </h3>
 
-                                Elige una opción.
+                                <p className="mb-3 text-sm text-gray-500">
 
-                            </p>
+                                    Elige una opción.
 
-                            <div className="space-y-3">
+                                </p>
 
-                                {principleOptions.map(
-                                    option => (
+                                <div className="space-y-3">
 
-                                        <label
-                                            key={option.id}
-                                            className={`
-                                                flex
-                                                cursor-pointer
-                                                items-center
-                                                gap-3
-                                                rounded-xl
-                                                border
-                                                p-4
-                                                transition
-                                                ${selectedPrinciple ===
-                                                    option.id
-                                                    ? "border-orange-500 bg-orange-50"
-                                                    : "border-gray-200"
-                                                }
-                                            `}
-                                        >
+                                    {principleOptions.map(
+                                        option => (
 
-                                            <input
-                                                type="radio"
-                                                name="daily-menu-principle"
-                                                checked={
-                                                    selectedPrinciple ===
-                                                    option.id
-                                                }
-                                                onChange={() =>
-                                                    setSelectedPrinciple(
+                                            <label
+                                                key={option.id}
+                                                className={`
+                                                    flex
+                                                    cursor-pointer
+                                                    items-center
+                                                    gap-3
+                                                    rounded-xl
+                                                    border
+                                                    p-4
+                                                    transition
+                                                    ${selectedPrinciple ===
                                                         option.id
-                                                    )
-                                                }
-                                            />
+                                                        ? "border-orange-500 bg-orange-50"
+                                                        : "border-gray-200"
+                                                    }
+                                                `}
+                                            >
 
-                                            <span>
+                                                <input
+                                                    type="radio"
+                                                    name="daily-menu-principle"
+                                                    checked={
+                                                        selectedPrinciple ===
+                                                        option.id
+                                                    }
+                                                    onChange={() =>
+                                                        setSelectedPrinciple(
+                                                            option.id
+                                                        )
+                                                    }
+                                                />
 
-                                                {option.name}
+                                                <span>
 
-                                            </span>
+                                                    {option.name}
 
-                                        </label>
+                                                </span>
 
-                                    )
-                                )}
+                                            </label>
 
-                            </div>
+                                        )
+                                    )}
 
-                        </section>
+                                </div>
+
+                            </section>
+
+                        )}
 
 
                         {/* PROTEÍNA */}
@@ -798,6 +811,8 @@ export default function DailyMenuDrawer({
 
                         {/* BEBIDA */}
 
+                        {drinkOptions.length > 0 && (
+
                         <section className="mt-8">
 
                             <h3 className="mb-3 text-lg font-semibold">
@@ -865,6 +880,8 @@ export default function DailyMenuDrawer({
                             </div>
 
                         </section>
+
+                        )}
 
 
                         {/* POSTRE */}

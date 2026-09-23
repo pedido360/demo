@@ -214,11 +214,12 @@ async function validateDailyMenu(
      */
 
     if (
+        soups.length > 0 &&
         soups.length !== 1
     ) {
 
         throw new Error(
-            "El Menú del Día debe tener exactamente una sopa."
+            "Si configuras sopa, debe existir exactamente una."
         );
 
     }
@@ -231,12 +232,15 @@ async function validateDailyMenu(
      */
 
     if (
-        secos.length < 3 ||
-        secos.length > 4
+        secos.length > 0 &&
+        (
+            secos.length < 3 ||
+            secos.length > 4
+        )
     ) {
 
         throw new Error(
-            "El seco debe tener 3 o 4 componentes."
+            "Si configuras seco, debe tener 3 o 4 componentes."
         );
 
     }
@@ -272,16 +276,6 @@ async function validateDailyMenu(
      * Debe existir al menos
      * una opción.
      */
-
-    if (
-        drinks.length === 0
-    ) {
-
-        throw new Error(
-            "El Menú del Día debe tener al menos una bebida."
-        );
-
-    }
 
 
     /*

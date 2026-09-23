@@ -874,27 +874,18 @@ export default function DailyMenuForm({
         );
 
 
+
         if (
-            !selectedSoup
+            selectedSeco.length > 0 &&
+            (
+                selectedSeco.length < 3
+                ||
+                selectedSeco.length > 4
+            )
         ) {
 
             setError(
-                "Debes seleccionar una sopa."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            selectedSeco.length < 3
-            ||
-            selectedSeco.length > 4
-        ) {
-
-            setError(
-                "Debes seleccionar entre 3 y 4 componentes para el seco."
+                "Si configuras seco, debes seleccionar entre 3 y 4 componentes."
             );
 
             return;
@@ -902,11 +893,12 @@ export default function DailyMenuForm({
         }
 
         if (
+            selectedPrinciples.length > 0 &&
             selectedPrinciples.length < 2
         ) {
 
             setError(
-                "Debes seleccionar al menos 2 opciones de principio."
+                "Si configuras principio, debes seleccionar al menos 2 opciones."
             );
 
             return;
@@ -952,18 +944,6 @@ export default function DailyMenuForm({
 * El cliente posteriormente
 * escogerá exactamente una.
 */
-
-        if (
-            selectedDrinks.length === 0
-        ) {
-
-            setError(
-                "Debes configurar al menos una bebida."
-            );
-
-            return;
-
-        }
 
         /*
  * Postre:

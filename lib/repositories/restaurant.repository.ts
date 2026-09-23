@@ -38,9 +38,10 @@ export async function createRestaurant(
     restaurant: Restaurant
 ): Promise<Restaurant> {
 
-    const slug = generateSlug(
-        restaurant.name
-    );
+    const slug =
+        restaurant.slug || generateSlug(
+            restaurant.name
+        );
 
     const { data, error } = await supabase
         .from("restaurants")

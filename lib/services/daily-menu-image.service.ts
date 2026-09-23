@@ -1536,6 +1536,7 @@ export async function generateDailyMenuImage(
         height="${height}"
         viewBox="0 0 ${width} ${height}"
         xmlns="http://www.w3.org/2000/svg"
+        font-family="DejaVu Sans, sans-serif"
     >
 
         <defs>

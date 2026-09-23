@@ -41,6 +41,11 @@ export interface DailyMenuItem {
 }
 
 
+export type DailyMenuPricingMode =
+    | "fixed"
+    | "protein";
+
+
 export interface DailyMenuSize {
 
     id: string;
@@ -48,6 +53,27 @@ export interface DailyMenuSize {
     dailyMenuId: string;
 
     label: string;
+
+    price: number;
+
+    pricingMode: DailyMenuPricingMode;
+
+    isAvailable: boolean;
+
+    sortOrder: number;
+
+}
+
+
+export interface DailyMenuSizeProteinPrice {
+
+    id: string;
+
+    dailyMenuId: string;
+
+    sizeId: string;
+
+    optionId: string;
 
     price: number;
 
@@ -79,6 +105,9 @@ export interface DailyMenu {
     items: DailyMenuItem[];
 
     sizes: DailyMenuSize[];
+
+    sizeProteinPrices:
+        DailyMenuSizeProteinPrice[];
 
 }
 

@@ -1946,6 +1946,56 @@ export async function generateDailyMenuImage(
                             activeSizes.length;
 
 
+                        const proteinPrices =
+                            menu.sizeProteinPrices
+                                .filter(
+                                    price =>
+                                        price.sizeId ===
+                                        size.id
+                                        &&
+                                        price.isAvailable
+                                )
+                                .map(
+                                    price =>
+                                        Number(
+                                            price.price
+                                        )
+                                )
+                                .filter(
+                                    price =>
+                                        Number.isFinite(
+                                            price
+                                        )
+                                );
+
+
+                        const displayPrice =
+                            size.pricingMode ===
+                                "protein"
+                                &&
+                                proteinPrices.length > 0
+
+                                ? Math.min(
+                                    ...proteinPrices
+                                )
+
+                                : Number(
+                                    size.price
+                                );
+
+
+                        const pricePrefix =
+                            size.pricingMode ===
+                                "protein"
+                                &&
+                                proteinPrices.length > 0
+
+                                ? "Desde "
+
+                                : "";
+
+
+
                         const centerX =
                             contentX +
                             (
@@ -2019,11 +2069,9 @@ export async function generateDailyMenuImage(
                                     font-weight="900"
                                     fill="${theme.primaryDark}"
                                 >
-                                    $${Number(
-                                size.price
-                            ).toLocaleString(
-                                "es-CO"
-                            )}
+                                    ${pricePrefix}$${displayPrice.toLocaleString(
+                                        "es-CO"
+                                    )}
                                 </text>
 
                             `;

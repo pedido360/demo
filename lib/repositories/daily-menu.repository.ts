@@ -5,6 +5,7 @@ import {
     DailyMenuItem,
     DailyMenuSection,
     DailyMenuSize,
+    DailyMenuSizeProteinPrice,
 } from "@/types/daily-menu";
 
 
@@ -50,6 +51,41 @@ function mapDailyMenuSize(
         price:
             Number(data.price),
 
+        pricingMode:
+            data.pricing_mode ?? "fixed",
+
+        isAvailable:
+            data.is_available,
+
+        sortOrder:
+            data.sort_order,
+
+    };
+
+}
+
+
+function mapDailyMenuSizeProteinPrice(
+    data: any
+): DailyMenuSizeProteinPrice {
+
+    return {
+
+        id:
+            data.id,
+
+        dailyMenuId:
+            data.daily_menu_id,
+
+        sizeId:
+            data.size_id,
+
+        optionId:
+            data.option_id,
+
+        price:
+            Number(data.price),
+
         isAvailable:
             data.is_available,
 
@@ -64,7 +100,9 @@ function mapDailyMenuSize(
 function mapDailyMenu(
     data: any,
     items: DailyMenuItem[] = [],
-    sizes: DailyMenuSize[] = []
+    sizes: DailyMenuSize[] = [],
+    sizeProteinPrices:
+        DailyMenuSizeProteinPrice[] = []
 ): DailyMenu {
 
     return {
@@ -96,6 +134,8 @@ function mapDailyMenu(
         items,
 
         sizes,
+
+        sizeProteinPrices,
 
     };
 
@@ -178,6 +218,44 @@ async function getDailyMenuSizes(
 
 
 /**
+ * Obtiene los precios por proteína de un menú.
+ */
+async function getDailyMenuSizeProteinPrices(
+    dailyMenuId: string
+): Promise<DailyMenuSizeProteinPrice[]> {
+
+    const { data, error } =
+        await supabase
+            .from(
+                "daily_menu_size_protein_prices"
+            )
+            .select("*")
+            .eq(
+                "daily_menu_id",
+                dailyMenuId
+            )
+            .order("sort_order", {
+                ascending: true,
+            });
+
+    if (error) {
+
+        console.error(error);
+
+        throw new Error(
+            error.message
+        );
+
+    }
+
+    return (data ?? []).map(
+        mapDailyMenuSizeProteinPrice
+    );
+
+}
+
+
+/**
  * Obtiene todos los menús de un restaurante.
  */
 export async function getDailyMenus(
@@ -223,6 +301,7 @@ export async function getDailyMenus(
         const [
             items,
             sizes,
+            sizeProteinPrices,
         ] = await Promise.all([
 
             getDailyMenuItems(
@@ -233,13 +312,18 @@ export async function getDailyMenus(
                 menu.id
             ),
 
+            getDailyMenuSizeProteinPrices(
+                menu.id
+            ),
+
         ]);
 
         result.push(
             mapDailyMenu(
                 menu,
                 items,
-                sizes
+                sizes,
+                sizeProteinPrices
             )
         );
 
@@ -277,6 +361,7 @@ export async function getDailyMenuById(
     const [
         items,
         sizes,
+        sizeProteinPrices,
     ] = await Promise.all([
 
         getDailyMenuItems(
@@ -287,12 +372,17 @@ export async function getDailyMenuById(
             id
         ),
 
+        getDailyMenuSizeProteinPrices(
+            id
+        ),
+
     ]);
 
     return mapDailyMenu(
         data,
         items,
-        sizes
+        sizes,
+        sizeProteinPrices
     );
 
 }
@@ -639,6 +729,8 @@ export async function replaceDailyMenuSizes(
                 sizes.map(
                     (size) => ({
 
+                          id:
+                              size.id,
                         daily_menu_id:
                             dailyMenuId,
 
@@ -648,11 +740,96 @@ export async function replaceDailyMenuSizes(
                         price:
                             size.price,
 
+                        pricing_mode:
+                            size.pricingMode,
+
                         is_available:
                             size.isAvailable,
 
                         sort_order:
                             size.sortOrder,
+
+                    })
+                )
+
+            );
+
+    if (insertError) {
+
+        console.error(insertError);
+
+        throw new Error(
+            insertError.message
+        );
+
+    }
+
+}
+
+
+/**
+ * Reemplaza completamente los precios
+ * por proteína de un menú.
+ */
+export async function replaceDailyMenuSizeProteinPrices(
+    dailyMenuId: string,
+    prices: DailyMenuSizeProteinPrice[]
+): Promise<void> {
+
+    const { error: deleteError } =
+        await supabase
+            .from(
+                "daily_menu_size_protein_prices"
+            )
+            .delete()
+            .eq(
+                "daily_menu_id",
+                dailyMenuId
+            );
+
+    if (deleteError) {
+
+        console.error(deleteError);
+
+        throw new Error(
+            deleteError.message
+        );
+
+    }
+
+    if (prices.length === 0) {
+
+        return;
+
+    }
+
+    const { error: insertError } =
+        await supabase
+            .from(
+                "daily_menu_size_protein_prices"
+            )
+            .insert(
+
+                prices.map(
+                    (price) => ({
+
+                        daily_menu_id:
+                            dailyMenuId,
+
+                        size_id:
+                            price.sizeId,
+
+                        option_id:
+                            price.optionId,
+
+                        price:
+                            price.price,
+
+                        is_available:
+                            price.isAvailable,
+
+                        sort_order:
+                            price.sortOrder,
 
                     })
                 )
@@ -695,6 +872,11 @@ export async function saveDailyMenu(
     await replaceDailyMenuSizes(
         menu.id,
         menu.sizes
+    );
+
+    await replaceDailyMenuSizeProteinPrices(
+        menu.id,
+        menu.sizeProteinPrices
     );
 
     return getDailyMenuById(

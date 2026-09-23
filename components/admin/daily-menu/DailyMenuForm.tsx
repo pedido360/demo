@@ -11,6 +11,7 @@ import {
     DailyMenuOption,
     DailyMenuSection,
     DailyMenuSize,
+    DailyMenuPricingMode,
 } from "@/types/daily-menu";
 
 import {
@@ -102,6 +103,13 @@ export default function DailyMenuForm({
 
     const [loadingOptions, setLoadingOptions] =
         useState(true);
+
+
+    const [
+        proteinPriceSizeId,
+        setProteinPriceSizeId
+    ] =
+        useState<string | null>(null);
 
 
     const [error, setError] =
@@ -757,6 +765,9 @@ export default function DailyMenuForm({
             price:
                 0,
 
+            pricingMode:
+                "fixed",
+
             isAvailable:
                 true,
 
@@ -779,6 +790,9 @@ export default function DailyMenuForm({
 
                 ],
 
+                sizeProteinPrices:
+                    current.sizeProteinPrices ?? [],
+
             })
         );
 
@@ -792,21 +806,21 @@ export default function DailyMenuForm({
         field:
             "label"
             | "price"
+            | "pricingMode"
             | "isAvailable",
 
         value:
-            string
+            | string
             | number
             | boolean
+            | DailyMenuPricingMode
 
     ) {
 
         setDraft(
-            current => ({
+            current => {
 
-                ...current,
-
-                sizes:
+                const updatedSizes =
                     current.sizes.map(
                         size =>
                             size.id === id
@@ -819,9 +833,93 @@ export default function DailyMenuForm({
 
                                 }
                                 : size
-                    ),
+                    );
 
-            })
+
+                if (
+                    field !==
+                    "pricingMode"
+                    ||
+                    value !==
+                    "protein"
+                ) {
+
+                    return {
+
+                        ...current,
+
+                        sizes:
+                            updatedSizes,
+
+                    };
+
+                }
+
+
+                const currentPrices =
+                    current.sizeProteinPrices ??
+                    [];
+
+
+                const proteinPricesToAdd =
+                    selectedProteins
+                        .filter(
+                            protein =>
+                                !currentPrices.some(
+                                    price =>
+                                        price.sizeId ===
+                                            id
+                                        &&
+                                        price.optionId ===
+                                            protein.optionId
+                                )
+                        )
+                        .map(
+                            protein => ({
+
+                                id:
+                                    crypto.randomUUID(),
+
+                                dailyMenuId:
+                                    current.id,
+
+                                sizeId:
+                                    id,
+
+                                optionId:
+                                    protein.optionId,
+
+                                price:
+                                    0,
+
+                                isAvailable:
+                                    true,
+
+                                sortOrder:
+                                    protein.sortOrder,
+
+                            })
+                        );
+
+
+                return {
+
+                    ...current,
+
+                    sizes:
+                        updatedSizes,
+
+                    sizeProteinPrices: [
+
+                        ...currentPrices,
+
+                        ...proteinPricesToAdd,
+
+                    ],
+
+                };
+
+            }
         );
 
     }
@@ -858,6 +956,16 @@ export default function DailyMenuForm({
 
                             })
                         ),
+
+                sizeProteinPrices:
+                    (
+                        current.sizeProteinPrices ??
+                        []
+                    ).filter(
+                        price =>
+                            price.sizeId !==
+                            id
+                    ),
 
             })
         );
@@ -997,6 +1105,76 @@ export default function DailyMenuForm({
                 );
 
                 return;
+
+            }
+
+
+            if (
+                size.pricingMode ===
+                "protein"
+            ) {
+
+                if (
+                    selectedProteins.length ===
+                    0
+                ) {
+
+                    setError(
+                        `El tamaño "${size.label}" usa precio según proteína, pero no hay proteínas configuradas.`
+                    );
+
+                    return;
+
+                }
+
+
+                const prices =
+                    draft.sizeProteinPrices ??
+                    [];
+
+
+                for (
+                    const protein
+                    of selectedProteins
+                ) {
+
+                    const price =
+                        prices.find(
+                            item =>
+                                item.sizeId ===
+                                    size.id
+                                &&
+                                item.optionId ===
+                                    protein.optionId
+                        );
+
+
+                    if (
+                        !price
+                    ) {
+
+                        setError(
+                            `Falta configurar el precio de "${optionName(protein.optionId)}" para el tamaño "${size.label}".`
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        price.price < 0
+                    ) {
+
+                        setError(
+                            `El precio de "${optionName(protein.optionId)}" para el tamaño "${size.label}" no puede ser negativo.`
+                        );
+
+                        return;
+
+                    }
+
+                }
 
             }
 
@@ -1591,89 +1769,423 @@ export default function DailyMenuForm({
                                     size.id
                                 }
 
-                                className="grid gap-3 rounded-xl border bg-white p-4 sm:grid-cols-[1fr_180px_auto]"
+                                className="grid gap-3 rounded-xl border bg-white p-4"
 
                             >
 
-                                <input
+                                <div className="grid gap-3 sm:grid-cols-[1fr_180px_auto]">
 
-                                    type="text"
+                                    <input
 
-                                    value={
-                                        size.label
-                                    }
+                                        type="text"
 
-                                    onChange={
-                                        event =>
-                                            updateSize(
+                                        value={
+                                            size.label
+                                        }
 
-                                                size.id,
+                                        onChange={
+                                            event =>
+                                                updateSize(
 
-                                                "label",
+                                                    size.id,
 
-                                                event.target.value
+                                                    "label",
 
-                                            )
-                                    }
-
-                                    placeholder="Ej. Ejecutivo"
-
-                                    className="h-11 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-orange-500"
-
-                                />
-
-
-                                <input
-
-                                    type="number"
-
-                                    min="0"
-
-                                    value={
-                                        size.price
-                                    }
-
-                                    onChange={
-                                        event =>
-                                            updateSize(
-
-                                                size.id,
-
-                                                "price",
-
-                                                Number(
                                                     event.target.value
+
                                                 )
+                                        }
 
+                                        placeholder="Ej. Ejecutivo"
+
+                                        className="h-11 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-orange-500"
+
+                                    />
+
+
+                                    <input
+
+                                        type="number"
+
+                                        min="0"
+
+                                        value={
+                                            size.price
+                                        }
+
+                                        onChange={
+                                            event =>
+                                                updateSize(
+
+                                                    size.id,
+
+                                                    "price",
+
+                                                    Number(
+                                                        event.target.value
+                                                    )
+
+                                                )
+                                        }
+
+                                        placeholder="Precio"
+
+                                        disabled={
+                                            size.pricingMode ===
+                                            "protein"
+                                        }
+
+                                        className="h-11 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-orange-500 disabled:bg-gray-100 disabled:text-gray-400"
+
+                                    />
+
+
+                                    <Button
+
+                                        type="button"
+
+                                        variant="danger"
+
+                                        size="sm"
+
+                                        onClick={() =>
+                                            removeSize(
+                                                size.id
                                             )
-                                    }
+                                        }
 
-                                    placeholder="Precio"
+                                    >
 
-                                    className="h-11 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-orange-500"
+                                        Eliminar
 
-                                />
+                                    </Button>
+
+                                </div>
 
 
-                                <Button
+                                <div>
 
-                                    type="button"
+                                    <div className="flex flex-wrap items-center gap-2">
 
-                                    variant="danger"
+                                        <button
 
-                                    size="sm"
+                                            type="button"
 
-                                    onClick={() =>
-                                        removeSize(
-                                            size.id
-                                        )
-                                    }
+                                            onClick={() => {
 
-                                >
+                                                updateSize(
 
-                                    Eliminar
+                                                    size.id,
 
-                                </Button>
+                                                    "pricingMode",
+
+                                                    "protein"
+
+                                                );
+
+                                                setProteinPriceSizeId(
+                                                    current =>
+                                                        current ===
+                                                        size.id
+                                                            ? null
+                                                            : size.id
+                                                );
+
+                                            }}
+
+                                            className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                                                size.pricingMode ===
+                                                "protein"
+
+                                                    ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+
+                                                    : "border-gray-300 bg-white text-gray-700 hover:border-emerald-400 hover:text-emerald-700"
+
+                                            }`}
+
+                                        >
+
+                                            💰 Configurar precios por proteína
+
+                                        </button>
+
+
+                                        {size.pricingMode ===
+                                            "protein" && (
+
+                                            <span className="text-xs font-medium text-emerald-700">
+
+                                                Precios por proteína activos
+
+                                            </span>
+
+                                        )}
+
+                                    </div>
+
+
+                                    {size.pricingMode ===
+                                        "protein" &&
+                                        proteinPriceSizeId ===
+                                        size.id && (
+
+                                        <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/40 p-4">
+
+                                            <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+
+                                                <div>
+
+                                                    <p className="text-sm font-semibold text-gray-800">
+
+                                                        Precio según proteína
+
+                                                    </p>
+
+                                                    <p className="text-xs text-gray-500">
+
+                                                        Define el precio de este tamaño para cada proteína.
+
+                                                    </p>
+
+                                                </div>
+
+
+                                                <button
+
+                                                    type="button"
+
+                                                    onClick={() =>
+                                                        setProteinPriceSizeId(
+                                                            null
+                                                        )
+                                                    }
+
+                                                    className="text-xs font-medium text-gray-500 hover:text-gray-800"
+
+                                                >
+
+                                                    Cerrar
+
+                                                </button>
+
+                                            </div>
+
+
+                                            {selectedProteins.length ===
+                                                0 ? (
+
+                                                <p className="rounded-lg border border-dashed border-gray-300 bg-white p-3 text-sm text-gray-500">
+
+                                                    Primero selecciona las proteínas del menú.
+
+                                                </p>
+
+                                            ) : (
+
+                                                <div className="space-y-2">
+
+                                                    {selectedProteins.map(
+                                                        protein => {
+
+                                                            const proteinPrice =
+                                                                (
+                                                                    draft.sizeProteinPrices ??
+                                                                    []
+                                                                ).find(
+                                                                    price =>
+                                                                        price.sizeId ===
+                                                                            size.id
+                                                                        &&
+                                                                        price.optionId ===
+                                                                            protein.optionId
+                                                                );
+
+
+                                                            return (
+
+                                                                <div
+
+                                                                    key={
+                                                                        `${size.id}-${protein.optionId}`
+                                                                    }
+
+                                                                    className="grid items-center gap-2 rounded-lg border bg-white p-3 sm:grid-cols-[1fr_180px]"
+
+                                                                >
+
+                                                                    <p className="text-sm font-medium text-gray-800">
+
+                                                                        {
+                                                                            optionName(
+                                                                                protein.optionId
+                                                                            )
+                                                                        }
+
+                                                                    </p>
+
+
+                                                                    <input
+
+                                                                        type="number"
+
+                                                                        min="0"
+
+                                                                        value={
+                                                                            proteinPrice?.price ??
+                                                                            0
+                                                                        }
+
+                                                                        onChange={
+                                                                            event => {
+
+                                                                                const value =
+                                                                                    Number(
+                                                                                        event.target.value
+                                                                                    );
+
+
+                                                                                setDraft(
+                                                                                    current => {
+
+                                                                                        const prices =
+                                                                                            current.sizeProteinPrices ??
+                                                                                            [];
+
+
+                                                                                        const exists =
+                                                                                            prices.some(
+                                                                                                price =>
+                                                                                                    price.sizeId ===
+                                                                                                        size.id
+                                                                                                    &&
+                                                                                                    price.optionId ===
+                                                                                                        protein.optionId
+                                                                                            );
+
+
+                                                                                        return {
+
+                                                                                            ...current,
+
+                                                                                            sizeProteinPrices:
+                                                                                                exists
+
+                                                                                                    ? prices.map(
+                                                                                                        price =>
+                                                                                                            price.sizeId ===
+                                                                                                                size.id
+                                                                                                            &&
+                                                                                                            price.optionId ===
+                                                                                                                protein.optionId
+
+                                                                                                                ? {
+
+                                                                                                                    ...price,
+
+                                                                                                                    price:
+                                                                                                                        value,
+
+                                                                                                                }
+
+                                                                                                                : price
+                                                                                                    )
+
+                                                                                                    : [
+
+                                                                                                        ...prices,
+
+                                                                                                        {
+
+                                                                                                            id:
+                                                                                                                crypto.randomUUID(),
+
+                                                                                                            dailyMenuId:
+                                                                                                                current.id,
+
+                                                                                                            sizeId:
+                                                                                                                size.id,
+
+                                                                                                            optionId:
+                                                                                                                protein.optionId,
+
+                                                                                                            price:
+                                                                                                                value,
+
+                                                                                                            isAvailable:
+                                                                                                                true,
+
+                                                                                                            sortOrder:
+                                                                                                                protein.sortOrder,
+
+                                                                                                        },
+
+                                                                                                    ],
+
+                                                                                        };
+
+                                                                                    }
+                                                                                );
+
+                                                                            }
+                                                                        }
+
+                                                                        placeholder="Precio"
+
+                                                                        className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-emerald-500"
+
+                                                                    />
+
+                                                                </div>
+
+                                                            );
+
+                                                        }
+                                                    )}
+
+                                                </div>
+
+                                            )}
+
+
+                                            <div className="mt-4 border-t pt-3">
+
+                                                <button
+
+                                                    type="button"
+
+                                                    onClick={() => {
+
+                                                        updateSize(
+
+                                                            size.id,
+
+                                                            "pricingMode",
+
+                                                            "fixed"
+
+                                                        );
+
+                                                        setProteinPriceSizeId(
+                                                            null
+                                                        );
+
+                                                    }}
+
+                                                    className="text-xs font-medium text-gray-500 hover:text-gray-800"
+
+                                                >
+
+                                                    Usar precio fijo para este tamaño
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    )}
+
+                                </div>
 
                             </div>
 

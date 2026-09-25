@@ -3,6 +3,7 @@ import SmartSupport from "@/components/smart/SmartSupport";
 
 import SmartMenu from "@/components/admin/smart-menu/SmartMenu";
 import RestaurantHoursPanel from "@/components/restaurant/RestaurantHoursPanel";
+import PendingOrders from "@/components/restaurant/PendingOrders";
 
 import { getCurrentRestaurantId } from "@/lib/server/current-restaurant";
 import { getCurrentProfile } from "@/lib/server/current-profile";
@@ -35,6 +36,11 @@ export default async function RestaurantPage() {
                 hours={hours}
                 adminName={profile?.full_name}
                 adminEmail={profile?.email}
+            />
+
+            <PendingOrders
+                restaurantId={restaurant.id}
+                restaurantName={restaurant.name}
             />
 
             <SmartMenu

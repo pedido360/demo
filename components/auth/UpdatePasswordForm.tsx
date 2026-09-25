@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -23,6 +23,32 @@ export default function UpdatePasswordForm() {
 
     const [errorMessage, setErrorMessage] =
         useState("");
+
+    useEffect(() => {
+        async function establishRecoverySession() {
+            const code =
+                new URLSearchParams(
+                    window.location.search
+                ).get("code");
+
+            if (!code) {
+                return;
+            }
+
+            const { error } =
+                await supabase.auth.exchangeCodeForSession(
+                    code
+                );
+
+            if (error) {
+                setErrorMessage(
+                    "El enlace de recuperación no es válido o ya expiró."
+                );
+            }
+        }
+
+        establishRecoverySession();
+    }, [supabase]);
 
     async function handleSubmit(
         event: React.FormEvent<HTMLFormElement>

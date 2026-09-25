@@ -32,12 +32,16 @@ export default function ResetPasswordForm() {
 
         setErrorMessage("");
 
+        const redirectTo =
+            `${window.location.origin}/update-password`;
+
+        console.log("P360 recovery redirectTo:", redirectTo);
+
         const { error } =
             await supabase.auth.resetPasswordForEmail(
                 email.trim(),
                 {
-                    redirectTo:
-                        `${window.location.origin}/update-password`,
+                    redirectTo,
                 }
             );
 

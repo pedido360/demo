@@ -5,6 +5,7 @@ import LinkButton from "@/components/ui/LinkButton";
 
 import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { getRestaurantMetrics } from "@/lib/repositories/restaurant-metrics.repository";
+import { getPendingOrders } from "@/lib/repositories/order.repository";
 
 export default async function DashboardPage() {
     const profile = await getCurrentProfile();
@@ -17,6 +18,12 @@ export default async function DashboardPage() {
             menuViews: 0,
             whatsappOrders: 0,
         };
+
+    const pendingOrders = profile?.restaurant_id
+        ? await getPendingOrders(
+            profile.restaurant_id
+        )
+        : [];
 
     const conversion =
         metrics.menuViews > 0
@@ -38,6 +45,17 @@ export default async function DashboardPage() {
                     Bienvenido a Pedidos360.
                 </p>
             </div>
+
+            {profile?.restaurant_id && (
+                <Card
+                    title="Pedidos pendientes"
+                    description="Pedidos recibidos y pendientes de confirmación."
+                >
+                    <p className="text-3xl font-bold text-gray-900">
+                        {pendingOrders.length}
+                    </p>
+                </Card>
+            )}
 
             {profile?.restaurant_id && (
                 <Card

@@ -7,6 +7,7 @@ import { Restaurant } from "@/types/restaurant";
 
 import { buildWhatsAppMessage } from "@/lib/whatsapp";
 import { recordRestaurantMetric } from "@/lib/repositories/restaurant-metrics.repository";
+import { createOrder } from "@/lib/repositories/order.repository";
 
 import { useCart } from "@/hooks/useCart";
 
@@ -138,6 +139,69 @@ export default function CartDrawer({
 
         const url =
             `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+
+        await createOrder({
+            restaurantId: restaurant.id,
+
+            customerName,
+
+            deliveryMethod,
+
+            address:
+                deliveryMethod === "Domicilio"
+                    ? address
+                    : "",
+
+            paymentMethod,
+
+            cashChange,
+
+            observations,
+
+            items: items.map((item) => ({
+                product: {
+                    id: item.product.id,
+                    name: item.product.name,
+                    productType: item.product.productType,
+                    price: item.product.price,
+                },
+
+                variant: item.variant
+                    ? {
+                        id: item.variant.id,
+                        label: item.variant.label,
+                        price: item.variant.price,
+                    }
+                    : undefined,
+
+                quantity: item.quantity,
+
+                ingredients: item.ingredients.map(
+                    (ingredient) => ({
+                        id: ingredient.id,
+                        name: ingredient.name,
+                    })
+                ),
+
+                extras: item.extras.map(
+                    (extra) => ({
+                        id: extra.id,
+                        name: extra.name,
+                        price: extra.price,
+                    })
+                ),
+
+                notes: item.notes,
+
+                dailyMenu: item.dailyMenu,
+            })),
+
+            subtotal: totalPrice,
+
+            deliveryFee: 0,
+
+            total: totalPrice,
+        });
 
         await recordRestaurantMetric(
             restaurant.id,

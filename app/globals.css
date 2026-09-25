@@ -98,3 +98,110 @@ body {
     animation: cartAttention 3s ease-out;
 
 }
+
+/* ===========================
+   Impresión de comandas
+=========================== */
+
+.print-only {
+    display: none;
+}
+
+@media print {
+    @page {
+        size: 80mm 250mm;
+        margin: 0;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        height: auto;
+        overflow: visible;
+    }
+
+    body * {
+        display: none !important;
+    }
+
+    body *:has(.print-only),
+    .print-only,
+    .print-only * {
+        display: block !important;
+    }
+
+    .print-only {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .order-print {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 8mm 5mm;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 12px;
+        line-height: 1.35;
+        color: #000;
+        background: #fff;
+    }
+
+    .print-center {
+        text-align: center;
+    }
+
+    .print-title {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .print-restaurant-name {
+        margin-top: 2px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .print-subtitle {
+        margin-top: 2px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .print-divider {
+        margin: 7px 0;
+        border-top: 1px dashed #000;
+    }
+
+    .print-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .print-section-title {
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .print-item {
+        margin-bottom: 8px;
+    }
+
+    .print-item-title {
+        font-weight: 700;
+    }
+
+    .print-note {
+        margin-top: 2px;
+    }
+
+    .print-total {
+        font-size: 14px;
+        font-weight: 700;
+    }
+}

@@ -242,6 +242,21 @@ export default function DailyMenuDrawer({
         );
 
 
+    const selectedProteinPrice =
+        selectedSizeObject?.pricingMode ===
+            "protein" &&
+        selectedProteinObject
+            ? menu?.sizeProteinPrices.find(
+                price =>
+                    price.sizeId ===
+                        selectedSizeObject.id &&
+                    price.optionId ===
+                        selectedProteinObject.id &&
+                    price.isAvailable
+            )?.price
+            : undefined;
+
+
     /*
      * La sopa y los secos vienen
      * definidos por el restaurante.
@@ -305,6 +320,7 @@ export default function DailyMenuDrawer({
                     selectedSizeObject.label,
 
                 price:
+                    selectedProteinPrice ??
                     selectedSizeObject.price,
 
             },
@@ -557,7 +573,36 @@ export default function DailyMenuDrawer({
                                                 <span className="font-bold text-orange-600">
 
                                                     $
-                                                    {size.price.toLocaleString(
+                                                    {(size.pricingMode ===
+                                                        "protein"
+                                                        ? (() => {
+                                                            const prices =
+                                                                menu.sizeProteinPrices
+                                                                    .filter(
+                                                                        price =>
+                                                                            price.sizeId ===
+                                                                                size.id &&
+                                                                            price.isAvailable
+                                                                    )
+                                                                    .map(
+                                                                        price =>
+                                                                            Number(
+                                                                                price.price
+                                                                            )
+                                                                    )
+                                                                    .filter(
+                                                                        price =>
+                                                                            Number.isFinite(
+                                                                                price
+                                                                            )
+                                                                    );
+
+                                                            return prices.length > 0
+                                                                ? Math.min(...prices)
+                                                                : Number(size.price);
+                                                        })()
+                                                        : Number(size.price)
+                                                    ).toLocaleString(
                                                         "es-CO"
                                                     )}
 

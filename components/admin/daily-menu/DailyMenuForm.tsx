@@ -455,7 +455,7 @@ export default function DailyMenuForm({
 
                     principle: 4,
 
-                    protein: 4,
+                    protein: Infinity,
 
                     drink: 20,
 
@@ -485,7 +485,7 @@ export default function DailyMenuForm({
 
                                 : section === "protein"
 
-                                    ? "Puedes habilitar máximo 4 proteínas."
+                                    ? "Puedes configurar varias proteínas."
 
                                     : section === "drink"
 
@@ -1025,16 +1025,12 @@ export default function DailyMenuForm({
 
             selectedProteins.length > 0
             &&
-            (
-                selectedProteins.length < 3
-                ||
-                selectedProteins.length > 4
-            )
+            selectedProteins.length < 3
 
         ) {
 
             setError(
-                "La proteína debe tener 3 o 4 opciones."
+                "La proteína debe tener al menos 3 opciones."
             );
 
             return;

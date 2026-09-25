@@ -433,6 +433,7 @@ export async function getPublishedDailyMenu(
     const [
         items,
         sizes,
+        sizeProteinPrices,
     ] = await Promise.all([
 
         getDailyMenuItems(
@@ -443,12 +444,17 @@ export async function getPublishedDailyMenu(
             data.id
         ),
 
+        getDailyMenuSizeProteinPrices(
+            data.id
+        ),
+
     ]);
 
     return mapDailyMenu(
         data,
         items,
-        sizes
+        sizes,
+        sizeProteinPrices
     );
 
 }

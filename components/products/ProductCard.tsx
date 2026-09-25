@@ -40,11 +40,28 @@ export default function ProductCard({
                     size =>
                         size.isAvailable
                 )
-                .map(
+                .flatMap(
                     size =>
-                        Number(
-                            size.price
-                        )
+                        size.pricingMode ===
+                            "protein"
+                            ? dailyMenu.sizeProteinPrices
+                                .filter(
+                                    price =>
+                                        price.sizeId ===
+                                            size.id &&
+                                        price.isAvailable
+                                )
+                                .map(
+                                    price =>
+                                        Number(
+                                            price.price
+                                        )
+                                )
+                            : [
+                                Number(
+                                    size.price
+                                ),
+                            ]
                 )
                 .filter(
                     price =>

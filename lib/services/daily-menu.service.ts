@@ -257,14 +257,11 @@ async function validateDailyMenu(
 
     if (
         proteins.length > 0 &&
-        (
-            proteins.length < 3 ||
-            proteins.length > 4
-        )
+        proteins.length < 3
     ) {
 
         throw new Error(
-            "La proteína debe tener 3 o 4 opciones."
+            "La proteína debe tener al menos 3 opciones."
         );
 
     }
@@ -557,6 +554,9 @@ export async function getRestaurantDailyMenuClient(
 
         sizes:
             menu.sizes,
+
+        sizeProteinPrices:
+            menu.sizeProteinPrices,
 
         options:
             clientOptions,

@@ -58,6 +58,7 @@ const dailyMenu: DailyMenuClient = {
 
   ],
 
+    sizeProteinPrices: [],
   options: [
 
     {

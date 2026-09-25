@@ -141,6 +141,9 @@ export interface DailyMenuClient {
 
     sizes: DailyMenuSize[];
 
+    sizeProteinPrices:
+        DailyMenuSizeProteinPrice[];
+
     options: DailyMenuClientOption[];
 
 }

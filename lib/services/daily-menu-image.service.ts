@@ -1249,6 +1249,14 @@ export async function generateDailyMenuImage(
             );
 
 
+    const hasProteinPricing =
+        activeSizes.some(
+            size =>
+                size.pricingMode ===
+                "protein"
+        );
+
+
     /*
      * ============================================================
      * TARJETAS DE COMPONENTES
@@ -1521,6 +1529,434 @@ export async function generateDailyMenuImage(
                 }
             )
             .join("");
+
+
+    const proteinPricingSections =
+        preparedSections.filter(
+            preparedSection =>
+                preparedSection.section !==
+                    "protein" &&
+                preparedSection.section !==
+                    "dessert"
+        );
+
+
+    const proteinNames =
+        grouped.get("protein") ?? [];
+
+
+    const proteinColumnCount = 3;
+
+
+    const proteinColumns =
+        Array.from(
+            {
+                length:
+                    proteinColumnCount,
+            },
+            () => [] as string[]
+        );
+
+
+    proteinNames.forEach(
+        (name, index) => {
+            proteinColumns[
+                index %
+                proteinColumnCount
+            ].push(name);
+        }
+    );
+
+
+    const proteinColumnWidth =
+        (
+            contentWidth -
+            130 -
+            (
+                (proteinColumnCount - 1) *
+                16
+            )
+        ) /
+        proteinColumnCount;
+
+
+    const proteinBodySvg =
+        proteinColumns
+            .map(
+                (
+                    names,
+                    columnIndex
+                ) => {
+
+                    const columnX =
+                        contentX +
+                        108 +
+                        (
+                            columnIndex *
+                            (
+                                proteinColumnWidth +
+                                16
+                            )
+                        );
+
+                    const separatorSvg =
+                        columnIndex > 0
+                            ? `
+                                <line
+                                    x1="${columnX - 8}"
+                                    y1="${cardStartY + (
+                                        2 *
+                                        (
+                                            cardHeight +
+                                            cardRowGap
+                                        )
+                                    ) + 64}"
+                                    x2="${columnX - 8}"
+                                    y2="${cardStartY + (
+                                        2 *
+                                        (
+                                            cardHeight +
+                                            cardRowGap
+                                        )
+                                    ) + 136}"
+                                    stroke="${theme.border}"
+                                    stroke-width="1"
+                                    opacity="0.55"
+                                />
+                            `
+                            : "";
+
+                    return `
+                        ${separatorSvg}
+
+                        ${names
+                            .map(
+                                (
+                                    name,
+                                    nameIndex
+                                ) => {
+
+                                    const textFit =
+                                        name.length > 30
+                                            ? `
+                                                textLength="${
+                                                    proteinColumnWidth - 8
+                                                }"
+                                                lengthAdjust="spacingAndGlyphs"
+                                            `
+                                            : "";
+
+                                    return `
+
+                                        <text
+                                            x="${columnX}"
+                                            y="${cardStartY + (
+                                                2 *
+                                                (
+                                                    cardHeight +
+                                                    cardRowGap
+                                                )
+                                            ) + 70 + (
+                                                nameIndex *
+                                                11.5
+                                            )}"
+                                            font-size="11.5"
+                                            font-weight="600"
+                                            fill="${theme.text}"
+                                            ${textFit}
+                                        >
+                                            • ${escapeXml(
+                                                name
+                                            )}
+                                        </text>
+
+                                    `;
+                                }
+                            )
+                            .join("")}
+                    `;
+                }
+            )
+            .join("");
+
+
+    const proteinPricingSectionSvg = `
+
+        ${proteinPricingSections
+            .map(
+                (
+                    {
+                        section,
+                    },
+                    index
+                ) => {
+
+                    const column =
+                        index % 2;
+
+                    const row =
+                        Math.floor(
+                            index / 2
+                        );
+
+                    const cardX =
+                        contentX +
+                        (
+                            column *
+                            (
+                                cardWidth +
+                                cardGap
+                            )
+                        );
+
+                    const cardY =
+                        cardStartY +
+                        (
+                            row *
+                            (
+                                cardHeight +
+                                cardRowGap
+                            )
+                        );
+
+                    const iconColor =
+                        getSectionColor(
+                            section
+                        );
+
+                    const iconSymbol =
+                        getSectionSymbol(
+                            section
+                        );
+
+                    const iconX =
+                        cardX + 54;
+
+                    const iconY =
+                        cardY + 70;
+
+                    const textX =
+                        cardX + 108;
+
+                    const titleY =
+                        cardY + 43;
+
+                    const lines =
+                        preparedSections.find(
+                            preparedSection =>
+                                preparedSection.section ===
+                                section
+                        )?.lines ?? [];
+
+                    const bodySvg =
+                        lines
+                            .slice(
+                                0,
+                                2
+                            )
+                            .map(
+                                (
+                                    line,
+                                    lineIndex
+                                ) => `
+
+                                    <text
+                                        x="${textX}"
+                                        y="${cardY + 78 + (
+                                            lineIndex *
+                                            25
+                                        )}"
+                                        font-size="19"
+                                        font-weight="600"
+                                        fill="${theme.text}"
+                                    >
+                                        ${escapeXml(
+                                            line
+                                        )}
+                                    </text>
+
+                                `
+                            )
+                            .join("");
+
+                    return `
+
+                        <rect
+                            x="${cardX}"
+                            y="${cardY}"
+                            width="${cardWidth}"
+                            height="${cardHeight}"
+                            rx="26"
+                            fill="#fffdf5"
+                            stroke="${theme.border}"
+                            stroke-width="2"
+                            filter="url(#dailyMenuShadow)"
+                        />
+
+                        <rect
+                            x="${cardX}"
+                            y="${cardY}"
+                            width="7"
+                            height="${cardHeight}"
+                            rx="3.5"
+                            fill="${iconColor}"
+                        />
+
+                        <circle
+                            cx="${iconX}"
+                            cy="${iconY}"
+                            r="39"
+                            fill="${iconColor}"
+                        />
+
+                        <text
+                            x="${iconX}"
+                            y="${iconY + 10}"
+                            text-anchor="middle"
+                            font-size="27"
+                            font-weight="900"
+                            fill="#ffffff"
+                        >
+                            ${iconSymbol}
+                        </text>
+
+                        <text
+                            x="${textX}"
+                            y="${titleY}"
+                            font-size="25"
+                            font-weight="900"
+                            letter-spacing="0.3"
+                            fill="${iconColor}"
+                        >
+                            ${escapeXml(
+                                SECTION_LABELS[
+                                    section
+                                ]
+                            )}
+                        </text>
+
+                        <line
+                            x1="${textX}"
+                            y1="${cardY + 56}"
+                            x2="${cardX + cardWidth - 25}"
+                            y2="${cardY + 56}"
+                            stroke="${iconColor}"
+                            stroke-width="2"
+                            opacity="0.22"
+                        />
+
+                        ${bodySvg}
+
+                    `;
+                }
+            )
+            .join("")}
+
+        <rect
+            x="${contentX}"
+            y="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            )}"
+            width="${contentWidth}"
+            height="${cardHeight}"
+            rx="26"
+            fill="#fffdf5"
+            stroke="${theme.border}"
+            stroke-width="2"
+            filter="url(#dailyMenuShadow)"
+        />
+
+        <rect
+            x="${contentX}"
+            y="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            )}"
+            width="7"
+            height="${cardHeight}"
+            rx="3.5"
+            fill="${getSectionColor("protein")}"
+        />
+
+        <circle
+            cx="${contentX + 54}"
+            cy="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            ) + 70}"
+            r="39"
+            fill="${getSectionColor("protein")}"
+        />
+
+        <text
+            x="${contentX + 54}"
+            y="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            ) + 80}"
+            text-anchor="middle"
+            font-size="27"
+            font-weight="900"
+            fill="#ffffff"
+        >
+            ${getSectionSymbol("protein")}
+        </text>
+
+        <text
+            x="${contentX + 108}"
+            y="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            ) + 43}"
+            font-size="25"
+            font-weight="900"
+            letter-spacing="0.3"
+            fill="${getSectionColor("protein")}"
+        >
+            PROTEÍNA
+        </text>
+
+        <line
+            x1="${contentX + 108}"
+            y1="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            ) + 56}"
+            x2="${contentX + contentWidth - 25}"
+            y2="${cardStartY + (
+                2 *
+                (
+                    cardHeight +
+                    cardRowGap
+                )
+            ) + 56}"
+            stroke="${getSectionColor("protein")}"
+            stroke-width="2"
+            opacity="0.22"
+        />
+
+        ${proteinBodySvg}
+
+    `;
 
 
     /*
@@ -1839,7 +2275,11 @@ export async function generateDailyMenuImage(
              SEIS COMPONENTES
              ================================================== -->
 
-        ${sectionSvg}
+        ${
+            hasProteinPricing
+                ? proteinPricingSectionSvg
+                : sectionSvg
+        }
 
 
         <!-- ==================================================

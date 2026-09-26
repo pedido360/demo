@@ -46,13 +46,13 @@ export async function generateMetadata({
         const restaurant =
             await getRestaurantBySlug(slug);
 
-        const url =
-            `https://pedidos360.shop/${slug}`;
+        const restaurantUrl =
+            `https://${slug}.pedidos360.shop`;
 
         return {
 
             metadataBase:
-                new URL("https://pedidos360.shop"),
+                new URL(restaurantUrl),
 
             title:
                 `${restaurant.name} | Pedidos360`,
@@ -68,7 +68,7 @@ export async function generateMetadata({
                 description:
                     restaurant.description,
 
-                url,
+                url: restaurantUrl,
 
                 siteName:
                     "Pedidos360",
@@ -81,7 +81,7 @@ export async function generateMetadata({
 
                 images: [
                     {
-                        url: `https://pedidos360.shop/${slug}/opengraph-image`,
+                        url: `${restaurantUrl}/opengraph-image`,
                         width: 1200,
                         height: 630,
                         alt: `${restaurant.name} | Pedidos360`,
@@ -102,7 +102,7 @@ export async function generateMetadata({
                     restaurant.description,
 
                 images: [
-                    `https://pedidos360.shop/${slug}/opengraph-image`,
+                    `${restaurantUrl}/opengraph-image`,
                 ],
 
             },

@@ -135,9 +135,7 @@ export async function updateRestaurant(
     restaurant: Restaurant
 ): Promise<Restaurant> {
 
-    const slug = generateSlug(
-        restaurant.name
-    );
+    const slug = restaurant.slug;
 
     const { data, error } = await supabase
         .from("restaurants")

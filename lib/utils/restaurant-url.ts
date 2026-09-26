@@ -5,6 +5,9 @@ export function buildRestaurantUrl(
     const baseUrl =
         process.env.NEXT_PUBLIC_APP_URL!;
 
-    return `${baseUrl}/${slug}`;
+    const hostname =
+        new URL(baseUrl).hostname;
+
+    return `https://${slug}.${hostname}`;
 
 }

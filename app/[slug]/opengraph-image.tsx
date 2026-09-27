@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import sharp from "sharp";
 
 import {
     getRestaurantBySlug,
@@ -35,6 +36,74 @@ export default async function OpenGraphImage({
             ? restaurant.logo
             : null;
 
+    const banner =
+        restaurant.banner?.trim()
+            ? restaurant.banner
+            : null;
+
+    async function imageToDataUri(
+        imageUrl: string | null,
+        width?: number,
+        height?: number
+    ): Promise<string | null> {
+        if (!imageUrl) {
+            return null;
+        }
+
+        try {
+            const response = await fetch(imageUrl);
+
+            if (!response.ok) {
+                return null;
+            }
+
+            const sourceBuffer = Buffer.from(
+                await response.arrayBuffer()
+            );
+
+            let image = sharp(sourceBuffer);
+
+            if (width && height) {
+                image = image.resize(
+                    width,
+                    height,
+                    {
+                        fit: "cover",
+                        position: "centre",
+                    }
+                );
+            }
+
+            const pngBuffer = await image
+                .png()
+                .toBuffer();
+
+            return (
+                "data:image/png;base64," +
+                pngBuffer.toString("base64")
+            );
+        } catch (error) {
+            console.error(
+                "Error convirtiendo imagen para Open Graph:",
+                error
+            );
+
+            return null;
+        }
+    }
+
+    const [
+        logoDataUri,
+        bannerDataUri,
+    ] = await Promise.all([
+        imageToDataUri(logo),
+        imageToDataUri(
+            banner,
+            1200,
+            630
+        ),
+    ]);
+
     return new ImageResponse(
         (
             <div
@@ -42,60 +111,104 @@ export default async function OpenGraphImage({
                     width: "100%",
                     height: "100%",
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#ffffff",
-                    padding: "60px",
-                    textAlign: "center",
+                    position: "relative",
+                    overflow: "hidden",
+                    backgroundColor: "#111827",
                 }}
             >
-                {logo && (
+                {banner && (
                     <img
-                        src={logo}
-                        alt={restaurant.name}
-                        width={180}
-                        height={180}
+                        src={bannerDataUri || banner}
+                        alt=""
+                        width={1200}
+                        height={630}
                         style={{
+                            position: "absolute",
+                            inset: 0,
+                            width: "100%",
+                            height: "100%",
                             objectFit: "cover",
-                            borderRadius: "40px",
-                            marginBottom: "30px",
                         }}
                     />
                 )}
 
                 <div
                     style={{
-                        fontSize: "56px",
-                        fontWeight: 800,
-                        color: "#111827",
-                        marginBottom: "18px",
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.80)",
                     }}
-                >
-                    {restaurant.name}
-                </div>
+                />
 
                 <div
                     style={{
-                        fontSize: "28px",
-                        color: "#6B7280",
-                        maxWidth: "900px",
-                    }}
-                >
-                    {restaurant.description ||
-                        "Haz tu pedido en línea."}
-                </div>
-
-                <div
-                    style={{
+                        position: "relative",
+                        zIndex: 2,
+                        width: "100%",
+                        height: "100%",
                         display: "flex",
-                        marginTop: "40px",
-                        fontSize: "24px",
-                        fontWeight: 700,
-                        color: "#DC2626",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "55px",
+                        textAlign: "center",
                     }}
                 >
-                    Pedidos360
+                    {logo && (
+                        <img
+                            src={logoDataUri || logo}
+                            alt={restaurant.name}
+                            width={190}
+                            height={190}
+                            style={{
+                                objectFit: "contain",
+                                borderRadius: "30px",
+                                marginBottom: "28px",
+                            }}
+                        />
+                    )}
+
+                    <div
+                        style={{
+                            fontSize: "58px",
+                            fontWeight: 800,
+                            color: "#ffffff",
+                            lineHeight: 1.1,
+                            maxWidth: "1050px",
+                            marginBottom: "18px",
+                        }}
+                    >
+                        {restaurant.name}
+                    </div>
+
+                    <div
+                        style={{
+                            fontSize: "28px",
+                            color: "#ffffff",
+                            maxWidth: "900px",
+                            lineHeight: 1.25,
+                        }}
+                    >
+                        {restaurant.description ||
+                            "Haz tu pedido en línea."}
+                    </div>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            marginTop: "38px",
+                            padding: "12px 28px",
+                            borderRadius: "999px",
+                            backgroundColor: "#DC2626",
+                            color: "#ffffff",
+                            fontSize: "24px",
+                            fontWeight: 800,
+                        }}
+                    >
+                        Pide ahora · Pedidos360
+                    </div>
                 </div>
             </div>
         ),

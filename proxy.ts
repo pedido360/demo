@@ -15,6 +15,19 @@ export async function proxy(request: NextRequest) {
     const isLocalSubdomain =
         hostname.endsWith(".localhost");
 
+    // Guía Boquisabrosa: subdominio propio con ruta interna fija.
+    if (
+        hostname === "guiaboquisabrosa.pedidos360.shop" ||
+        hostname === "guiaboquisabrosa.localhost"
+    ) {
+        const url = request.nextUrl.clone();
+
+        url.pathname =
+            `/boquisabrosa${pathname === "/" ? "" : pathname}`;
+
+        return NextResponse.rewrite(url);
+    }
+
     if (isProductionSubdomain || isLocalSubdomain) {
 
         const slug = isProductionSubdomain

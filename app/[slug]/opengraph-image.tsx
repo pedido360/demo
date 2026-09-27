@@ -75,7 +75,10 @@ export default async function OpenGraphImage({
             }
 
             const pngBuffer = await image
-                .png()
+                .png({
+                    compressionLevel: 9,
+                    palette: true,
+                })
                 .toBuffer();
 
             return (

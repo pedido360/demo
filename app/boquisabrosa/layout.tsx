@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/GuiaBoquisabrosa.jpeg",
+        url: "/guia/GuiaBoquisabrosaOG.jpeg",
         alt: "Guía Boquisabrosa · Ruta Gastronómica · San Gil",
       },
     ],
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "Guía Boquisabrosa | Ruta Gastronómica · San Gil",
     description:
       "Descubre restaurantes, cafés y sabores de San Gil con la Guía Boquisabrosa.",
-    images: ["/GuiaBoquisabrosa.jpeg"],
+    images: ["/guia/GuiaBoquisabrosaOG.jpeg"],
   },
 };
 

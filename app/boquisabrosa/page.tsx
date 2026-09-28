@@ -45,6 +45,7 @@ const places: Array<{
   {
     number: "03",
     name: "Dinamita Restaurante",
+    image: "/guia/dinamita.jpg",
     type: "Restaurante",
     schedule: "Todos los días · 6 A.M. - 11 P.M.",
     address: "Carrera 5 No. 6A - 04",
@@ -96,6 +97,7 @@ const places: Array<{
   {
     number: "08",
     name: "El Zaguán Cafetería",
+    image: "/guia/zaguan.webp",
     type: "Cafetería",
     schedule: "Todos los días · 7 A.M. - 12:30 P.M.",
     address: "Calle 13 No. 10 - 35",
@@ -106,6 +108,7 @@ const places: Array<{
   {
     number: "09",
     name: "Megalesa",
+    image: "/guia/megalesa.webp",
     type: "Restaurante",
     schedule: "24 horas",
     address: "San Gil",
@@ -334,6 +337,7 @@ function getPlaceStatus(schedule: string) {
 
 export default function BoquisabrosaPage() {
   const [shuffledPlaces, setShuffledPlaces] = useState(places);
+  const [promoPosition, setPromoPosition] = useState<number | null>(null);
   const [openPlace, setOpenPlace] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
@@ -356,6 +360,7 @@ export default function BoquisabrosaPage() {
 
   useEffect(() => {
     setShuffledPlaces(shufflePlaces(places));
+    setPromoPosition(Math.floor(Math.random() * (places.length + 1)));
     void recordGuideMetric("guide_view");
   }, []);
 
@@ -485,11 +490,53 @@ export default function BoquisabrosaPage() {
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredPlaces.map((place) => (
-              <article
-                key={place.number}
-                className="group overflow-hidden rounded-[1.7rem] border border-black/5 bg-white shadow-[0_12px_40px_rgba(37,23,11,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
+            {filteredPlaces.map((place, index) => (
+              <div key={place.number} className="contents">
+                {activeFilter === "Todos" &&
+                searchTerm.trim() === "" &&
+                promoPosition === index ? (
+                  <article className="group overflow-hidden rounded-[1.7rem] border border-[#f6c515]/40 bg-white shadow-[0_12px_40px_rgba(37,23,11,0.09)] transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#eee5c9]">
+                      <Image
+                        src="/guia/espacio-disponible-boquisabrosa.png"
+                        alt="Espacio disponible en la Guía Boquisabrosa"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover object-center transition duration-500 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="p-5">
+                      <span className="inline-flex rounded-full bg-[#f6c515] px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-[#25170b]">
+                        Espacio disponible
+                      </span>
+
+                      <h3 className="mt-3 text-xl font-black leading-tight">
+                        ¿Tu negocio también hace parte de esta ruta?
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-6 text-black/60">
+                        Haz parte de la Guía Boquisabrosa y presenta tu negocio
+                        gastronómico a quienes buscan dónde comer en San Gil.
+                      </p>
+
+                      <a
+                        href={`https://wa.me/573180972943?text=${encodeURIComponent(
+                          "Hola, quiero información para hacer parte de la Guía Boquisabrosa."
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 block w-full rounded-xl bg-[#25D366] px-4 py-3 text-center text-xs font-black uppercase tracking-wider text-white transition hover:brightness-95"
+                      >
+                        💬 Solicita información
+                      </a>
+                    </div>
+                  </article>
+                ) : null}
+
+                <article
+                  className="group overflow-hidden rounded-[1.7rem] border border-black/5 bg-white shadow-[0_12px_40px_rgba(37,23,11,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
                 <div className="relative aspect-[16/10] overflow-hidden bg-[#eee5c9]">
                   <Image
                     src={place.image ?? "/GuiaBoquisabrosa.jpeg"}
@@ -685,6 +732,7 @@ export default function BoquisabrosaPage() {
                   </details>
                 </div>
               </article>
+              </div>
             ))}
           </div>
         </div>

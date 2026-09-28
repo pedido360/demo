@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { recordGuideMetric } from "@/lib/repositories/guide-metrics.repository";
 
 const places: Array<{
   number: string;
@@ -355,6 +356,7 @@ export default function BoquisabrosaPage() {
 
   useEffect(() => {
     setShuffledPlaces(shufflePlaces(places));
+    void recordGuideMetric("guide_view");
   }, []);
 
   return (
@@ -554,9 +556,20 @@ export default function BoquisabrosaPage() {
                         event.target.closest("summary")
                       ) {
                         event.preventDefault();
+
+                        const willOpen =
+                          openPlace !== place.number;
+
                         setOpenPlace((current) =>
                           current === place.number ? null : place.number
                         );
+
+                        if (willOpen) {
+                          void recordGuideMetric(
+                            "restaurant_view",
+                            place.name
+                          );
+                        }
                       }
                     }}
                     className="mt-4 overflow-hidden rounded-2xl bg-[#fff9e8]"

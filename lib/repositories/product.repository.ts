@@ -158,6 +158,8 @@ export async function getProducts(
         reusableExtraGroupsResult,
         reusableExtraGroupItemsResult,
         reusableExtrasResult,
+        productExtraSelectionGroupsResult,
+        productExtraSelectionGroupItemsResult,
         variantsResult,
         availableDaysResults,
         availableHoursResults,
@@ -222,6 +224,30 @@ export async function getProducts(
                 "is_active",
                 true
             )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
+
+        supabase
+            .from("product_extra_selection_groups")
+            .select("*")
+            .in(
+                "product_id",
+                productIds
+            )
+            .order(
+                "sort_order",
+                {
+                    ascending: true,
+                }
+            ),
+
+        supabase
+            .from("product_extra_selection_group_items")
+            .select("*")
             .order(
                 "sort_order",
                 {
@@ -342,6 +368,36 @@ export async function getProducts(
 
         throw new Error(
             reusableExtrasResult.error.message
+        );
+
+    }
+
+
+    if (
+        productExtraSelectionGroupsResult.error
+    ) {
+
+        console.error(
+            productExtraSelectionGroupsResult.error
+        );
+
+        throw new Error(
+            productExtraSelectionGroupsResult.error.message
+        );
+
+    }
+
+
+    if (
+        productExtraSelectionGroupItemsResult.error
+    ) {
+
+        console.error(
+            productExtraSelectionGroupItemsResult.error
+        );
+
+        throw new Error(
+            productExtraSelectionGroupItemsResult.error.message
         );
 
     }
@@ -531,6 +587,104 @@ export async function getProducts(
     }
 
 
+    const productExtraSelectionGroupItemsByGroup =
+        new Map<string, any[]>();
+
+
+    for (
+        const item
+        of productExtraSelectionGroupItemsResult.data ?? []
+    ) {
+
+        const list =
+            productExtraSelectionGroupItemsByGroup.get(
+                item.group_id
+            ) ?? [];
+
+
+        list.push({
+            id:
+                item.id,
+
+            groupId:
+                item.group_id,
+
+            extraId:
+                item.extra_id,
+
+            sortOrder:
+                Number(
+                    item.sort_order
+                ),
+        });
+
+
+        productExtraSelectionGroupItemsByGroup.set(
+            item.group_id,
+            list
+        );
+
+    }
+
+
+    const extraSelectionGroupsByProduct =
+        new Map<string, any[]>();
+
+
+    for (
+        const group
+        of productExtraSelectionGroupsResult.data ?? []
+    ) {
+
+        const list =
+            extraSelectionGroupsByProduct.get(
+                group.product_id
+            ) ?? [];
+
+
+        list.push({
+            id:
+                group.id,
+
+            productId:
+                group.product_id,
+
+            name:
+                group.name,
+
+            minSelections:
+                Number(
+                    group.min_selections
+                ),
+
+            maxSelections:
+                Number(
+                    group.max_selections
+                ),
+
+            isActive:
+                group.is_active,
+
+            sortOrder:
+                Number(
+                    group.sort_order
+                ),
+
+            items:
+                productExtraSelectionGroupItemsByGroup.get(
+                    group.id
+                ) ?? [],
+        });
+
+
+        extraSelectionGroupsByProduct.set(
+            group.product_id,
+            list
+        );
+
+    }
+
+
     const variantsByProduct =
         new Map<
             string,
@@ -669,6 +823,12 @@ export async function getProducts(
             ...traditionalExtras,
             ...reusableExtras,
         ];
+
+
+        product.extraSelectionGroups =
+            extraSelectionGroupsByProduct.get(
+                product.id
+            ) ?? [];
 
 
         product.variants =

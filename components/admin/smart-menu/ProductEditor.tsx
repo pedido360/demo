@@ -298,7 +298,27 @@ export default function ProductEditor({
                 />
 
                 <ExtraSection
-                    extras={editableProduct.extras ?? []}
+                    productId={
+                        editableProduct.id
+                    }
+
+                    extras={
+                        editableProduct.extras ??
+                        []
+                    }
+
+                    selectionGroups={
+                        editableProduct.extraSelectionGroups ??
+                        []
+                    }
+
+                    onSelectionGroupsChange={
+                        (groups) =>
+                            updateField(
+                                "extraSelectionGroups",
+                                groups
+                            )
+                    }
 
                     onToggle={(id) => {
 
@@ -343,6 +363,7 @@ export default function ProductEditor({
 
                     }}
                 />
+
 
                 <section className="rounded-xl border border-gray-200 p-6">
 

@@ -34,19 +34,25 @@ export async function createExtra(
     sortOrder: number
 ): Promise<void> {
 
+    const payload: Record<string, unknown> = {
+        product_id: productId,
+
+        name: extra.name,
+
+        price: extra.price,
+
+        is_active: extra.isActive ?? true,
+
+        sort_order: sortOrder,
+    };
+
+    if (extra.id) {
+        payload.id = extra.id;
+    }
+
     const { error } = await supabase
         .from("extras")
-        .insert({
-            product_id: productId,
-
-            name: extra.name,
-
-            price: extra.price,
-
-            is_active: extra.isActive ?? true,
-
-            sort_order: sortOrder,
-        });
+        .insert(payload);
 
     if (error) {
         console.error(error);

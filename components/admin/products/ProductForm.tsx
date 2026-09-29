@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Label from '@/components/ui/Label';
+import ProductExtraSelectionGroups from '@/components/admin/smart-menu/ProductExtraSelectionGroups';
 import Textarea from '@/components/ui/Textarea';
 
 import { Category } from '@/types/category';
@@ -328,6 +329,22 @@ export default function ProductForm({
             (form.extras ?? []).filter(
                 (extra) => extra.id !== id
             )
+        );
+
+        updateField(
+            'extraSelectionGroups',
+            (form.extraSelectionGroups ?? [])
+                .map(group => ({
+                    ...group,
+                    items: group.items.filter(
+                        item =>
+                            item.extraId !== id
+                    ),
+                }))
+                .filter(
+                    group =>
+                        group.items.length > 0
+                )
         );
     }
 
@@ -910,6 +927,21 @@ export default function ProductForm({
                     </div>
 
                 )}
+
+                <ProductExtraSelectionGroups
+                    productId={form.id}
+                    extras={form.extras ?? []}
+                    groups={
+                        form.extraSelectionGroups ??
+                        []
+                    }
+                    onChange={(groups) =>
+                        updateField(
+                            'extraSelectionGroups',
+                            groups
+                        )
+                    }
+                />
 
             </Card>
 

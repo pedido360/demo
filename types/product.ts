@@ -3,6 +3,10 @@ import {
     DailyMenuClientOption,
 } from "./daily-menu";
 
+import {
+    ProductExtraSelectionGroup,
+} from "./product-extra-selection";
+
 
 export interface Ingredient {
 
@@ -66,6 +70,8 @@ export interface Product {
     ingredients?: Ingredient[];
 
     extras?: Extra[];
+
+    extraSelectionGroups?: ProductExtraSelectionGroup[];
 
     variants?: ProductVariant[];
 

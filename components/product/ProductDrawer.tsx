@@ -3,7 +3,14 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import { Product, ProductSelection } from "@/types/product";
+import {
+    Product,
+    ProductSelection,
+} from "@/types/product";
+
+import {
+    ProductExtraSelectionGroup,
+} from "@/types/product-extra-selection";
 
 import QuantitySelector from "@/components/product/QuantitySelector";
 
@@ -29,6 +36,9 @@ export default function ProductDrawer({
     const [selectedExtras, setSelectedExtras] =
         useState<string[]>([]);
 
+    const [selectedGroupExtras, setSelectedGroupExtras] =
+        useState<Record<string, string[]>>({});
+
     const [selectedVariantId, setSelectedVariantId] =
         useState<string>("");
 
@@ -43,6 +53,8 @@ export default function ProductDrawer({
             setNotes("");
 
             setSelectedExtras([]);
+
+            setSelectedGroupExtras({});
 
             setSelectedVariantId(
                 product?.variants?.find(
@@ -73,10 +85,36 @@ export default function ProductDrawer({
         selectedVariant?.price ??
         product.price;
 
+    const groupedExtraIds =
+        new Set(
+            (product.extraSelectionGroups ?? [])
+                .filter(
+                    group => group.isActive
+                )
+                .flatMap(
+                    group =>
+                        group.items.map(
+                            item =>
+                                item.extraId
+                        )
+                )
+        );
+
+    const selectedGroupExtraIds =
+        Object.values(
+            selectedGroupExtras
+        ).flat();
+
     const extrasTotal =
         (product.extras ?? [])
-            .filter(extra =>
-                selectedExtras.includes(extra.id)
+            .filter(
+                extra =>
+                    selectedExtras.includes(
+                        extra.id
+                    ) ||
+                    selectedGroupExtraIds.includes(
+                        extra.id
+                    )
             )
             .reduce(
                 (total, extra) =>
@@ -88,14 +126,151 @@ export default function ProductDrawer({
         (productPrice + extrasTotal)
         * quantity;
 
+    function getGroupSelectedIds(
+        group: ProductExtraSelectionGroup
+    ): string[] {
+
+        return (
+            selectedGroupExtras[group.id] ??
+            []
+        );
+
+    }
+
+    function toggleGroupExtra(
+        group: ProductExtraSelectionGroup,
+        extraId: string
+    ) {
+
+        setSelectedGroupExtras(
+            current => {
+
+                const selected =
+                    current[group.id] ??
+                    [];
+
+                const alreadySelected =
+                    selected.includes(
+                        extraId
+                    );
+
+                if (alreadySelected) {
+
+                    return {
+                        ...current,
+                        [group.id]:
+                            selected.filter(
+                                id =>
+                                    id !==
+                                    extraId
+                            ),
+                    };
+
+                }
+
+                if (
+                    group.maxSelections ===
+                    1
+                ) {
+
+                    return {
+                        ...current,
+                        [group.id]: [
+                            extraId,
+                        ],
+                    };
+
+                }
+
+                if (
+                    selected.length >=
+                    group.maxSelections
+                ) {
+
+                    return current;
+
+                }
+
+                return {
+                    ...current,
+                    [group.id]: [
+                        ...selected,
+                        extraId,
+                    ],
+                };
+
+            }
+        );
+
+    }
+
     function handleAdd() {
 
         if (!product) return;
+
+        const activeSelectionGroups =
+            (product.extraSelectionGroups ?? [])
+                .filter(
+                    group =>
+                        group.isActive
+                );
+
+        for (
+            const group
+            of activeSelectionGroups
+        ) {
+
+            const selectedCount =
+                getGroupSelectedIds(
+                    group
+                ).length;
+
+            if (
+                selectedCount <
+                group.minSelections
+            ) {
+
+                alert(
+                    `Debes seleccionar al menos ${group.minSelections} opción${group.minSelections === 1 ? "" : "es"} en "${group.name}".`
+                );
+
+                return;
+
+            }
+
+            if (
+                selectedCount >
+                group.maxSelections
+            ) {
+
+                alert(
+                    `No puedes seleccionar más de ${group.maxSelections} opción${group.maxSelections === 1 ? "" : "es"} en "${group.name}".`
+                );
+
+                return;
+
+            }
+
+        }
+
+        const selectedGroupIds =
+            new Set(
+                activeSelectionGroups
+                    .flatMap(
+                        group =>
+                            getGroupSelectedIds(
+                                group
+                            )
+                    )
+            );
 
         const selectedExtraObjects =
             (product.extras ?? []).filter(
                 extra =>
                     selectedExtras.includes(
+                        extra.id
+                    ) ||
+                    selectedGroupIds.has(
                         extra.id
                     )
             );
@@ -283,9 +458,200 @@ export default function ProductDrawer({
 
                         )}
 
-                        {/* Extras */}
+                        {/* Grupos de selección obligatoria */}
 
-                        {(product.extras?.length ?? 0) > 0 && (
+                        {(product.extraSelectionGroups ?? [])
+                            .filter(
+                                group =>
+                                    group.isActive
+                            )
+                            .length > 0 && (
+
+                            <div className="mt-8">
+
+                                <h3 className="mb-3 text-lg font-semibold">
+                                    Elecciones obligatorias
+                                </h3>
+
+                                <div className="space-y-5">
+
+                                    {(product.extraSelectionGroups ?? [])
+                                        .filter(
+                                            group =>
+                                                group.isActive
+                                        )
+                                        .map(group => {
+
+                                            const selected =
+                                                getGroupSelectedIds(
+                                                    group
+                                                );
+
+                                            const groupExtras =
+                                                group.items
+                                                    .slice()
+                                                    .sort(
+                                                        (
+                                                            a,
+                                                            b
+                                                        ) =>
+                                                            a.sortOrder -
+                                                            b.sortOrder
+                                                    )
+                                                    .map(
+                                                        item =>
+                                                            product.extras?.find(
+                                                                extra =>
+                                                                    extra.id ===
+                                                                    item.extraId
+                                                            )
+                                                    )
+                                                    .filter(
+                                                        extra =>
+                                                            Boolean(
+                                                                extra?.isActive
+                                                            )
+                                                    )
+                                                    .flatMap(
+                                                        extra =>
+                                                            extra
+                                                                ? [
+                                                                    extra,
+                                                                ]
+                                                                : []
+                                                    );
+
+                                            return (
+
+                                                <div
+                                                    key={
+                                                        group.id
+                                                    }
+                                                    className="rounded-xl border border-orange-200 bg-orange-50 p-4"
+                                                >
+
+                                                    <div className="mb-3">
+
+                                                        <h4 className="font-semibold text-gray-900">
+                                                            {group.name}
+                                                        </h4>
+
+                                                        <p className="mt-1 text-sm font-medium text-red-600">
+                                                            {group.minSelections ===
+                                                            group.maxSelections
+                                                                ? `Obligatorio · Selecciona ${group.minSelections}`
+                                                                : `Obligatorio · Selecciona entre ${group.minSelections} y ${group.maxSelections}`}
+                                                        </p>
+
+                                                    </div>
+
+                                                    <div className="space-y-2">
+
+                                                        {groupExtras.map(
+                                                            extra => {
+
+                                                                const checked =
+                                                                    selected.includes(
+                                                                        extra.id
+                                                                    );
+
+                                                                const reachedMax =
+                                                                    !checked &&
+                                                                    selected.length >=
+                                                                    group.maxSelections;
+
+                                                                return (
+
+                                                                    <label
+                                                                        key={
+                                                                            extra.id
+                                                                        }
+                                                                        className={`flex items-center justify-between rounded-lg border bg-white px-4 py-3 ${
+                                                                            reachedMax
+                                                                                ? "cursor-not-allowed opacity-50"
+                                                                                : "cursor-pointer"
+                                                                        }`}
+                                                                    >
+
+                                                                        <div className="flex items-center gap-3">
+
+                                                                            <input
+                                                                                type={
+                                                                                    group.maxSelections ===
+                                                                                    1
+                                                                                        ? "radio"
+                                                                                        : "checkbox"
+                                                                                }
+                                                                                name={
+                                                                                    group.maxSelections ===
+                                                                                    1
+                                                                                        ? `extra-group-${group.id}`
+                                                                                        : undefined
+                                                                                }
+                                                                                checked={
+                                                                                    checked
+                                                                                }
+                                                                                disabled={
+                                                                                    reachedMax
+                                                                                }
+                                                                                onChange={() =>
+                                                                                    toggleGroupExtra(
+                                                                                        group,
+                                                                                        extra.id
+                                                                                    )
+                                                                                }
+                                                                            />
+
+                                                                            <span>
+                                                                                {
+                                                                                    extra.name
+                                                                                }
+                                                                            </span>
+
+                                                                        </div>
+
+                                                                        {extra.price >
+                                                                        0 && (
+
+                                                                            <span className="font-semibold text-red-600">
+                                                                                +$
+                                                                                {extra.price.toLocaleString(
+                                                                                    "es-CO"
+                                                                                )}
+                                                                            </span>
+
+                                                                        )}
+
+                                                                    </label>
+
+                                                                );
+
+                                                            }
+                                                        )}
+
+                                                    </div>
+
+                                                </div>
+
+                                            );
+
+                                        })}
+
+                                </div>
+
+                            </div>
+
+                        )}
+
+                        {/* Extras opcionales e independientes */}
+
+                        {(product.extras ?? []).some(
+                            extra =>
+                                extra.isActive &&
+                                !groupedExtraIds.has(
+                                    extra.id
+                                )
+                        ) && (
 
                             <div className="mt-8">
 
@@ -294,27 +660,38 @@ export default function ProductDrawer({
                                 </h3>
 
                                 <p className="mb-3 text-sm text-gray-500">
-                                    ✨ Personaliza tu pedido seleccionando tus extras favoritos.
+                                    ✨ Extras opcionales e independientes.
+                                    Puedes seleccionar los que quieras.
                                 </p>
 
                                 <div className="space-y-2">
 
-                                    {product.extras!
-                                        .filter(extra => extra.isActive)
+                                    {(product.extras ?? [])
+                                        .filter(
+                                            extra =>
+                                                extra.isActive &&
+                                                !groupedExtraIds.has(
+                                                    extra.id
+                                                )
+                                        )
                                         .map(extra => (
 
                                             <label
-                                                key={extra.id}
-                                                className="flex items-center justify-between"
+                                                key={
+                                                    extra.id
+                                                }
+                                                className="flex cursor-pointer items-center justify-between"
                                             >
 
                                                 <div className="flex items-center gap-3">
 
                                                     <input
                                                         type="checkbox"
-                                                        checked={selectedExtras.includes(
-                                                            extra.id
-                                                        )}
+                                                        checked={
+                                                            selectedExtras.includes(
+                                                                extra.id
+                                                            )
+                                                        }
                                                         onChange={(e) => {
 
                                                             if (
@@ -345,13 +722,18 @@ export default function ProductDrawer({
                                                     />
 
                                                     <span>
-                                                        {extra.name}
+                                                        {
+                                                            extra.name
+                                                        }
                                                     </span>
 
                                                 </div>
 
                                                 <span className="font-semibold text-red-600">
-                                                    +${extra.price.toLocaleString("es-CO")}
+                                                    +$
+                                                    {extra.price.toLocaleString(
+                                                        "es-CO"
+                                                    )}
                                                 </span>
 
                                             </label>

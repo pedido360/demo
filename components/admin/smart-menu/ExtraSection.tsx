@@ -6,15 +6,29 @@ import Button from "@/components/ui/Button";
 
 import { Extra } from "@/types/product";
 
+import {
+    ProductExtraSelectionGroup,
+} from "@/types/product-extra-selection";
+
+import ProductExtraSelectionGroups from "./ProductExtraSelectionGroups";
+
 interface ExtraSectionProps {
+    productId: string;
     extras: Extra[];
+    selectionGroups: ProductExtraSelectionGroup[];
+    onSelectionGroupsChange: (
+        groups: ProductExtraSelectionGroup[]
+    ) => void;
     onDelete: (id: string) => void;
     onAdd: (extra: Omit<Extra, "id">) => void;
     onToggle: (id: string) => void;
 }
 
 export default function ExtraSection({
+    productId,
     extras,
+    selectionGroups,
+    onSelectionGroupsChange,
     onDelete,
     onAdd,
     onToggle,
@@ -197,6 +211,16 @@ export default function ExtraSection({
                 </div>
 
             )}
+
+
+            <ProductExtraSelectionGroups
+                productId={productId}
+                extras={extras}
+                groups={selectionGroups}
+                onChange={
+                    onSelectionGroupsChange
+                }
+            />
 
         </section>
 

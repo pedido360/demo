@@ -23,6 +23,184 @@ import {
     deleteExtra,
 } from "@/lib/repositories/extra.repository";
 
+import {
+    ProductExtraSelectionGroup,
+} from "@/types/product-extra-selection";
+
+import {
+    getProductExtraSelectionGroups,
+    createProductExtraSelectionGroup,
+    updateProductExtraSelectionGroup,
+    deleteProductExtraSelectionGroup,
+} from "@/lib/repositories/product-extra-selection.repository";
+
+function validateProductExtraSelectionGroup(
+    group: ProductExtraSelectionGroup,
+    validExtraIds: Set<string>
+) {
+
+    const name = group.name.trim();
+
+    if (!name) {
+        throw new Error(
+            "El nombre del grupo de extras es obligatorio."
+        );
+    }
+
+    const minSelections = Number(
+        group.minSelections
+    );
+
+    const maxSelections = Number(
+        group.maxSelections
+    );
+
+    if (
+        !Number.isInteger(minSelections) ||
+        minSelections < 1
+    ) {
+        throw new Error(
+            `El grupo "${name}" debe exigir al menos 1 selección.`
+        );
+    }
+
+    if (
+        !Number.isInteger(maxSelections) ||
+        maxSelections < minSelections
+    ) {
+        throw new Error(
+            `La selección máxima del grupo "${name}" no puede ser menor que la mínima.`
+        );
+    }
+
+    const extraIds = Array.from(
+        new Set(
+            (group.items ?? []).map(
+                item => item.extraId
+            )
+        )
+    );
+
+    if (extraIds.length === 0) {
+        throw new Error(
+            `El grupo "${name}" debe tener al menos un extra.`
+        );
+    }
+
+    if (minSelections > extraIds.length) {
+        throw new Error(
+            `El grupo "${name}" no tiene suficientes extras para la selección mínima.`
+        );
+    }
+
+    if (maxSelections > extraIds.length) {
+        throw new Error(
+            `El grupo "${name}" no tiene suficientes extras para la selección máxima.`
+        );
+    }
+
+    for (const extraId of extraIds) {
+
+        if (!validExtraIds.has(extraId)) {
+            throw new Error(
+                `El grupo "${name}" contiene un extra que no pertenece al producto.`
+            );
+        }
+
+    }
+
+}
+
+
+async function createProductExtraSelectionGroups(
+    productId: string,
+    groups: ProductExtraSelectionGroup[],
+    validExtraIds: Set<string>
+) {
+
+    for (const group of groups) {
+
+        validateProductExtraSelectionGroup(
+            group,
+            validExtraIds
+        );
+
+        await createProductExtraSelectionGroup({
+            ...group,
+            productId,
+            items: group.items ?? [],
+        });
+
+    }
+
+}
+
+
+async function saveProductExtraSelectionGroups(
+    productId: string,
+    groups: ProductExtraSelectionGroup[],
+    validExtraIds: Set<string>
+) {
+
+    const currentGroups =
+        await getProductExtraSelectionGroups(
+            productId
+        );
+
+    const currentGroupIds = new Set(
+        currentGroups.map(
+            group => group.id
+        )
+    );
+
+    const newGroupIds = new Set(
+        groups.map(
+            group => group.id
+        )
+    );
+
+    for (const group of groups) {
+
+        validateProductExtraSelectionGroup(
+            group,
+            validExtraIds
+        );
+
+        if (currentGroupIds.has(group.id)) {
+
+            await updateProductExtraSelectionGroup({
+                ...group,
+                productId,
+                items: group.items ?? [],
+            });
+
+        } else {
+
+            await createProductExtraSelectionGroup({
+                ...group,
+                productId,
+                items: group.items ?? [],
+            });
+
+        }
+
+    }
+
+    for (const currentGroup of currentGroups) {
+
+        if (!newGroupIds.has(currentGroup.id)) {
+
+            await deleteProductExtraSelectionGroup(
+                currentGroup.id
+            );
+
+        }
+
+    }
+
+}
+
+
 export async function createCompleteProduct(
     restaurantId: string,
     product: Product
@@ -84,6 +262,25 @@ export async function createCompleteProduct(
 
     createdProduct.extras =
         await getExtras(createdProduct.id);
+
+    const createdExtraIds =
+        new Set(
+            createdProduct.extras.map(
+                extra => extra.id
+            )
+        );
+
+    await createProductExtraSelectionGroups(
+        createdProduct.id,
+        product.extraSelectionGroups ?? [],
+        createdExtraIds
+    );
+
+    createdProduct.extraSelectionGroups =
+        await getProductExtraSelectionGroups(
+            createdProduct.id
+        );
+
 
     return createdProduct;
 
@@ -209,6 +406,27 @@ export async function saveCompleteProduct(
         }
 
     }
+
+    const savedExtras =
+        await getExtras(product.id);
+
+    const validExtraIds =
+        new Set(
+            savedExtras.map(
+                extra => extra.id
+            )
+        );
+
+    await saveProductExtraSelectionGroups(
+        product.id,
+        product.extraSelectionGroups ?? [],
+        validExtraIds
+    );
+
+    updatedProduct.extraSelectionGroups =
+        await getProductExtraSelectionGroups(
+            product.id
+        );
 
     return updatedProduct;
 

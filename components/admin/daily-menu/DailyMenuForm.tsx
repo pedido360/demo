@@ -17,6 +17,7 @@ import {
 import {
     getDailyMenuOptions,
     createDailyMenuOption,
+    deleteDailyMenuOption,
 } from "@/lib/repositories/daily-menu-option.repository";
 
 import ImageUploader from "@/components/ui/ImageUploader";
@@ -568,6 +569,67 @@ export default function DailyMenuForm({
         setNewOptionName(
             ""
         );
+
+    }
+
+
+    async function handleDeleteOption(
+        option: DailyMenuOption
+    ) {
+
+        const confirmed =
+            window.confirm(
+                `¿Eliminar definitivamente "${option.name}"?\n\nEsta acción no se puede deshacer.`
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            setError(null);
+
+            await deleteDailyMenuOption(
+                option.id
+            );
+
+            setOptions(
+                current =>
+                    current.filter(
+                        item =>
+                            item.id !==
+                            option.id
+                    )
+            );
+
+            setDraft(
+                current => ({
+                    ...current,
+
+                    items:
+                        current.items.filter(
+                            item =>
+                                item.optionId !==
+                                option.id
+                        ),
+                })
+            );
+
+        } catch (error) {
+
+            console.error(
+                "No fue posible eliminar la opción:",
+                error
+            );
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "No fue posible eliminar la opción."
+            );
+
+        }
 
     }
 
@@ -1290,40 +1352,11 @@ export default function DailyMenuForm({
 
                                 return (
 
-                                    <button
+                                    <div
 
                                         key={
                                             option.id
                                         }
-
-                                        type="button"
-
-                                        onClick={() => {
-
-                                            if (
-                                                section === "soup"
-                                            ) {
-
-                                                selectFixedOption(
-                                                    "soup",
-                                                    option.id
-                                                );
-
-                                            } else {
-
-                                                toggleSectionOption(
-                                                    section as
-                                                    | "seco"
-                                                    | "principle"
-                                                    | "protein"
-                                                    | "drink"
-                                                    | "dessert",
-                                                    option.id
-                                                );
-
-                                            }
-
-                                        }}
 
                                         className={`
 
@@ -1362,28 +1395,86 @@ export default function DailyMenuForm({
 
                                         <div className="flex items-center justify-between gap-3">
 
-                                            <span className="font-semibold text-gray-900">
+                                            <button
 
-                                                {
-                                                    option.name
-                                                }
+                                                type="button"
 
-                                            </span>
+                                                onClick={() => {
 
+                                                    if (
+                                                        section === "soup"
+                                                    ) {
 
-                                            {selected && (
+                                                        selectFixedOption(
+                                                            "soup",
+                                                            option.id
+                                                        );
 
-                                                <span className="text-sm font-bold">
+                                                    } else {
 
-                                                    ✓
+                                                        toggleSectionOption(
+                                                            section as
+                                                            | "seco"
+                                                            | "principle"
+                                                            | "protein"
+                                                            | "drink"
+                                                            | "dessert",
+                                                            option.id
+                                                        );
+
+                                                    }
+
+                                                }}
+
+                                                className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left"
+
+                                            >
+
+                                                <span className="font-semibold text-gray-900">
+
+                                                    {
+                                                        option.name
+                                                    }
 
                                                 </span>
 
-                                            )}
+
+                                                {selected && (
+
+                                                    <span className="text-sm font-bold">
+
+                                                        ✓
+
+                                                    </span>
+
+                                                )}
+
+                                            </button>
+
+
+                                            <button
+
+                                                type="button"
+
+                                                onClick={() =>
+                                                    handleDeleteOption(
+                                                        option
+                                                    )
+                                                }
+
+                                                className="ml-2 shrink-0 rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50"
+
+                                                title="Eliminar opción"
+
+                                            >
+
+                                                🗑️ Eliminar
+
+                                            </button>
 
                                         </div>
 
-                                    </button>
+                                    </div>
 
                                 );
 

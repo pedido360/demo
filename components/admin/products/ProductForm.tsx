@@ -10,7 +10,12 @@ import Label from '@/components/ui/Label';
 import Textarea from '@/components/ui/Textarea';
 
 import { Category } from '@/types/category';
-import { Extra, Ingredient, Product } from '@/types/product';
+import {
+    Extra,
+    Ingredient,
+    Product,
+    ProductAvailableHour,
+} from '@/types/product';
 import ImageUploader from '@/components/ui/ImageUploader';
 
 interface ProductFormProps {
@@ -52,6 +57,9 @@ export default function ProductForm({
 
     const [ingredientName, setIngredientName] = useState('');
 
+    const [availableHours, setAvailableHours] =
+        useState<ProductAvailableHour[]>([]);
+
     const [extraName, setExtraName] = useState('');
     const [extraPrice, setExtraPrice] = useState('');
 
@@ -74,6 +82,16 @@ export default function ProductForm({
                 product.availableDays.length === 0
             );
 
+            setAvailableHours(
+                (product.availableHours ?? []).map((hour) => ({
+                    ...hour,
+                    startTime:
+                        hour.startTime?.slice(0, 5) ?? '',
+                    endTime:
+                        hour.endTime?.slice(0, 5) ?? '',
+                }))
+            );
+
         } else {
 
             setForm({
@@ -84,6 +102,8 @@ export default function ProductForm({
             });
 
             setAllDays(true);
+
+            setAvailableHours([]);
 
         }
     }, [product, initialCategoryId]);
@@ -112,6 +132,48 @@ export default function ProductForm({
 
     }
 
+    function updateDayHours(
+        dayOfWeek: number,
+        field: 'startTime' | 'endTime',
+        value: string
+    ) {
+        setAvailableHours((current) => {
+            const existing = current.find(
+                (hour) => hour.dayOfWeek === dayOfWeek
+            );
+
+            if (existing) {
+                return current.map((hour) =>
+                    hour.dayOfWeek === dayOfWeek
+                        ? {
+                            ...hour,
+                            [field]: value,
+                        }
+                        : hour
+                );
+            }
+
+            return [
+                ...current,
+                {
+                    id: crypto.randomUUID(),
+                    productId: form.id,
+                    dayOfWeek,
+                    startTime:
+                        field === 'startTime' ? value : '',
+                    endTime:
+                        field === 'endTime' ? value : '',
+                },
+            ];
+        });
+    }
+
+    function getDayHours(dayOfWeek: number) {
+        return availableHours.find(
+            (hour) => hour.dayOfWeek === dayOfWeek
+        );
+    }
+
     function handleSubmit(e: FormEvent) {
 
         e.preventDefault();
@@ -135,6 +197,62 @@ export default function ProductForm({
         }
 
 
+        const normalizedHours =
+            allDays
+                ? []
+                : availableHours
+                    .filter((hour) =>
+                        availableDays.includes(
+                            hour.dayOfWeek
+                        )
+                    )
+                    .map((hour) => ({
+                        ...hour,
+                        startTime:
+                            hour.startTime.slice(0, 5),
+                        endTime:
+                            hour.endTime.slice(0, 5),
+                    }));
+
+
+        for (const hour of normalizedHours) {
+
+            const hasStart =
+                Boolean(hour.startTime);
+
+            const hasEnd =
+                Boolean(hour.endTime);
+
+
+            if (hasStart !== hasEnd) {
+
+                alert(
+                    "Completa la hora de inicio y la hora de fin para cada horario."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                hasStart &&
+                hasEnd &&
+                hour.startTime >=
+                hour.endTime
+            ) {
+
+                alert(
+                    "La hora de inicio debe ser anterior a la hora de fin."
+                );
+
+                return;
+
+            }
+
+        }
+
+
         onSave({
 
             ...form,
@@ -147,6 +265,13 @@ export default function ProductForm({
                 allDays
                     ? []
                     : availableDays,
+
+            availableHours:
+                normalizedHours.filter(
+                    (hour) =>
+                        hour.startTime &&
+                        hour.endTime
+                ),
 
         });
 
@@ -442,7 +567,7 @@ export default function ProductForm({
 
                         {!allDays && (
 
-                            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            <div className="mt-4 space-y-3">
 
                                 {[
                                     {
@@ -483,50 +608,125 @@ export default function ProductForm({
                                             day.value
                                         );
 
+                                    const hours =
+                                        getDayHours(
+                                            day.value
+                                        );
 
                                     return (
 
-                                        <label
+                                        <div
                                             key={day.value}
-                                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 hover:border-orange-300"
+                                            className="rounded-lg border border-gray-200 bg-white p-3"
                                         >
 
-                                            <input
-                                                type="checkbox"
-                                                checked={selected}
-                                                onChange={(e) => {
+                                            <label className="flex cursor-pointer items-center gap-2">
 
-                                                    const current =
-                                                        form.availableDays ??
-                                                        [];
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selected}
+                                                    onChange={(e) => {
 
-                                                    const next =
-                                                        e.target.checked
+                                                        const current =
+                                                            form.availableDays ??
+                                                            [];
 
-                                                            ? [
-                                                                ...current,
-                                                                day.value,
-                                                            ]
+                                                        const next =
+                                                            e.target.checked
 
-                                                            : current.filter(
-                                                                value =>
-                                                                    value !==
-                                                                    day.value
+                                                                ? [
+                                                                    ...current,
+                                                                    day.value,
+                                                                ]
+
+                                                                : current.filter(
+                                                                    value =>
+                                                                        value !==
+                                                                        day.value
+                                                                );
+
+                                                        updateField(
+                                                            'availableDays',
+                                                            next
+                                                        );
+
+                                                        if (
+                                                            !e.target.checked
+                                                        ) {
+                                                            setAvailableHours(
+                                                                (currentHours) =>
+                                                                    currentHours.filter(
+                                                                        hour =>
+                                                                            hour.dayOfWeek !==
+                                                                            day.value
+                                                                    )
                                                             );
+                                                        }
 
-                                                    updateField(
-                                                        'availableDays',
-                                                        next
-                                                    );
+                                                    }}
+                                                />
 
-                                                }}
-                                            />
+                                                <span className="text-sm font-medium">
+                                                    {day.label}
+                                                </span>
 
-                                            <span className="text-sm font-medium">
-                                                {day.label}
-                                            </span>
+                                            </label>
 
-                                        </label>
+                                            {selected && (
+
+                                                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+
+                                                    <div>
+
+                                                        <Label>
+                                                            Hora inicio
+                                                        </Label>
+
+                                                        <Input
+                                                            type="time"
+                                                            value={
+                                                                hours?.startTime ??
+                                                                ''
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateDayHours(
+                                                                    day.value,
+                                                                    'startTime',
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                        />
+
+                                                    </div>
+
+                                                    <div>
+
+                                                        <Label>
+                                                            Hora fin
+                                                        </Label>
+
+                                                        <Input
+                                                            type="time"
+                                                            value={
+                                                                hours?.endTime ??
+                                                                ''
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateDayHours(
+                                                                    day.value,
+                                                                    'endTime',
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                        />
+
+                                                    </div>
+
+                                                </div>
+
+                                            )}
+
+                                        </div>
 
                                     );
 

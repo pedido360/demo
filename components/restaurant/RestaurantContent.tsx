@@ -162,8 +162,58 @@ export default function RestaurantContent({
         const today =
             dayMap[weekday];
 
-        return availableDays.includes(
-            today
+        if (
+            !availableDays.includes(
+                today
+            )
+        ) {
+            return false;
+        }
+
+        const availableHours =
+            product.availableHours ?? [];
+
+        if (
+            availableHours.length === 0
+        ) {
+            return true;
+        }
+
+        const todayHours =
+            availableHours.find(
+                (hour) =>
+                    hour.dayOfWeek ===
+                    today
+            );
+
+        if (!todayHours) {
+            return true;
+        }
+
+        const now =
+            new Intl.DateTimeFormat(
+                "en-GB",
+                {
+                    timeZone:
+                        "America/Bogota",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                }
+            ).format(
+                new Date()
+            );
+
+        const currentTime =
+            now === "24:00"
+                ? "00:00"
+                : now;
+
+        return (
+            currentTime >=
+                todayHours.startTime.slice(0, 5) &&
+            currentTime <
+                todayHours.endTime.slice(0, 5)
         );
 
     }

@@ -10,6 +10,7 @@ import { Category } from "@/types/category";
 import {
     Ingredient,
     Product,
+    ProductAvailableHour,
 } from "@/types/product";
 
 interface ProductEditorProps {
@@ -47,6 +48,76 @@ export default function ProductEditor({
             ...previous,
             [field]: value,
         }));
+
+    }
+
+    function updateDayHours(
+        dayOfWeek: number,
+        field: "startTime" | "endTime",
+        value: string
+    ) {
+
+        const currentHours =
+            editableProduct.availableHours ?? [];
+
+        const existing =
+            currentHours.find(
+                hour =>
+                    hour.dayOfWeek === dayOfWeek
+            );
+
+        if (existing) {
+
+            updateField(
+                "availableHours",
+                currentHours.map(hour =>
+                    hour.dayOfWeek === dayOfWeek
+                        ? {
+                            ...hour,
+                            [field]: value,
+                        }
+                        : hour
+                )
+            );
+
+            return;
+
+        }
+
+        const newHour: ProductAvailableHour = {
+            id: crypto.randomUUID(),
+            productId: editableProduct.id,
+            dayOfWeek,
+            startTime:
+                field === "startTime"
+                    ? value
+                    : "",
+            endTime:
+                field === "endTime"
+                    ? value
+                    : "",
+        };
+
+        updateField(
+            "availableHours",
+            [
+                ...currentHours,
+                newHour,
+            ]
+        );
+
+    }
+
+    function getDayHours(
+        dayOfWeek: number
+    ) {
+
+        return (
+            editableProduct.availableHours ?? []
+        ).find(
+            hour =>
+                hour.dayOfWeek === dayOfWeek
+        );
 
     }
 
@@ -318,7 +389,7 @@ export default function ProductEditor({
                     {editableProduct.availableDays &&
                         editableProduct.availableDays.length > 0 && (
 
-                            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            <div className="mt-4 space-y-3">
 
                                 {[
                                     {
@@ -356,51 +427,136 @@ export default function ProductEditor({
                                             day.value
                                         ) ?? false;
 
+                                    const hours =
+                                        getDayHours(
+                                            day.value
+                                        );
 
                                     return (
 
-                                        <label
+                                        <div
                                             key={day.value}
-                                            className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 hover:border-orange-300"
+                                            className="rounded-lg border border-gray-200 bg-white p-3"
                                         >
 
-                                            <input
-                                                type="checkbox"
-                                                checked={selected}
-                                                onChange={(event) => {
+                                            <label className="flex cursor-pointer items-center gap-2">
 
-                                                    const current =
-                                                        editableProduct.availableDays ??
-                                                        [];
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selected}
+                                                    onChange={(event) => {
 
-                                                    const next =
-                                                        event.target.checked
+                                                        const current =
+                                                            editableProduct.availableDays ??
+                                                            [];
 
-                                                            ? [
-                                                                ...current,
-                                                                day.value,
-                                                            ]
+                                                        const next =
+                                                            event.target.checked
 
-                                                            : current.filter(
-                                                                value =>
-                                                                    value !==
-                                                                    day.value
+                                                                ? [
+                                                                    ...current,
+                                                                    day.value,
+                                                                ]
+
+                                                                : current.filter(
+                                                                    value =>
+                                                                        value !==
+                                                                        day.value
+                                                                );
+
+                                                        updateField(
+                                                            "availableDays",
+                                                            next
+                                                        );
+
+                                                        if (
+                                                            !event.target.checked
+                                                        ) {
+
+                                                            updateField(
+                                                                "availableHours",
+                                                                (
+                                                                    editableProduct.availableHours ??
+                                                                    []
+                                                                ).filter(
+                                                                    hour =>
+                                                                        hour.dayOfWeek !==
+                                                                        day.value
+                                                                )
                                                             );
 
+                                                        }
 
-                                                    updateField(
-                                                        "availableDays",
-                                                        next
-                                                    );
+                                                    }}
+                                                />
 
-                                                }}
-                                            />
+                                                <span className="text-sm font-medium">
+                                                    {day.label}
+                                                </span>
 
-                                            <span className="text-sm font-medium">
-                                                {day.label}
-                                            </span>
+                                            </label>
 
-                                        </label>
+                                            {selected && (
+
+                                                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+
+                                                    <div>
+
+                                                        <label className="mb-2 block text-sm font-medium">
+                                                            Hora inicio
+                                                        </label>
+
+                                                        <input
+                                                            type="time"
+                                                            className="w-full rounded-xl border border-gray-300 p-3"
+                                                            value={
+                                                                hours?.startTime?.slice(
+                                                                    0,
+                                                                    5
+                                                                ) ?? ""
+                                                            }
+                                                            onChange={(event) =>
+                                                                updateDayHours(
+                                                                    day.value,
+                                                                    "startTime",
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                        />
+
+                                                    </div>
+
+                                                    <div>
+
+                                                        <label className="mb-2 block text-sm font-medium">
+                                                            Hora fin
+                                                        </label>
+
+                                                        <input
+                                                            type="time"
+                                                            className="w-full rounded-xl border border-gray-300 p-3"
+                                                            value={
+                                                                hours?.endTime?.slice(
+                                                                    0,
+                                                                    5
+                                                                ) ?? ""
+                                                            }
+                                                            onChange={(event) =>
+                                                                updateDayHours(
+                                                                    day.value,
+                                                                    "endTime",
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                        />
+
+                                                    </div>
+
+                                                </div>
+
+                                            )}
+
+                                        </div>
 
                                     );
 

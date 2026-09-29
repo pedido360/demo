@@ -11,6 +11,10 @@ import {
 } from "@/lib/repositories/product-availability.repository";
 
 import {
+    replaceProductAvailableHours,
+} from "@/lib/repositories/product-availability-hours.repository";
+
+import {
     replaceVariants,
 } from "@/lib/repositories/product-variant.repository";
 
@@ -156,6 +160,7 @@ export async function getProducts(
         reusableExtrasResult,
         variantsResult,
         availableDaysResults,
+        availableHoursResults,
     ] = await Promise.all([
 
         supabase
@@ -248,7 +253,21 @@ export async function getProducts(
                 productIds
             ),
 
-
+        supabase
+            .from("product_available_hours")
+            .select(
+                "id, product_id, day_of_week, start_time, end_time"
+            )
+            .in(
+                "product_id",
+                productIds
+            )
+            .order(
+                "day_of_week",
+                {
+                    ascending: true,
+                }
+            ),
 
     ]);
 
@@ -577,6 +596,52 @@ export async function getProducts(
 
     }
 
+    const availableHoursByProduct =
+        new Map<
+            string,
+            Product["availableHours"]
+        >();
+
+
+    for (
+        const row
+        of availableHoursResults.data ?? []
+    ) {
+
+        const hours =
+            availableHoursByProduct.get(
+                row.product_id
+            ) ?? [];
+
+
+        hours.push({
+            id:
+                row.id,
+
+            productId:
+                row.product_id,
+
+            dayOfWeek:
+                Number(
+                    row.day_of_week
+                ),
+
+            startTime:
+                row.start_time,
+
+            endTime:
+                row.end_time,
+        });
+
+
+        availableHoursByProduct.set(
+            row.product_id,
+            hours
+        );
+
+    }
+
+
     for (
         const product
         of products
@@ -614,6 +679,12 @@ export async function getProducts(
 
         product.availableDays =
             availableDaysByProduct.get(
+                product.id
+            ) ?? [];
+
+
+        product.availableHours =
+            availableHoursByProduct.get(
                 product.id
             ) ?? [];
 
@@ -674,6 +745,11 @@ export async function createProduct(
         product.availableDays ?? []
     );
 
+    await replaceProductAvailableHours(
+        created.id,
+        product.availableHours ?? []
+    );
+
     created.ingredients =
         product.ingredients ?? [];
 
@@ -686,6 +762,9 @@ export async function createProduct(
 
     created.availableDays =
         product.availableDays ?? [];
+
+    created.availableHours =
+        product.availableHours ?? [];
 
     return created;
 }
@@ -734,6 +813,11 @@ export async function updateProduct(
         product.availableDays ?? []
     );
 
+    await replaceProductAvailableHours(
+        updated.id,
+        product.availableHours ?? []
+    );
+
     updated.ingredients =
         product.ingredients ?? [];
 
@@ -745,6 +829,9 @@ export async function updateProduct(
 
     updated.availableDays =
         product.availableDays ?? [];
+
+    updated.availableHours =
+        product.availableHours ?? [];
 
     return updated;
 }

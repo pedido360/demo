@@ -28,6 +28,14 @@ export interface Extra {
 }
 
 
+export interface ProductAvailableHour {
+    id: string;
+    productId: string;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+}
+
 export interface Product {
 
     id: string;
@@ -53,6 +61,7 @@ export interface Product {
     isAvailable?: boolean;
 
     availableDays?: number[];
+    availableHours?: ProductAvailableHour[];
 
     ingredients?: Ingredient[];
 

@@ -20,6 +20,7 @@ import ExtraCatalog from "@/components/admin/extra-catalog/ExtraCatalog";
 
 import CategoryForm from "@/components/admin/categories/CategoryForm";
 import ProductForm from "@/components/admin/products/ProductForm";
+import { deleteProduct } from "@/lib/repositories/product.repository";
 
 import {
     createCompleteProduct,
@@ -413,6 +414,49 @@ export default function SmartMenu({
 
     }
 
+    async function handleDeleteProduct(id: string) {
+
+        const product = productList.find(
+            (item) => item.id === id
+        );
+
+        const confirmed = window.confirm(
+            `¿Eliminar definitivamente "${product?.name ?? "este producto"}"?\n\nEsta acción no se puede deshacer.`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await deleteProduct(id);
+
+            setProductList((previous) =>
+                previous.filter(
+                    (item) => item.id !== id
+                )
+            );
+
+            setSelectedProduct(null);
+
+        } catch (error) {
+
+            console.error(
+                "No fue posible eliminar el producto:",
+                error
+            );
+
+            alert(
+                error instanceof Error
+                    ? error.message
+                    : "No fue posible eliminar el producto."
+            );
+
+        }
+
+    }
+
     if (selectedProduct) {
 
         return (
@@ -421,7 +465,7 @@ export default function SmartMenu({
                 product={selectedProduct}
                 categories={categories}
                 onSave={handleSaveProduct}
-                onDelete={() => { }}
+                onDelete={handleDeleteProduct}
                 onClose={() =>
                     setSelectedProduct(null)
                 }

@@ -1234,7 +1234,7 @@ export async function generateDailyMenuImage(
                         lines:
                             wrapText(
                                 names.join(
-                                    " • "
+                                    " / "
                                 ),
                                 30
                             ),

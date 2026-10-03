@@ -112,7 +112,9 @@ export default function CartDrawer({
 
         setSendingOrder(true);
 
-        const message = buildWhatsAppMessage(
+        const isDemo = restaurant.slug === "demo";
+
+        let message = buildWhatsAppMessage(
             items,
             totalPrice,
             {
@@ -129,9 +131,15 @@ export default function CartDrawer({
             }
         );
 
-        let whatsapp = restaurant.whatsapp
-            .replace(/\D/g, "")
-            .trim();
+        if (isDemo) {
+            message = `🧪 PRUEBA DEL DEMO\n\n${message}`;
+        }
+
+        let whatsapp = isDemo
+            ? "573180972943"
+            : restaurant.whatsapp
+                .replace(/\D/g, "")
+                .trim();
 
         if (whatsapp.length === 10) {
             whatsapp = `57${whatsapp}`;
@@ -140,73 +148,75 @@ export default function CartDrawer({
         const url =
             `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
 
-        await createOrder({
-            restaurantId: restaurant.id,
+        if (restaurant.slug !== "demo") {
+            await createOrder({
+                restaurantId: restaurant.id,
 
-            customerName,
+                customerName,
 
-            deliveryMethod,
+                deliveryMethod,
 
-            address:
-                deliveryMethod === "Domicilio"
-                    ? address
-                    : "",
+                address:
+                    deliveryMethod === "Domicilio"
+                        ? address
+                        : "",
 
-            paymentMethod,
+                paymentMethod,
 
-            cashChange,
+                cashChange,
 
-            observations,
+                observations,
 
-            items: items.map((item) => ({
-                product: {
-                    id: item.product.id,
-                    name: item.product.name,
-                    productType: item.product.productType,
-                    price: item.product.price,
-                },
+                items: items.map((item) => ({
+                    product: {
+                        id: item.product.id,
+                        name: item.product.name,
+                        productType: item.product.productType,
+                        price: item.product.price,
+                    },
 
-                variant: item.variant
-                    ? {
-                        id: item.variant.id,
-                        label: item.variant.label,
-                        price: item.variant.price,
-                    }
-                    : undefined,
+                    variant: item.variant
+                        ? {
+                            id: item.variant.id,
+                            label: item.variant.label,
+                            price: item.variant.price,
+                        }
+                        : undefined,
 
-                quantity: item.quantity,
+                    quantity: item.quantity,
 
-                ingredients: item.ingredients.map(
-                    (ingredient) => ({
-                        id: ingredient.id,
-                        name: ingredient.name,
-                    })
-                ),
+                    ingredients: item.ingredients.map(
+                        (ingredient) => ({
+                            id: ingredient.id,
+                            name: ingredient.name,
+                        })
+                    ),
 
-                extras: item.extras.map(
-                    (extra) => ({
-                        id: extra.id,
-                        name: extra.name,
-                        price: extra.price,
-                    })
-                ),
+                    extras: item.extras.map(
+                        (extra) => ({
+                            id: extra.id,
+                            name: extra.name,
+                            price: extra.price,
+                        })
+                    ),
 
-                notes: item.notes,
+                    notes: item.notes,
 
-                dailyMenu: item.dailyMenu,
-            })),
+                    dailyMenu: item.dailyMenu,
+                })),
 
-            subtotal: totalPrice,
+                subtotal: totalPrice,
 
-            deliveryFee: 0,
+                deliveryFee: 0,
 
-            total: totalPrice,
-        });
+                total: totalPrice,
+            });
 
-        await recordRestaurantMetric(
-            restaurant.id,
-            "whatsapp_order"
-        );
+            await recordRestaurantMetric(
+                restaurant.id,
+                "whatsapp_order"
+            );
+        }
 
         window.open(url, "_blank");
 

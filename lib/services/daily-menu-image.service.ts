@@ -218,6 +218,38 @@ const SECTION_ORDER:
  * ============================================================
  */
 
+function sanitizeImageText(
+    value: string
+): string {
+
+    return value
+        .replace(/•/g, "/")
+        .replace(/·/g, "/")
+        .replace(/–/g, "-")
+        .replace(/—/g, "-")
+        .replace(/→/g, "->")
+        .replace(/←/g, "<-")
+        .replace(/✓/g, "OK")
+        .replace(/★/g, "*")
+        .replace(/♥/g, "*")
+        .replace(/\\u200B/g, "")
+        .replace(/\\u200C/g, "")
+        .replace(/\\u200D/g, "")
+        .replace(/\\uFEFF/g, "");
+
+}
+
+function escapeImageText(
+    value: string
+): string {
+
+    return escapeXml(
+        sanitizeImageText(value)
+    );
+
+}
+
+
 function escapeXml(
     value: string
 ): string {
@@ -1119,7 +1151,7 @@ export async function generateDailyMenuImage(
                     font-size="17"
                     fill="#ffffff"
                 >
-                    ${escapeXml(
+                    ${escapeImageText(
                 restaurantName
             )}
                 </text>
@@ -1171,7 +1203,7 @@ export async function generateDailyMenuImage(
                     font-size="20"
                     fill="${theme.muted}"
                 >
-                    ${escapeXml(
+                    ${escapeImageText(
                 restaurantName
             )}
                 </text>
@@ -1428,7 +1460,7 @@ export async function generateDailyMenuImage(
                                     font-weight="600"
                                     fill="${theme.text}"
                                 >
-                                    ${escapeXml(
+                                    ${escapeImageText(
                                         line
                                     )}
                                 </text>
@@ -1499,7 +1531,7 @@ export async function generateDailyMenuImage(
                         letter-spacing="0.3"
                         fill="${iconColor}"
                     >
-                        ${escapeXml(
+                        ${escapeImageText(
                         SECTION_LABELS[
                         section
                         ]
@@ -1665,7 +1697,7 @@ export async function generateDailyMenuImage(
                                             fill="${theme.text}"
                                             ${textFit}
                                         >
-                                            • ${escapeXml(
+                                            / ${escapeImageText(
                                                 name
                                             )}
                                         </text>
@@ -2161,7 +2193,7 @@ export async function generateDailyMenuImage(
             letter-spacing="0.6"
             fill="${theme.text}"
         >
-            ${escapeXml(
+            ${escapeImageText(
         restaurantName
     )}
         </text>
@@ -2200,7 +2232,7 @@ export async function generateDailyMenuImage(
             font-weight="800"
             fill="#ffffff"
         >
-            ${escapeXml(
+            ${escapeImageText(
         formattedDate
     )}
         </text>
@@ -2485,7 +2517,7 @@ export async function generateDailyMenuImage(
                                     font-weight="900"
                                     fill="${theme.text}"
                                 >
-                                    ${escapeXml(
+                                    ${escapeImageText(
                                 size.label
                             )}
                                 </text>

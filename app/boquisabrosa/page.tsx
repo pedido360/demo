@@ -4,6 +4,14 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { recordGuideMetric } from "@/lib/repositories/guide-metrics.repository";
 
+const demoFoodGallery = [
+  "/images/products/burrito.jpg",
+  "/images/products/hamburger.jpg",
+  "/images/products/meat.jpg",
+  "/images/products/fries.jpg",
+  "/images/products/hotdog.jpg",
+];
+
 const places: Array<{
   number: string;
   name: string;
@@ -18,6 +26,9 @@ const places: Array<{
   pedidosUrl?: string;
   whatsapp?: string;
   image?: string;
+  gallery?: string[];
+  videoUrl?: string;
+  videoCover?: string;
   categories?: string[];
 }> = [
   {
@@ -29,7 +40,7 @@ const places: Array<{
     phone: "317 275 0131",
     description: "Pata de Res, Asadura o Chanfaina, Pichón, Bollos, Picos, Venas y Arepa santandereana.",
     featured: true,
-    categories: ["Restaurantes", "Comida típica", "Parrillas y carnes"],
+    categories: ["Típicos santandereanos", "Carnes y parrilla", "Desayunos", "Piquetes y comida tradicional"],
   },
   {
     number: "02",
@@ -40,7 +51,7 @@ const places: Array<{
     phone: "724 058 / 317 376 1437",
     description: "Frijoles con Pezuña, Cazuela, Cola de Res Sudada, Sobrebarriga, Lengua en Salsa, Pata de Res, Sancocho, Pollo Criollo y más.",
     featured: true,
-    categories: ["Restaurantes", "Comida típica"],
+    categories: ["Típicos santandereanos", "Carnes y parrilla", "Desayunos", "Piquetes y comida tradicional"],
   },
   {
     number: "03",
@@ -52,7 +63,7 @@ const places: Array<{
     phone: "314 488 7575",
     description: "Calentado Paisa, Chanfaina, Chunchulla, Ternero Sudado, Tripa Dimensión y más.",
     featured: true,
-    categories: ["Restaurantes", "Comida típica"],
+    categories: ["Típicos santandereanos", "Carnes y parrilla", "Desayunos", "Piquetes y comida tradicional"],
   },
   {
     number: "04",
@@ -63,7 +74,7 @@ const places: Array<{
     phone: "724 6005",
     description: "Carne Asada, Sobrebarriga, Cabro, Pepitoria, Gallina, Pollo, Lomo de Cerdo y más.",
     featured: true,
-    categories: ["Restaurantes", "Comida típica"],
+    categories: ["Típicos santandereanos", "Carnes y parrilla", "Desayunos", "Piquetes y comida tradicional"],
   },
   {
     number: "05",
@@ -73,7 +84,7 @@ const places: Array<{
     address: "San Gil",
     phone: "Consultar guía",
     description: "Especialidades de la gastronomía local.",
-    categories: ["Restaurantes", "Comida típica"],
+    categories: ["Típicos santandereanos", "Carnes y parrilla", "Desayunos", "Piquetes y comida tradicional"],
   },
   {
     number: "06",
@@ -83,12 +94,13 @@ const places: Array<{
     address: "Interior casa de mercado, puesto 86",
     phone: "311 50 1766 / 310 789 9404",
     description: "Domicilios gratis. Atendido por sus propietarios Manuel Bernal y Olinda Cuervo.",
-    categories: ["Restaurantes"],
+    categories: ["Frutas y verduras"],
   },
   {
     number: "07",
     name: "Balneario Pozo Azul",
     type: "Turismo",
+    categories: ["Experiencias y turismo"],
     schedule: "Todos los días · 8 A.M. en adelante",
     address: "Km 2 vía San Gil - Barichara",
     phone: "312 303 0643",
@@ -103,7 +115,7 @@ const places: Array<{
     address: "Calle 13 No. 10 - 35",
     phone: "724 2173",
     description: "Arepas rellenas, pollo, carne desmechada, salchicha, mixta y especial. Además panadería, chorizos, empanadas, avena y bebidas.",
-    categories: ["Cafeterías", "Comidas rápidas"],
+    categories: ["Café y panadería", "Comidas rápidas", "Desayunos"],
   },
   {
     number: "09",
@@ -114,22 +126,23 @@ const places: Array<{
     address: "San Gil",
     phone: "Consultar guía",
     description: "Hamburguesas, picadas y diferentes opciones para compartir.",
-    categories: ["Restaurantes", "Comidas rápidas"],
+    categories: ["Comidas rápidas"],
   },
   {
     number: "10",
     name: "Piqueteadero Doña Bárbara",
     type: "Restaurante",
+    categories: ["Piquetes y comida tradicional", "Típicos santandereanos"],
     schedule: "Todos los días · 11 A.M. - 10 P.M.",
     address: "San Gil",
     phone: "Consultar guía",
     description: "Piquetes y sabores tradicionales.",
-    categories: ["Restaurantes", "Comida típica"],
   },
   {
     number: "11",
     name: "Hotel Terrazas de la Candelaria",
     type: "Hotel",
+    categories: ["Experiencias y turismo"],
     schedule: "Todos los días · 8 A.M. - 10 P.M.",
     address: "San Gil",
     phone: "Consultar guía",
@@ -143,7 +156,7 @@ const places: Array<{
     address: "Cl. 4 #3-69, Pinchote, Santander",
     phone: "316 4611891",
     description: "Comida típica santandereana.",
-    categories: ["Restaurantes", "Comida típica"],
+    categories: ["Típicos santandereanos", "Carnes y parrilla", "Desayunos", "Piquetes y comida tradicional"],
     instagram: "https://www.instagram.com/tipicoslina/",
     facebook: "https://www.facebook.com/profile.php?id=100089145213642",
     pedidosUrl: "https://tipicos-lina.pedidos360.shop",
@@ -225,13 +238,15 @@ function shufflePlaces(items: typeof places) {
 }
 
 const filters = [
-  "Todos",
-  "Restaurantes",
+  "Todos los sabores",
+  "Típicos santandereanos",
+  "Carnes y parrilla",
   "Comidas rápidas",
-  "Comida típica",
-  "Cafeterías",
-  "Pizzerías",
-  "Parrillas y carnes",
+  "Desayunos",
+  "Café y panadería",
+  "Piquetes y comida tradicional",
+  "Frutas y verduras",
+  "Experiencias y turismo",
 ];
 
 function getPlaceStatus(schedule: string) {
@@ -339,12 +354,12 @@ export default function BoquisabrosaPage() {
   const [shuffledPlaces, setShuffledPlaces] = useState(places);
   const [promoPosition, setPromoPosition] = useState<number | null>(null);
   const [openPlace, setOpenPlace] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState("Todos");
+  const [activeFilter, setActiveFilter] = useState("Todos los sabores");
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredPlaces = shuffledPlaces.filter((place) => {
     const matchesCategory =
-      activeFilter === "Todos" ||
+      activeFilter === "Todos los sabores" ||
       place.categories?.includes(activeFilter);
 
     const term = searchTerm.trim().toLowerCase();
@@ -366,64 +381,127 @@ export default function BoquisabrosaPage() {
 
   return (
     <main className="min-h-screen bg-[#fff9e8] pb-24 text-[#25170b]">
-      <section className="relative overflow-hidden bg-[#11100d]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#f6c51533,transparent_45%),radial-gradient(circle_at_bottom_left,#e6394633,transparent_40%)]" />
+      <section className="relative isolate overflow-hidden bg-[#17120d]">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-cover bg-[center_58%] sm:bg-center"
+          style={{ backgroundImage: "url('/guia/portadaok.png')" }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-black/75 via-black/45 to-black/90 sm:bg-gradient-to-r sm:from-black/75 sm:via-black/45 sm:to-black/65"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,#f6c51535,transparent_55%)]"
+        />
 
-        <div className="relative mx-auto max-w-6xl px-5 pb-10 pt-6 sm:px-8">
-          <header className="flex items-center justify-between">
-            <div className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur">
-              San Gil · Santander
-            </div>
-
-            <div className="text-right text-white">
-              <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">
-                Presenta
+        <div className="relative mx-auto flex min-h-[760px] max-w-7xl flex-col px-5 pb-10 pt-5 sm:min-h-[720px] sm:px-8 sm:pb-12 sm:pt-7 lg:min-h-[780px]">
+          <header className="flex justify-center text-white">
+            <div className="flex items-center justify-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-white/75 sm:text-xs">
+                  Presenta
+                </span>
+                <span className="text-sm font-black tracking-wide sm:text-base">
+                  El Sibari
+                </span>
               </div>
-              <div className="text-xs font-black">El Sibarita Sangileño</div>
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="https://www.facebook.com/yosoyelsibarita/?locale=es_LA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook de El Sibari"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 bg-white/15 text-xs font-black text-white shadow-md backdrop-blur transition hover:scale-110 hover:bg-[#1877F2] sm:h-8 sm:w-8"
+                >
+                  f
+                </a>
+                <a
+                  href="https://www.instagram.com/elsibaris/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram de El Sibari"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 bg-white/15 text-sm font-black text-white shadow-md backdrop-blur transition hover:scale-110 hover:bg-[#C13584] sm:h-8 sm:w-8"
+                >
+                  ◎
+                </a>
+              </div>
             </div>
           </header>
 
-          <div className="mx-auto flex max-w-xl flex-col items-center py-10 text-center">
-            <div className="w-full max-w-[330px] overflow-hidden rounded-[1.8rem] border border-white/10 bg-white shadow-2xl sm:max-w-[430px] lg:max-w-[520px]">
-              <Image
-                src="/GuiaBoquisabrosa.jpeg"
-                alt="Guía Boquisabrosa"
-                width={900}
-                height={1200}
-                priority
-                className="h-auto w-full"
-              />
-            </div>
+          <div className="mt-3 flex justify-center">
+            <a
+              href="/boquisabrosa/propuesta"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/20 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-wider text-white/80 backdrop-blur transition duration-200 hover:border-[#e63946] hover:bg-[#e63946] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#e63946]/70 sm:text-[10px]"
+            >
+              ¿Qué es la Guía Boquisabrosa?
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
 
-            <p className="mt-7 text-xs font-black uppercase tracking-[0.3em] text-[#f6c515]">
-              Ruta Gastronómica
+          <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center py-10 text-center sm:py-16 lg:py-20">
+            <Image
+              src="/guia/logo-boquisabrosa-transparente.png"
+              alt="Logo oficial de la Ruta Boquisabrosa"
+              width={420}
+              height={420}
+              priority
+              className="mb-4 h-auto w-28 drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] sm:mb-5 sm:w-36"
+            />
+
+            <p className="rounded-full border border-[#f6c515]/60 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#ffe16b] shadow-lg backdrop-blur sm:text-xs">
+              Ruta gastronómica
             </p>
 
-            <h1 className="mt-3 text-4xl font-black uppercase leading-[0.94] tracking-tight text-white sm:text-6xl">
-              Descubre
-              <span className="block text-[#f6c515]">San Gil a bocados</span>
+            <h1 className="mt-6 max-w-4xl text-4xl font-black uppercase leading-[0.98] tracking-tight text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.65)] sm:text-6xl lg:text-7xl">
+              La guía más
+              <span className="mt-2 block text-[#f6c515]">
+                “arrecha”
+              </span>
             </h1>
 
-            <p className="mt-5 max-w-md text-sm leading-6 text-white/65 sm:text-base">
-              Lugares, sabores y experiencias recomendadas para descubrir
-              lo mejor de nuestra tierra.
+            <p className="mt-5 text-xl font-black uppercase tracking-[0.08em] text-white drop-shadow-lg sm:mt-6 sm:text-3xl lg:text-4xl">
+              Ruta Boquisabrosa
+            </p>
+
+            <p className="mt-5 max-w-2xl text-base font-bold leading-7 text-white drop-shadow-md sm:text-xl sm:leading-8">
+              Sabores que cuentan historias. Lugares que merecen ser descubiertos.
+            </p>
+
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-white/90 drop-shadow-md sm:text-base sm:leading-7 lg:text-lg">
+              Una ruta gastronómica que conecta establecimientos, visitantes y
+              experiencias, con presencia web 24/7 y contenido promocional para
+              darle visibilidad a los sabores de nuestra tierra.
             </p>
 
             <a
               href="#explorar"
-              className="mt-7 rounded-full bg-[#e63946] px-7 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-xl transition hover:scale-105"
+              className="mt-8 inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-white/20 bg-[#e63946] px-7 py-3 text-xs font-black uppercase tracking-[0.12em] text-white shadow-[0_12px_35px_rgba(230,57,70,0.4)] transition duration-200 hover:-translate-y-1 hover:border-[#f6c515] hover:bg-[#f6c515] hover:text-black focus:outline-none focus:ring-4 focus:ring-[#f6c515]/70 sm:px-9 sm:text-sm"
             >
-              Explorar la guía ↓
+              Explorar la guía
+              <span aria-hidden="true" className="text-lg">↓</span>
             </a>
+
+            <p className="mt-5 max-w-full text-[9px] font-black uppercase tracking-[0.12em] text-[#ffe16b] drop-shadow sm:text-xs sm:tracking-[0.2em]">
+              Gastronomía · Turismo · Cultura · Nuestra gente
+            </p>
           </div>
 
-          <div className="border-t border-white/10 pt-5 text-center">
-            <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/35">
+          <div className="border-t border-white/25 pt-5 text-center">
+            <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/75">
               Patrocinador principal
             </div>
-            <div className="mt-1 text-lg font-black text-white">
+            <a
+              href="https://pedidos360.shop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-flex items-center rounded-lg px-3 py-1 text-lg font-black text-white transition hover:bg-white/10 sm:text-xl"
+              aria-label="Visitar Pedidos360"
+            >
               Pedidos<span className="text-[#f6c515]">360</span>
-            </div>
+              <span aria-hidden="true" className="ml-2 text-sm text-white/70">↗</span>
+            </a>
           </div>
         </div>
       </section>
@@ -454,8 +532,23 @@ export default function BoquisabrosaPage() {
             />
           </div>
 
-          <div className="no-scrollbar -mx-1 mt-3 flex touch-pan-x gap-2 overflow-x-auto px-1 pb-2">
-            {filters.map((filter) => (
+          <div className="mt-3 flex items-center justify-between px-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-black/45 sm:text-[10px]">
+              Explora las categorías
+            </span>
+            <span className="flex items-center gap-1 text-[9px] font-bold text-[#b78b00] sm:text-[10px]">
+              Desliza para ver más
+              <span aria-hidden="true" className="text-sm">→</span>
+            </span>
+          </div>
+
+          <div className="relative -mx-1">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-2 right-0 top-0 z-10 w-8 bg-gradient-to-l from-[#fff9e8] to-transparent"
+            />
+            <div className="no-scrollbar flex touch-pan-x gap-2 overflow-x-auto px-1 pb-2">
+              {filters.map((filter) => (
               <button
                 key={filter}
                 type="button"
@@ -471,7 +564,8 @@ export default function BoquisabrosaPage() {
               >
                 {filter}
               </button>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
@@ -492,7 +586,7 @@ export default function BoquisabrosaPage() {
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filteredPlaces.map((place, index) => (
               <div key={place.number} className="contents">
-                {activeFilter === "Todos" &&
+                {activeFilter === "Todos los sabores" &&
                 searchTerm.trim() === "" &&
                 promoPosition === index ? (
                   <article className="group overflow-hidden rounded-[1.7rem] border border-[#f6c515]/40 bg-white shadow-[0_12px_40px_rgba(37,23,11,0.09)] transition duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -629,6 +723,29 @@ export default function BoquisabrosaPage() {
                     </summary>
 
                     <div className="space-y-3 border-t border-black/5 px-4 pb-4 pt-3 text-xs text-black/60">
+                      <section className="mb-5" aria-label={`Galería de comida de ${place.name}`}>
+                        <h4 className="mb-3 text-xs font-black uppercase tracking-wider text-[#25170b]">
+                          Conócenos y ven a disfrutar
+                        </h4>
+                        <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2">
+                          {(place.gallery ?? demoFoodGallery).slice(0, 5).map((photo, index) => (
+                            <div
+                              key={`${place.number}-galeria-${index}`}
+                              className="relative aspect-square shrink-0 snap-start overflow-hidden rounded-xl bg-[#eee5c9]"
+                              style={{ flex: "0 0 calc((100% - 1rem) / 3)" }}
+                            >
+                              <Image
+                                src={photo}
+                                alt={`Imagen de muestra de comida ${index + 1} para ${place.name}`}
+                                fill
+                                sizes="33vw"
+                                className="object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
                       <p>
                         <strong className="text-black">🕐 Horario</strong>
                         <br />
@@ -730,6 +847,30 @@ export default function BoquisabrosaPage() {
                       )}
                     </div>
                   </details>
+
+                  {place.videoUrl ? (
+                    <a
+                      href={place.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 block overflow-hidden rounded-2xl border border-[#299bf3]/30 bg-white shadow-sm transition hover:shadow-md"
+                    >
+                      <div className="relative aspect-video bg-[#25170b]">
+                        <Image
+                          src={place.videoCover ?? "/images/products/hamburger.jpg"}
+                          alt={`Portada del video de ${place.name}`}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 33vw"
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+                          <span className="rounded-full bg-white/95 px-5 py-3 text-xs font-black uppercase tracking-wider text-[#25170b]">
+                            ▶ Ver video
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  ) : null}
                 </div>
               </article>
               </div>
@@ -777,24 +918,50 @@ export default function BoquisabrosaPage() {
         </div>
       </section>
 
-      <section className="mt-16 bg-[#f6c515] px-5 py-14">
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-black/45">
-            La ruta sigue creciendo
-          </p>
+      <section className="mt-16 overflow-hidden bg-[#f6c515]">
+        <div className="px-5 py-14 sm:py-16">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-black/50 sm:text-xs">
+              Guía Boquisabrosa · Ruta Gastronómica
+            </p>
 
-          <h2 className="mt-3 text-3xl font-black uppercase leading-tight sm:text-5xl">
-            Buenos sabores.
-            <span className="block">Buenos lugares.</span>
-          </h2>
+            <h2 className="mt-4 text-3xl font-black uppercase leading-[1.05] tracking-tight text-[#25170b] sm:text-5xl">
+              Los buenos sabores
+              <span className="mt-1 block">merecen ser descubiertos.</span>
+            </h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-6 text-black/60">
-            Guía Boquisabrosa · Ruta Gastronómica · San Gil
-          </p>
+            <p className="mx-auto mt-5 max-w-xl text-sm leading-6 text-black/65 sm:text-base">
+              Encuentra tu próximo lugar favorito o haz que más personas descubran tu negocio gastronómico.
+            </p>
 
-          <div className="mt-7 text-sm font-black">
-            Powered by Pedidos360
+            <a
+              href="/boquisabrosa/propuesta"
+              className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#25170b] px-6 py-3 text-xs font-black uppercase tracking-[0.1em] text-white shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-[#e63946] focus:outline-none focus:ring-4 focus:ring-black/20 sm:px-8 sm:text-sm"
+            >
+              ¿Tu negocio quiere sumarse?
+              <span aria-hidden="true">↗</span>
+            </a>
+
+            <p className="mt-4 text-[10px] font-semibold text-black/55 sm:text-xs">
+              Conoce cómo hacer parte de la ruta.
+            </p>
           </div>
+        </div>
+
+        <div className="bg-[#25170b] px-5 py-8 text-center text-white">
+          <p className="text-xl font-black uppercase tracking-[0.12em]">
+            Boquisabrosa
+          </p>
+
+          <p className="mx-auto mt-2 max-w-md text-xs leading-5 text-white/65 sm:text-sm">
+            Una ruta para descubrir, disfrutar y compartir los sabores de nuestra tierra.
+          </p>
+
+          <div className="mx-auto mt-6 h-px max-w-xs bg-white/15" />
+
+          <p className="mt-4 text-[10px] font-semibold tracking-wide text-white/50">
+            Una iniciativa impulsada por Pedidos360
+          </p>
         </div>
       </section>
 

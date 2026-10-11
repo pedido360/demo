@@ -141,7 +141,7 @@ export default function PropuestaBoquisabrosaPage() {
               Una iniciativa de promoción turística y gastronómica que reúne restaurantes, cafés, emprendedores y establecimientos representativos de la Provincia Guanentina para descubrir sus sabores, lugares e historias.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="#plan" className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f6c515] px-7 py-4 font-black text-[#29180d] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-white">
+              <a href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual." className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f6c515] px-7 py-4 font-black text-[#29180d] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-white">
                 Quiero participar <span aria-hidden="true">→</span>
               </a>
               <a href="#que-es" className="inline-flex items-center justify-center rounded-full border border-white/35 px-7 py-4 font-bold text-white transition hover:bg-white/10">
@@ -325,24 +325,21 @@ export default function PropuestaBoquisabrosaPage() {
             <div className="flex flex-col justify-between bg-[#29180d] p-7 text-white sm:p-10">
               <div>
                 <span className="inline-flex rounded-full bg-[#f6c515] px-4 py-2 text-xs font-black uppercase tracking-wider text-[#29180d]">Inversión anual</span>
-                <p className="mt-7 text-sm font-bold uppercase tracking-[0.16em] text-white/65">Plan 1</p>
-                <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
-                  <span className="text-4xl font-black tracking-tight text-[#f6c515] sm:text-5xl">$300.000</span>
-                  <span className="text-lg font-bold">COP</span>
-                </div>
-                <p className="mt-2 text-sm text-white/70">Por un año de permanencia.</p>
-                <div className="my-7 h-px bg-white/20" />
-                <ul className="space-y-3 text-sm leading-6 text-white/85">
-                  <li>✓ Presencia física y digital</li>
-                  <li>✓ Fotografía y video promocional iniciales</li>
-                  <li>✓ Publicación inicial de contenidos</li>
-                  <li>✓ Guía digital disponible 24/7</li>
-                  <li>✓ Permanencia por un año desde el contrato</li>
-                </ul>
+                <p className="mt-8 text-sm font-bold uppercase tracking-[0.16em] text-white/65">Plan 1 · Participación anual</p>
+              <div className="mt-3 flex flex-wrap items-baseline gap-x-2">
+                <span className="text-4xl font-black tracking-tight text-[#f6c515] sm:text-5xl">$300.000</span>
+                <span className="text-lg font-bold">COP</span>
               </div>
-              <a href="#invitacion" className="mt-9 inline-flex items-center justify-center gap-3 rounded-full bg-[#f6c515] px-6 py-4 text-center font-black text-[#29180d] transition hover:bg-white">
-                Quiero hacer parte <span aria-hidden="true">→</span>
+              <h3 className="mt-4 text-2xl font-black leading-tight">Tu negocio merece ser visto.</h3>
+              <p className="mt-3 text-lg font-extrabold leading-snug text-[#f6c515]">Más visibilidad. Más oportunidades. Más razones para visitarte.</p>
+              <p className="mt-3 text-sm leading-7 text-white/75">Aprovecha los beneficios de la Ruta Boquisabrosa para promocionar tu establecimiento, destacar tu oferta gastronómica y llegar a más personas.</p>
+              <div className="my-7 h-px bg-white/20" />
+              <p className="text-sm leading-6 text-white/70">Un año de participación, contado desde la fecha del contrato.</p>
+              </div>
+              <a href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual." target="_blank" rel="noreferrer" className="mt-9 inline-flex items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-center font-black text-white transition hover:bg-[#1fb858]">
+                Consultar por WhatsApp <span aria-hidden="true">→</span>
               </a>
+              <p className="mt-3 text-center text-xs leading-5 text-white/60">Se abrirá WhatsApp con un mensaje listo para enviar. Consultar no te compromete a participar.</p>
             </div>
           </div>
           <p className="mx-auto mt-5 max-w-5xl text-xs leading-6 text-[#79695a]">
@@ -410,25 +407,12 @@ export default function PropuestaBoquisabrosaPage() {
             <p className="mt-3 text-3xl font-black">$300.000 <span className="text-base">COP</span></p>
             <p className="mt-1 text-sm text-white/65">Permanencia por un año desde la fecha del contrato.</p>
             <div className="my-6 h-px bg-white/15" />
-            <p className="text-sm font-bold text-white/80">Contacto del proyecto</p>
-            <dl className="mt-4 space-y-4 text-sm">
-              <div>
-                <dt className="text-white/50">Región</dt>
-                <dd className="mt-1 font-bold">Provincia Guanentina</dd>
-              </div>
-              <div>
-                <dt className="text-white/50">Redes sociales</dt>
-                <dd className="mt-1 text-white/80">Por confirmar</dd>
-              </div>
-              <div>
-                <dt className="text-white/50">WhatsApp</dt>
-                <dd className="mt-1 text-white/80">Por confirmar</dd>
-              </div>
-              <div>
-                <dt className="text-white/50">Correo electrónico</dt>
-                <dd className="mt-1 text-white/80">Por confirmar</dd>
-              </div>
-            </dl>
+            <p className="text-sm font-bold text-white/80">¿Te gustaría participar?</p>
+          <p className="mt-3 text-sm leading-7 text-white/75">Conversemos sobre tu establecimiento y resolvamos tus dudas antes de tomar una decisión.</p>
+          <a href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual%20y%20resolver%20algunas%20dudas." target="_blank" rel="noreferrer" className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-center font-black text-white transition hover:bg-[#1fb858]">
+            Consultar por WhatsApp <span aria-hidden="true">→</span>
+          </a>
+          <p className="mt-3 text-xs leading-5 text-white/60">Consultar no te compromete a participar.</p>
           </div>
         </div>
       </section>

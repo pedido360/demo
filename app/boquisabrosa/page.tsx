@@ -432,7 +432,7 @@ export default function BoquisabrosaPage() {
 
           <div className="mt-3 flex justify-center">
             <a
-              href="/boquisabrosa/propuesta"
+              href="/propuesta"
               className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/20 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-wider text-white/80 backdrop-blur transition duration-200 hover:border-[#e63946] hover:bg-[#e63946] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#e63946]/70 sm:text-[10px]"
             >
               ¿Qué es la Guía Boquisabrosa?
@@ -503,6 +503,44 @@ export default function BoquisabrosaPage() {
               <span aria-hidden="true" className="ml-2 text-sm text-white/70">↗</span>
             </a>
           </div>
+        </div>
+      </section>
+
+      <section
+        id="mapa-interactivo"
+        className="bg-[#fffdf7] px-4 py-10 sm:px-6 sm:py-14 lg:px-8"
+      >
+        <div className="mx-auto w-full max-w-7xl">
+          <div className="mb-6 text-center sm:mb-8">
+            <span className="inline-flex rounded-full border border-[#e63946]/20 bg-[#e63946]/5 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#e63946]">
+              Ruta Boquisabrosa
+            </span>
+
+            <h2 className="mt-4 text-2xl font-black leading-tight text-[#202020] sm:text-3xl lg:text-4xl">
+              Encuentra tu próximo sabor
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
+              Explora los restaurantes y lugares de la Ruta Boquisabrosa
+              en un solo mapa interactivo.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl sm:rounded-3xl">
+            <Image
+              src="/guia/mapainteractivo.png"
+              alt="Vista ilustrativa del futuro mapa de la Ruta Boquisabrosa en San Gil, con marcadores gastronómicos"
+              width={1728}
+              height={972}
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className="block h-auto w-full"
+            />
+          </div>
+
+          <p className="mt-4 text-center text-xs leading-5 text-gray-500 sm:text-sm">
+            Vista ilustrativa. Los establecimientos y sus ubicaciones definitivas
+            se mostrarán cuando el mapa interactivo esté disponible.
+          </p>
         </div>
       </section>
 

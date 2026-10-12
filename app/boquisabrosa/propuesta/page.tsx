@@ -418,7 +418,7 @@ export default function PropuestaBoquisabrosaPage() {
       </section>
 
       <a
-        href="/boquisabrosa"
+        href="https://guiaboquisabrosa.pedidos360.shop/"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Ver la Ruta Boquisabrosa"

@@ -2,7 +2,11 @@ import { createClient } from "@/lib/supabase/client";
 
 export type GuideMetricEvent =
     | "guide_view"
-    | "restaurant_view";
+    | "restaurant_view"
+    | "proposal_view"
+    | "proposal_info_click"
+    | "proposal_whatsapp_click"
+    | "proposal_guide_click";
 
 export async function recordGuideMetric(
     eventType: GuideMetricEvent,

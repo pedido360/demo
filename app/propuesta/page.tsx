@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import Link from "next/link";
+import ProposalMetricTracker, { TrackedProposalLink, TrackedProposalInternalLink } from "./ProposalMetricTracker";
 
 const ink = "#29180D";
 const red = "#D9363E";
@@ -78,6 +79,7 @@ const journey = [
 export default function PropuestaBoquisabrosaPage() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#fffaf0] text-[#29180d]">
+      <ProposalMetricTracker />
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
@@ -104,7 +106,7 @@ export default function PropuestaBoquisabrosaPage() {
         </div>
 
         <header className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-12">
-          <Link href="/boquisabrosa" aria-label="Volver a la Guía Boquisabrosa" className="flex items-center gap-3">
+          <TrackedProposalInternalLink eventType="proposal_guide_click" href="/boquisabrosa" aria-label="Volver a la Guía Boquisabrosa" className="flex items-center gap-3">
             <Image
               src="/guia/logo-boquisabrosa-transparente.png"
               alt="Logo Boquisabrosa"
@@ -115,7 +117,7 @@ export default function PropuestaBoquisabrosaPage() {
             <span className="text-sm font-black uppercase leading-tight tracking-[0.12em] sm:text-base">
               Guía <span className="block text-[#f6c515]">Boquisabrosa</span>
             </span>
-          </Link>
+          </TrackedProposalInternalLink>
           <a href="#plan" className="rounded-full bg-[#f6c515] px-4 py-3 text-center text-xs font-black text-[#29180d] transition hover:bg-white sm:px-6 sm:text-sm">
             Conocer el plan <span aria-hidden="true">↘</span>
           </a>
@@ -141,12 +143,12 @@ export default function PropuestaBoquisabrosaPage() {
               Una iniciativa de promoción turística y gastronómica que reúne restaurantes, cafés, emprendedores y establecimientos representativos de la Provincia Guanentina para descubrir sus sabores, lugares e historias.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="https://wa.me/573212057671?text=Hola%2C%20quiero%20participar%20en%20la%20Ruta%20Boquisabrosa." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f6c515] px-7 py-4 font-black text-[#29180d] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-white">
+              <TrackedProposalLink eventType="proposal_whatsapp_click" href="https://wa.me/573212057671?text=Hola%2C%20quiero%20participar%20en%20la%20Ruta%20Boquisabrosa." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f6c515] px-7 py-4 font-black text-[#29180d] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-white">
                 Quiero participar <span aria-hidden="true">→</span>
-              </a>
-              <a href="#que-es" className="inline-flex items-center justify-center rounded-full border border-white/35 px-7 py-4 font-bold text-white transition hover:bg-white/10">
+              </TrackedProposalLink>
+              <TrackedProposalLink eventType="proposal_info_click" href="#que-es" className="inline-flex items-center justify-center rounded-full border border-white/35 px-7 py-4 font-bold text-white transition hover:bg-white/10">
                 Conocer la ruta
-              </a>
+              </TrackedProposalLink>
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-white/75">
               <span>✦ Promoción impresa</span>
@@ -337,11 +339,11 @@ export default function PropuestaBoquisabrosaPage() {
                 <h3 className="text-2xl font-black leading-tight">Hagamos visible tu establecimiento.</h3>
                 <p className="mt-3 text-sm leading-7 text-white/75">Conversemos sobre tu negocio, resolvamos tus dudas y revisemos cómo hacer parte de la Ruta Boquisabrosa.</p>
               </div>
-              <a href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual." target="_blank" rel="noopener noreferrer" className="mt-9 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] px-5 py-4 text-center font-black text-[#103B25] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#4be582] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+              <TrackedProposalLink eventType="proposal_whatsapp_click" href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual." target="_blank" rel="noopener noreferrer" className="mt-9 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] px-5 py-4 text-center font-black text-[#103B25] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#4be582] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
                 <span aria-hidden="true">☏</span>
                 Consultar por WhatsApp
                 <span aria-hidden="true">↗</span>
-              </a>
+              </TrackedProposalLink>
               <p className="mt-4 text-center text-xs leading-5 text-white/55">Se abrirá WhatsApp con un mensaje listo para enviar. Consultar no te compromete a participar.</p>
             </div>
 
@@ -413,17 +415,18 @@ export default function PropuestaBoquisabrosaPage() {
             <div className="my-6 h-px bg-white/15" />
             <h3 className="text-2xl font-black">¿Te gustaría participar?</h3>
             <p className="mt-3 text-sm leading-7 text-white/75">Conversemos sobre tu establecimiento y resolvamos tus dudas antes de tomar una decisión.</p>
-            <a href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual%20y%20resolver%20algunas%20dudas." target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] px-5 py-4 text-center font-black text-[#103B25] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#4be582] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+            <TrackedProposalLink eventType="proposal_whatsapp_click" href="https://wa.me/573212057671?text=Hola%2C%20estoy%20interesado%20en%20participar%20en%20la%20Ruta%20Boquisabrosa.%20Quisiera%20conocer%20m%C3%A1s%20detalles%20del%20plan%20anual%20y%20resolver%20algunas%20dudas." target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#25D366] px-5 py-4 text-center font-black text-[#103B25] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#4be582] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
               <span aria-hidden="true">☏</span>
               Consultar por WhatsApp
               <span aria-hidden="true">↗</span>
-            </a>
+            </TrackedProposalLink>
             <p className="mt-4 text-center text-xs leading-5 text-white/55">Se abrirá WhatsApp con un mensaje listo para enviar. La consulta no te compromete a participar.</p>
           </div>
         </div>
       </section>
 
-      <a
+      <TrackedProposalLink
+        eventType="proposal_guide_click"
         href="/boquisabrosa"
         target="_blank"
         rel="noopener noreferrer"
@@ -432,7 +435,7 @@ export default function PropuestaBoquisabrosaPage() {
       >
         <span aria-hidden="true">✦</span>
         <span>Ver Ruta Boquisabrosa</span>
-      </a>
+      </TrackedProposalLink>
 
       <footer className="bg-[#1c1009] px-5 py-8 text-center text-white sm:px-8">
         <p className="text-sm font-black uppercase tracking-[0.15em]">Guía Boquisabrosa</p>

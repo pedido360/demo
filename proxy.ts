@@ -22,6 +22,10 @@ export async function proxy(request: NextRequest) {
     ) {
         const url = request.nextUrl.clone();
 
+        if (pathname === "/propuesta" || pathname.startsWith("/propuesta/")) {
+            return NextResponse.next();
+        }
+
         url.pathname =
             `/boquisabrosa${pathname === "/" ? "" : pathname}`;
 

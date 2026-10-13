@@ -50,6 +50,10 @@ export default async function DashboardPage({
             : {
                 guideViews: 0,
                 restaurantViews: {},
+                proposalViews: 0,
+                proposalInfoClicks: 0,
+                proposalWhatsappClicks: 0,
+                proposalGuideClicks: 0,
             };
 
     const conversion =
@@ -168,6 +172,8 @@ export default async function DashboardPage({
                                     </p>
                                 </div>
 
+
+
                                 <div>
                                     <h3 className="mb-3 text-sm font-semibold text-gray-900">
                                         🍽️ Visitas por restaurante
@@ -207,6 +213,39 @@ export default async function DashboardPage({
                                         )}
                                     </div>
                                 </div>
+
+                                <section className="rounded-2xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-100 p-5 shadow-md sm:p-6">
+                                    <div className="mb-5 border-b border-orange-200 pb-4">
+                                        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-orange-700">
+                                            Seguimiento comercial
+                                        </p>
+                                        <h3 className="mt-1 text-xl font-black text-gray-900 sm:text-2xl">
+                                            Métricas de la propuesta comercial
+                                        </h3>
+                                        <p className="mt-2 text-sm text-gray-600">
+                                            Visitas e interacciones con la propuesta, según el período seleccionado.
+                                        </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div className="rounded-xl border border-orange-200 bg-white p-5 shadow-sm">
+                                            <p className="text-sm font-semibold text-gray-600">📄 Visitas a la propuesta</p>
+                                            <p className="mt-3 text-4xl font-black tracking-tight text-orange-700">{guideMetrics.proposalViews}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-orange-200 bg-white p-5 shadow-sm">
+                                            <p className="text-sm font-semibold text-gray-600">ℹ️ Clics informativos</p>
+                                            <p className="mt-3 text-4xl font-black tracking-tight text-orange-700">{guideMetrics.proposalInfoClicks}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-orange-200 bg-white p-5 shadow-sm">
+                                            <p className="text-sm font-semibold text-gray-600">💬 Clics en WhatsApp</p>
+                                            <p className="mt-3 text-4xl font-black tracking-tight text-green-700">{guideMetrics.proposalWhatsappClicks}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-orange-200 bg-white p-5 shadow-sm">
+                                            <p className="text-sm font-semibold text-gray-600">↩️ Clics para volver a la guía</p>
+                                            <p className="mt-3 text-4xl font-black tracking-tight text-orange-700">{guideMetrics.proposalGuideClicks}</p>
+                                        </div>
+                                    </div>
+                                </section>
                             </div>
                         </details>
                     </div>

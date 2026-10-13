@@ -973,7 +973,7 @@ export default function BoquisabrosaPage() {
             </p>
 
             <a
-              href="/boquisabrosa/propuesta"
+              href="/propuesta"
               className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#25170b] px-6 py-3 text-xs font-black uppercase tracking-[0.1em] text-white shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-[#e63946] focus:outline-none focus:ring-4 focus:ring-black/20 sm:px-8 sm:text-sm"
             >
               ¿Tu negocio quiere sumarse?

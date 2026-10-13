@@ -5,15 +5,24 @@ export interface GuideMetricsSummary {
     restaurantViews: Record<string, number>;
 }
 
-export async function getGuideMetrics(): Promise<GuideMetricsSummary> {
+export interface GuideMetricsPeriod {
+    from?: string;
+    to?: string;
+}
+
+export async function getGuideMetrics(period: GuideMetricsPeriod = {}): Promise<GuideMetricsSummary> {
 
     const supabase =
         await createClient();
 
-    const { data, error } =
-        await supabase
-            .from("guide_metrics")
-            .select("event_type, restaurant_name");
+    let query = supabase
+        .from("guide_metrics")
+        .select("event_type, restaurant_name");
+
+    if (period.from) query = query.gte("created_at", period.from);
+    if (period.to) query = query.lt("created_at", period.to);
+
+    const { data, error } = await query;
 
     if (error) {
         console.error(

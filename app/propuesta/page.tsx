@@ -427,7 +427,7 @@ export default function PropuestaBoquisabrosaPage() {
 
       <TrackedProposalLink
         eventType="proposal_guide_click"
-        href="/boquisabrosa"
+        href="/"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Ver la Ruta Boquisabrosa"

@@ -285,6 +285,8 @@ export default function SmartMenu({
 
             setSelectedCategoryId(null);
 
+            alert("¡Producto creado correctamente!");
+
         } catch (error) {
 
             console.error(error);
@@ -315,6 +317,8 @@ export default function SmartMenu({
             );
 
             setSelectedProduct(null);
+
+            alert("¡Producto actualizado correctamente!");
 
         } catch (error) {
 

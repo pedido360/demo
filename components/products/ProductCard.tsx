@@ -80,15 +80,38 @@ export default function ProductCard({
             : null;
 
 
+    const availableVariantPrices =
+        (product.variants ?? [])
+            .filter(
+                variant => variant.isAvailable
+            )
+            .map(
+                variant => Number(variant.price)
+            )
+            .filter(
+                price =>
+                    Number.isFinite(price) &&
+                    price >= 0
+            );
+
+    const variantMinimumPrice =
+        availableVariantPrices.length > 0
+            ? Math.min(...availableVariantPrices)
+            : null;
+
     const priceLabel =
         isDailyMenu &&
             dailyMenuPrice !== null
             ? `Desde $${dailyMenuPrice.toLocaleString(
                 "es-CO"
             )}`
-            : `$${product.price.toLocaleString(
-                "es-CO"
-            )}`;
+            : variantMinimumPrice !== null
+                ? `Desde $${variantMinimumPrice.toLocaleString(
+                    "es-CO"
+                )}`
+                : `$${product.price.toLocaleString(
+                    "es-CO"
+                )}`;
 
 
     return (

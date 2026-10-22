@@ -488,6 +488,13 @@ export default function ProductForm({
                             }
                         />
 
+                        {(form.variants?.length ?? 0) > 0 && (
+                            <p className="mt-2 text-sm text-gray-500">
+                                Este es el precio base. El precio de venta
+                                se determina por la variante seleccionada.
+                            </p>
+                        )}
+
                     </div>
 
                     <div>

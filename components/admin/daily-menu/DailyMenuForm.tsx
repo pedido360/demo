@@ -208,12 +208,18 @@ export default function DailyMenuForm({
     );
 
 
-    const selectedSoup =
-        draft.items.find(
-            item =>
-                item.section ===
-                "soup"
-        );
+    const selectedSoups =
+        draft.items
+            .filter(
+                item =>
+                    item.section ===
+                    "soup"
+            )
+            .sort(
+                (a, b) =>
+                    a.sortOrder -
+                    b.sortOrder
+            );
 
 
     const selectedSeco =
@@ -324,48 +330,53 @@ export default function DailyMenuForm({
         setDraft(
             current => {
 
-                const remaining =
+                const currentSoups =
                     current.items.filter(
                         item =>
-                            item.section !==
-                            section
+                            item.section === section
                     );
 
+                const alreadySelected =
+                    currentSoups.some(
+                        item =>
+                            item.optionId === optionId
+                    );
 
-                const item:
-                    DailyMenuItem = {
-
-                    id:
-                        selectedSoup?.id ??
-                        crypto.randomUUID(),
-
-                    dailyMenuId:
-                        current.id,
-
-                    optionId,
-
-                    section,
-
-                    sortOrder:
-                        0,
-
-                };
-
+                const updatedSoups =
+                    alreadySelected
+                        ? currentSoups
+                            .filter(
+                                item =>
+                                    item.optionId !== optionId
+                            )
+                            .map(
+                                (item, index) => ({
+                                    ...item,
+                                    sortOrder: index,
+                                })
+                            )
+                        : [
+                            ...currentSoups,
+                            {
+                                id: crypto.randomUUID(),
+                                dailyMenuId: current.id,
+                                optionId,
+                                section,
+                                sortOrder: currentSoups.length,
+                            },
+                        ];
 
                 return {
-
                     ...current,
-
                     items: [
-                        ...remaining,
-                        item,
+                        ...current.items.filter(
+                            item => item.section !== section
+                        ),
+                        ...updatedSoups,
                     ],
-
                 };
-
             }
         );
-
     }
 
 
@@ -443,61 +454,6 @@ export default function DailyMenuForm({
                         ],
 
                     };
-
-                }
-
-
-                const limits: Record<
-                    string,
-                    number
-                > = {
-
-                    seco: 4,
-
-                    principle: 4,
-
-                    protein: Infinity,
-
-                    drink: 20,
-
-                    dessert: 20,
-
-                };
-
-
-                const limit =
-                    limits[section];
-
-
-                if (
-                    currentItems.length >=
-                    limit
-                ) {
-
-                    setError(
-
-                        section === "seco"
-
-                            ? "El seco puede tener máximo 4 componentes."
-
-                            : section === "principle"
-
-                                ? "Debes seleccionar un solo principio."
-
-                                : section === "protein"
-
-                                    ? "Puedes configurar varias proteínas."
-
-                                    : section === "drink"
-
-                                        ? "Puedes configurar varias bebidas."
-
-                                        : "Puedes configurar varias opciones de postre."
-
-                    );
-
-
-                    return current;
 
                 }
 
@@ -1045,62 +1001,6 @@ export default function DailyMenuForm({
 
 
 
-        if (
-            selectedSeco.length > 0 &&
-            (
-                selectedSeco.length < 3
-                ||
-                selectedSeco.length > 4
-            )
-        ) {
-
-            setError(
-                "Si configuras seco, debes seleccionar entre 3 y 4 componentes."
-            );
-
-            return;
-
-        }
-
-        if (
-            selectedPrinciples.length > 0 &&
-            selectedPrinciples.length < 2
-        ) {
-
-            setError(
-                "Si configuras principio, debes seleccionar al menos 2 opciones."
-            );
-
-            return;
-
-        }
-
-
-        /*
-         * Proteína es opcional.
-         *
-         * Si se configura,
-         * debe tener entre 3 y 4 opciones.
-         */
-
-        if (
-
-            selectedProteins.length > 0
-            &&
-            selectedProteins.length < 3
-
-        ) {
-
-            setError(
-                "La proteína debe tener al menos 3 opciones."
-            );
-
-            return;
-
-        }
-
-
-
         /*
 * Bebida:
 *
@@ -1312,8 +1212,6 @@ export default function DailyMenuForm({
 
 
         const isSingle =
-            section === "soup"
-            ||
             section === "principle";
 
 
@@ -1751,11 +1649,9 @@ export default function DailyMenuForm({
 
                 "🍲 Sopa",
 
-                "Selecciona una sola sopa para este día. Es un componente fijo.",
+                "Selecciona las sopas disponibles para este día. Con una sola, quedará fija; con varias, el cliente podrá elegir una.",
 
-                selectedSoup
-                    ? [selectedSoup]
-                    : [],
+                selectedSoups,
 
                 "orange"
 
@@ -1768,7 +1664,7 @@ export default function DailyMenuForm({
 
                 "🍛 Seco",
 
-                `Selecciona entre 3 y 4 componentes fijos. Actualmente: ${selectedSeco.length}/4.`,
+                `Selecciona los componentes fijos que tendrá el seco. Actualmente: ${selectedSeco.length}.`,
 
                 selectedSeco,
 

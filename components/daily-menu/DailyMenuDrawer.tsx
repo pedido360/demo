@@ -63,6 +63,9 @@ export default function DailyMenuDrawer({
     const [selectedSize, setSelectedSize] =
         useState("");
 
+    const [selectedSoupId, setSelectedSoupId] =
+        useState("");
+
     const [selectedPrinciple, setSelectedPrinciple] =
         useState("");
 
@@ -94,6 +97,8 @@ export default function DailyMenuDrawer({
                 "hidden";
 
             setSelectedSize("");
+
+            setSelectedSoupId("");
 
             setSelectedPrinciple("");
 
@@ -207,7 +212,11 @@ export default function DailyMenuDrawer({
 
 
     const selectedSoup =
-        soupOptions[0];
+        soupOptions.length === 1
+            ? soupOptions[0]
+            : soupOptions.find(
+                option => option.id === selectedSoupId
+            );
 
 
     const selectedPrincipleObject =
@@ -258,11 +267,9 @@ export default function DailyMenuDrawer({
 
 
     /*
-     * La sopa y los secos vienen
-     * definidos por el restaurante.
-     *
-     * El cliente no debe volver
-     * a seleccionarlos.
+     * Los secos vienen definidos por el restaurante.
+     * Si hay una sola sopa queda fija; si hay varias,
+     * el cliente debe elegir una.
      */
 
 
@@ -271,13 +278,6 @@ export default function DailyMenuDrawer({
         (
             soupOptions.length === 0 ||
             !!selectedSoup
-        ) &&
-        (
-            secoOptions.length === 0 ||
-            (
-                secoOptions.length >= 3 &&
-                secoOptions.length <= 4
-            )
         ) &&
         (
             principleOptions.length === 0 ||
@@ -618,7 +618,7 @@ export default function DailyMenuDrawer({
                         </section>
 
 
-                        {/* SOPA FIJA */}
+                        {/* SOPA */}
 
                         {soupOptions.length > 0 && (
 
@@ -632,19 +632,36 @@ export default function DailyMenuDrawer({
 
                                 <div className="rounded-xl border border-green-200 bg-green-50 p-4">
 
-                                    <div className="flex items-center gap-3">
-
-                                        <span className="text-green-600">
-                                            ✓
-                                        </span>
-
-                                        <span className="font-medium text-gray-800">
-
-                                            {selectedSoup?.name}
-
-                                        </span>
-
-                                    </div>
+                                    {soupOptions.length === 1 ? (
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-green-600">✓</span>
+                                            <span className="font-medium text-gray-800">
+                                                {soupOptions[0].name}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            <p className="text-sm text-gray-600">
+                                                Elige una sopa.
+                                            </p>
+                                            {soupOptions.map(option => (
+                                                <label
+                                                    key={option.id}
+                                                    className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition ${selectedSoup?.id === option.id ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white"}`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="daily-menu-soup"
+                                                        checked={selectedSoup?.id === option.id}
+                                                        onChange={() => setSelectedSoupId(option.id)}
+                                                    />
+                                                    <span className="font-medium text-gray-800">
+                                                        {option.name}
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
 
                                 </div>
 

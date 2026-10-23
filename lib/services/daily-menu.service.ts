@@ -110,23 +110,20 @@ function validateMenuItems(
 /**
  * Valida las reglas del Menú del Día.
  *
- * Reglas:
- *
  * SOPA:
- * exactamente 1 opción fija.
+ * opcional; una opción queda fija y varias permiten
+ * que el cliente elija una.
  *
  * SECO:
- * exactamente 3 o 4 opciones fijas.
+ * componentes fijos configurados por el restaurante,
+ * sin mínimo ni máximo artificial.
  *
- * PROTEÍNA:
- * opcional.
- * Si existe, debe tener entre 3 y 4 opciones.
+ * PRINCIPIO, PROTEÍNA, BEBIDA Y POSTRE:
+ * opcionales; cuando hay opciones disponibles,
+ * el cliente puede elegir una.
  *
- * BEBIDA:
- * debe existir al menos 1 opción.
- *
- * POSTRE:
- * opcional.
+ * TAMAÑOS:
+ * debe existir al menos uno, con nombre y precio válido.
  */
 async function validateDailyMenu(
     restaurantId: string,
@@ -210,78 +207,37 @@ async function validateDailyMenu(
     /*
      * SOPA
      *
-     * Exactamente una.
+     * Puede no configurarse, configurarse una opción fija
+     * o varias opciones para que el cliente elija una.
      */
-
-    if (
-        soups.length > 0 &&
-        soups.length !== 1
-    ) {
-
-        throw new Error(
-            "Si configuras sopa, debe existir exactamente una."
-        );
-
-    }
-
 
     /*
      * SECO
      *
-     * Exactamente tres o cuatro.
+     * Los componentes son fijos y no tienen un mínimo
+     * ni un máximo artificial de opciones.
      */
-
-    if (
-        secos.length > 0 &&
-        (
-            secos.length < 3 ||
-            secos.length > 4
-        )
-    ) {
-
-        throw new Error(
-            "Si configuras seco, debe tener 3 o 4 componentes."
-        );
-
-    }
-
 
     /*
      * PROTEÍNA
      *
-     * Es opcional.
-     *
-     * Si se configura,
-     * debe tener entre 3 y 4 opciones.
+     * Es opcional. Si hay opciones disponibles,
+     * el cliente podrá elegir una.
      */
-
-    if (
-        proteins.length > 0 &&
-        proteins.length < 3
-    ) {
-
-        throw new Error(
-            "La proteína debe tener al menos 3 opciones."
-        );
-
-    }
-
 
     /*
      * BEBIDA
      *
-     * Debe existir al menos
-     * una opción.
+     * Es opcional. Si hay opciones disponibles,
+     * el cliente podrá elegir una.
      */
 
 
     /*
      * POSTRE
      *
-     * Es opcional.
-     *
-     * Si se configura,
-     * debe tener al menos una opción.
+     * Es opcional. Si hay opciones disponibles,
+     * el cliente podrá elegir una.
      */
 
     if (

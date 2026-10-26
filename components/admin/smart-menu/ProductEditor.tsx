@@ -384,18 +384,12 @@ export default function ProductEditor({
                                 editableProduct.availableDays.length === 0
                             }
                             onChange={(event) => {
-
-                                if (
+                                updateField(
+                                    "availableDays",
                                     event.target.checked
-                                ) {
-
-                                    updateField(
-                                        "availableDays",
-                                        []
-                                    );
-
-                                }
-
+                                        ? []
+                                        : [1, 2, 3, 4, 5, 6, 0]
+                                );
                             }}
                             className="h-5 w-5"
                         />
@@ -411,6 +405,46 @@ export default function ProductEditor({
                         editableProduct.availableDays.length > 0 && (
 
                             <div className="mt-4 space-y-3">
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const days = editableProduct.availableDays ?? [];
+                                        const currentHours = editableProduct.availableHours ?? [];
+                                        const sourceDay = days.find(day =>
+                                            currentHours.some(hour =>
+                                                hour.dayOfWeek === day &&
+                                                hour.startTime &&
+                                                hour.endTime
+                                            )
+                                        );
+
+                                        if (sourceDay === undefined) {
+                                            alert("Configura primero la hora de inicio y fin de un día.");
+                                            return;
+                                        }
+
+                                        const sourceHours = currentHours.find(
+                                            hour => hour.dayOfWeek === sourceDay
+                                        )!;
+
+                                        updateField(
+                                            "availableHours",
+                                            [
+                                                ...currentHours.filter(
+                                                    hour => !days.includes(hour.dayOfWeek)
+                                                ),
+                                                ...days.map(day => ({
+                                                    ...sourceHours,
+                                                    dayOfWeek: day,
+                                                })),
+                                            ]
+                                        );
+                                    }}
+                                    className="rounded-lg border border-orange-300 px-4 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50"
+                                >
+                                    Aplicar a todos los días
+                                </button>
 
                                 {[
                                     {

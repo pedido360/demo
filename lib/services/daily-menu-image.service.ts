@@ -1,5 +1,3 @@
-import sharp from "sharp";
-
 import {
     readFile,
 } from "fs/promises";
@@ -23,9 +21,29 @@ import {
     supabase,
 } from "@/lib/supabase";
 
+
+
+
 import {
     uploadImage,
 } from "@/lib/repositories/storage.repository";
+
+
+let sharpPromise: Promise<any> | undefined;
+
+async function getSharp() {
+    if (!process.env.FONTCONFIG_FILE) {
+        process.env.FONTCONFIG_FILE = path.join(
+            process.cwd(),
+            "public",
+            "fonts",
+            "fonts.conf",
+        );
+    }
+
+    sharpPromise ??= import("sharp").then((module) => module.default);
+    return sharpPromise;
+}
 
 
 /*
@@ -465,7 +483,7 @@ async function getImageDataUri(
          */
 
         const pngBuffer =
-            await sharp(
+            await (await getSharp())(
                 sourceBuffer
             )
                 .png()
@@ -2729,7 +2747,7 @@ export async function generateDailyMenuImage(
      */
 
     const imageBuffer =
-        await sharp(
+        await (await getSharp())(
             Buffer.from(
                 svg
             )

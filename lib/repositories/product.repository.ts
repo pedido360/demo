@@ -49,6 +49,9 @@ function mapProduct(data: any): Product {
         isAvailable:
             data.is_available,
 
+        restrictPurchaseHours:
+            data.restrict_purchase_hours ?? false,
+
         availableDays:
             [],
 
@@ -880,6 +883,8 @@ export async function createProduct(
 
             is_available: product.isAvailable,
 
+            restrict_purchase_hours: product.restrictPurchaseHours ?? false,
+
             product_type:
                 product.productType ?? "normal",
         })
@@ -949,6 +954,8 @@ export async function updateProduct(
             is_featured: product.featured,
 
             is_available: product.isAvailable,
+
+            restrict_purchase_hours: product.restrictPurchaseHours ?? false,
         })
         .eq("id", product.id)
         .select()

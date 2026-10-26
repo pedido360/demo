@@ -64,6 +64,8 @@ export interface Product {
 
     isAvailable?: boolean;
 
+    restrictPurchaseHours?: boolean;
+
     availableDays?: number[];
     availableHours?: ProductAvailableHour[];
 

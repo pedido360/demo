@@ -33,6 +33,8 @@ export default function ProductEditor({
     const [editableProduct, setEditableProduct] =
         useState<Product>(product);
 
+    const [isSaving, setIsSaving] = useState(false);
+
     useEffect(() => {
 
         setEditableProduct(product);
@@ -623,6 +625,36 @@ export default function ProductEditor({
 
                 </section>
 
+                <section className="rounded-xl border border-orange-200 bg-orange-50 p-6">
+
+                    <h2 className="mb-3 text-lg font-semibold">
+                        🕒 Horario de compra
+                    </h2>
+
+                    <label className="flex cursor-pointer items-center gap-3">
+                        <input
+                            type="checkbox"
+                            checked={editableProduct.restrictPurchaseHours ?? false}
+                            onChange={(event) =>
+                                updateField(
+                                    "restrictPurchaseHours",
+                                    event.target.checked
+                                )
+                            }
+                            className="h-5 w-5"
+                        />
+
+                        <span className="font-medium">
+                            Limitar horario de compra
+                        </span>
+                    </label>
+
+                    <p className="mt-2 text-sm text-gray-600">
+                        El producto seguirá visible en el menú, pero solo se podrá pedir dentro de los días y horarios configurados arriba.
+                    </p>
+
+                </section>
+
                 <section className="rounded-xl border border-gray-200 p-6">
 
                     <h2 className="mb-4 text-lg font-semibold">
@@ -702,28 +734,30 @@ export default function ProductEditor({
                     </Button>
 
                     <Button
-                        onClick={() => {
+                        loading={isSaving}
+                        disabled={isSaving}
+                        onClick={async () => {
+                            if (isSaving) return;
 
                             const availableDays =
                                 editableProduct.availableDays ?? [];
 
-                            if (
-                                availableDays.length === 0
-                            ) {
-
+                            if (availableDays.length === 0) {
                                 alert(
                                     "Este producto quedará disponible todos los días."
                                 );
-
                             }
 
-                            onSave(
-                                editableProduct
-                            );
+                            setIsSaving(true);
 
+                            try {
+                                await onSave(editableProduct);
+                            } finally {
+                                setIsSaving(false);
+                            }
                         }}
                     >
-                        Guardar cambios
+                        {isSaving ? "Guardando…" : "Guardar cambios"}
                     </Button>
                 </div>
 

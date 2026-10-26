@@ -8,6 +8,7 @@ import { Restaurant } from "@/types/restaurant";
 import { buildWhatsAppMessage } from "@/lib/whatsapp";
 import { recordRestaurantMetric } from "@/lib/repositories/restaurant-metrics.repository";
 import { createOrder } from "@/lib/repositories/order.repository";
+import { isProductPurchaseAllowed } from "@/lib/utils/product-purchase-hours";
 
 import { useCart } from "@/hooks/useCart";
 
@@ -107,6 +108,17 @@ export default function CartDrawer({
         }
 
         if (sendingOrder) {
+            return;
+        }
+
+        const unavailableItem = items.find(
+            item => !isProductPurchaseAllowed(item.product)
+        );
+
+        if (unavailableItem) {
+            alert(
+                `“${unavailableItem.product.name}” está fuera de su horario de compra. Elimínalo del carrito o espera hasta su horario permitido.`
+            );
             return;
         }
 

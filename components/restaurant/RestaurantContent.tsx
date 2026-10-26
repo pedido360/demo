@@ -118,6 +118,11 @@ export default function RestaurantContent({
         product: Product
     ): boolean {
 
+        // Con horario de compra limitado, mantener visible el producto.
+        if (product.restrictPurchaseHours) {
+            return true;
+        }
+
         const availableDays =
             product.availableDays ?? [];
 

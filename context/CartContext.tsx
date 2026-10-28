@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import { ProductSelection } from "@/types/product";
-import { isProductPurchaseAllowed } from "@/lib/utils/product-purchase-hours";
+import { isProductPurchaseAllowed, getProductPurchaseScheduleMessage } from "@/lib/utils/product-purchase-hours";
 
 
 interface CartContextType {
@@ -62,7 +62,7 @@ export function CartProvider({
         item: ProductSelection
     ) {
         if (!isProductPurchaseAllowed(item.product)) {
-            alert("Este producto solo se puede pedir dentro del horario permitido.");
+            alert(getProductPurchaseScheduleMessage(item.product));
             return;
         }
 

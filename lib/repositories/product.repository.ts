@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 
-import { Product } from "@/types/product";
+import { Product, ProductAvailableHour } from "@/types/product";
 
 import {
     ProductVariant,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/repositories/product-availability.repository";
 
 import {
+    getProductAvailableHours,
     replaceProductAvailableHours,
 } from "@/lib/repositories/product-availability-hours.repository";
 
@@ -980,10 +981,52 @@ export async function updateProduct(
         product.availableDays ?? []
     );
 
-    await replaceProductAvailableHours(
-        updated.id,
-        product.availableHours ?? []
+    const submittedHours = product.availableHours ?? [];
+    const existingHours = await getProductAvailableHours(updated.id);
+
+    const isValidHour = (hour: ProductAvailableHour) =>
+        Number.isInteger(Number(hour.dayOfWeek)) &&
+        Number(hour.dayOfWeek) >= 0 &&
+        Number(hour.dayOfWeek) <= 6 &&
+        /^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?$/.test(hour.startTime ?? "") &&
+        /^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?$/.test(hour.endTime ?? "") &&
+        hour.startTime < hour.endTime;
+
+    const submittedByDay = new Map<number, ProductAvailableHour>();
+
+    for (const hour of submittedHours) {
+        const day = Number(hour.dayOfWeek);
+
+        if (!Number.isInteger(day) || day < 0 || day > 6) {
+            throw new Error("Hay un día inválido en los horarios del producto.");
+        }
+
+        if (!hour.startTime || !hour.endTime) {
+            throw new Error(
+                "Hay horarios incompletos. Revisa las horas de inicio y fin antes de guardar."
+            );
+        }
+
+        if (!isValidHour(hour)) {
+            throw new Error(
+                "Hay horarios inválidos. La hora de fin debe ser posterior a la hora de inicio."
+            );
+        }
+
+        submittedByDay.set(day, hour);
+    }
+
+    const existingByDay = new Map(
+        existingHours
+            .filter(isValidHour)
+            .map(hour => [Number(hour.dayOfWeek), hour])
     );
+
+    const hoursToSave = Array.from({ length: 7 }, (_, day) =>
+        submittedByDay.get(day) ?? existingByDay.get(day)
+    ).filter((hour): hour is ProductAvailableHour => Boolean(hour));
+
+    await replaceProductAvailableHours(updated.id, hoursToSave);
 
     updated.ingredients =
         product.ingredients ?? [];
@@ -998,7 +1041,7 @@ export async function updateProduct(
         product.availableDays ?? [];
 
     updated.availableHours =
-        product.availableHours ?? [];
+        hoursToSave;
 
     return updated;
 }

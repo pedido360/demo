@@ -574,11 +574,10 @@ export async function getProducts(
             }
 
 
-            productExtras.push(
-                mapExtra(
-                    extra
-                )
-            );
+            productExtras.push({
+                ...mapExtra(extra),
+                source: "catalog",
+            });
 
         }
 

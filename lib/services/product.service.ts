@@ -357,65 +357,46 @@ export async function saveCompleteProduct(
     const currentExtras =
         await getExtras(product.id);
 
-    const currentExtraIds =
-        new Set(
-            currentExtras.map(
-                extra => extra.id
-            )
+    // Los extras del catálogo reutilizable no se sincronizan en la tabla extras.
+    const productExtras =
+        (product.extras ?? []).filter(
+            extra => extra.source !== "catalog"
         );
 
+    const catalogExtraIds =
+        (product.extras ?? [])
+            .filter(extra => extra.source === "catalog")
+            .map(extra => extra.id);
+
+    const currentExtraIds =
+        new Set(currentExtras.map(extra => extra.id));
+
     const newExtraIds =
-        new Set(
-            (product.extras ?? []).map(
-                extra => extra.id
-            )
-        );
+        new Set(productExtras.map(extra => extra.id));
 
     let extraSortOrder = 0;
 
-    for (const extra of product.extras ?? []) {
-
+    for (const extra of productExtras) {
         if (!currentExtraIds.has(extra.id)) {
-
-            await createExtra(
-                product.id,
-                extra,
-                extraSortOrder
-            );
-
+            await createExtra(product.id, extra, extraSortOrder);
         } else {
-
-            await updateExtra(
-                extra
-            );
-
+            await updateExtra(extra);
         }
-
         extraSortOrder++;
-
     }
 
     for (const extra of currentExtras) {
-
         if (!newExtraIds.has(extra.id)) {
-
-            await deleteExtra(
-                extra.id
-            );
-
+            await deleteExtra(extra.id);
         }
-
     }
 
-    const savedExtras =
-        await getExtras(product.id);
+    const savedExtras = await getExtras(product.id);
 
-    const validExtraIds =
-        new Set(
-            savedExtras.map(
-                extra => extra.id
-            )
-        );
+    const validExtraIds = new Set([
+        ...savedExtras.map(extra => extra.id),
+        ...catalogExtraIds,
+    ]);
 
     await saveProductExtraSelectionGroups(
         product.id,

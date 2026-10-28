@@ -12,6 +12,7 @@ import {
     Product,
     ProductAvailableHour,
 } from "@/types/product";
+import { ProductVariant } from "@/types/product-variant";
 
 interface ProductEditorProps {
     product: Product;
@@ -34,6 +35,54 @@ export default function ProductEditor({
         useState<Product>(product);
 
     const [isSaving, setIsSaving] = useState(false);
+    const [variantLabel, setVariantLabel] = useState("");
+    const [variantPrice, setVariantPrice] = useState("");
+
+    function updateVariant(id: string, changes: Partial<ProductVariant>) {
+        updateField(
+            "variants",
+            (editableProduct.variants ?? []).map(variant =>
+                variant.id === id ? { ...variant, ...changes } : variant
+            )
+        );
+    }
+
+    function addVariant() {
+        const label = variantLabel.trim();
+
+        if (!label) {
+            alert("Escribe el nombre de la presentación.");
+            return;
+        }
+
+        const variants = editableProduct.variants ?? [];
+
+        const newVariant: ProductVariant = {
+            id: crypto.randomUUID(),
+            productId: editableProduct.id,
+            label,
+            price: Number(variantPrice) || 0,
+            isDefault: variants.length === 0,
+            isAvailable: true,
+            sortOrder: variants.length,
+        };
+
+        updateField("variants", [...variants, newVariant]);
+        setVariantLabel("");
+        setVariantPrice("");
+    }
+
+    function removeVariant(id: string) {
+        const remaining = (editableProduct.variants ?? [])
+            .filter(variant => variant.id !== id)
+            .map((variant, index) => ({
+                ...variant,
+                isDefault: index === 0 ? variant.isDefault : false,
+                sortOrder: index,
+            }));
+
+        updateField("variants", remaining);
+    }
 
     useEffect(() => {
 
@@ -250,6 +299,111 @@ export default function ProductEditor({
 
                     </div>
 
+                </section>
+
+                <section className="rounded-xl border border-gray-200 p-6">
+                    <h2 className="mb-4 text-lg font-semibold">
+                        Variantes, tamaños y precios
+                    </h2>
+
+                    {(editableProduct.variants ?? []).length > 0 ? (
+                        <div className="mb-5 space-y-3">
+                            {(editableProduct.variants ?? []).map(variant => (
+                                <div
+                                    key={variant.id}
+                                    className="grid gap-3 rounded-lg border border-gray-200 p-4 sm:grid-cols-[1fr_180px_auto]"
+                                >
+                                    <div>
+                                        <label className="mb-1 block text-sm font-medium">
+                                            Presentación
+                                        </label>
+                                        <input
+                                            className="w-full rounded-xl border border-gray-300 p-3"
+                                            value={variant.label}
+                                            onChange={event =>
+                                                updateVariant(variant.id, {
+                                                    label: event.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="mb-1 block text-sm font-medium">
+                                            Precio
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            step="0.01"
+                                            className="w-full rounded-xl border border-gray-300 p-3"
+                                            value={variant.price}
+                                            onChange={event =>
+                                                updateVariant(variant.id, {
+                                                    price: Number(event.target.value),
+                                                })
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="flex items-end">
+                                        <Button
+                                            type="button"
+                                            variant="danger"
+                                            onClick={() => {
+                                                if (window.confirm(
+                                                    `¿Eliminar la presentación "${variant.label}"?`
+                                                )) {
+                                                    removeVariant(variant.id);
+                                                }
+                                            }}
+                                        >
+                                            Eliminar
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="mb-4 text-sm text-gray-500">
+                            Este producto todavía no tiene variantes configuradas.
+                        </p>
+                    )}
+
+                    <div className="grid gap-3 sm:grid-cols-[1fr_180px_auto]">
+                        <div>
+                            <label className="mb-1 block text-sm font-medium">
+                                Nueva presentación
+                            </label>
+                            <input
+                                className="w-full rounded-xl border border-gray-300 p-3"
+                                placeholder="Ej. Personal, mediano, familiar"
+                                value={variantLabel}
+                                onChange={event => setVariantLabel(event.target.value)}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-1 block text-sm font-medium">
+                                Precio
+                            </label>
+                            <input
+                                type="number"
+                                min={0}
+                                step="0.01"
+                                className="w-full rounded-xl border border-gray-300 p-3"
+                                placeholder="0"
+                                value={variantPrice}
+                                onChange={event => setVariantPrice(event.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex items-end">
+                            <Button type="button" onClick={addVariant}>
+                                Agregar variante
+                            </Button>
+                        </div>
+                    </div>
                 </section>
 
                 <IngredientSection

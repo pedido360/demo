@@ -29,6 +29,8 @@ export interface Extra {
 
     isActive: boolean;
 
+    source?: "product" | "catalog";
+
 }
 
 

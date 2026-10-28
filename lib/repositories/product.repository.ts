@@ -981,7 +981,6 @@ export async function updateProduct(
     );
 
     const submittedHours = product.availableHours ?? [];
-    const existingHours = await getProductAvailableHours(updated.id);
 
     const isValidHour = (hour: ProductAvailableHour) =>
         Number.isInteger(Number(hour.dayOfWeek)) &&
@@ -1015,15 +1014,9 @@ export async function updateProduct(
         submittedByDay.set(day, hour);
     }
 
-    const existingByDay = new Map(
-        existingHours
-            .filter(isValidHour)
-            .map(hour => [Number(hour.dayOfWeek), hour])
-    );
-
-    const hoursToSave = Array.from({ length: 7 }, (_, day) =>
-        submittedByDay.get(day) ?? existingByDay.get(day)
-    ).filter((hour): hour is ProductAvailableHour => Boolean(hour));
+    // Guardar exactamente los horarios enviados por el editor.
+    // No recuperar horarios anteriores de días que el usuario quitó.
+    const hoursToSave = Array.from(submittedByDay.values());
 
     await replaceProductAvailableHours(updated.id, hoursToSave);
 

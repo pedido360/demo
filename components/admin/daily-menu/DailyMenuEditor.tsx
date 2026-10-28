@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import DailyMenuAvailabilitySettings from "./DailyMenuAvailabilitySettings";
 
 import {
     Plus,
@@ -97,6 +98,25 @@ export default function DailyMenuEditor({
                 product.productType ===
                 "daily_menu"
         );
+
+    const [availabilityProduct, setAvailabilityProduct] =
+        useState<Product | null>(dailyMenuProduct ?? null);
+
+    useEffect(() => {
+        if (dailyMenuProduct) {
+            setAvailabilityProduct(dailyMenuProduct);
+            return;
+        }
+
+        let cancelled = false;
+        getOrCreateDailyMenuProduct(restaurantId)
+            .then(product => {
+                if (!cancelled) setAvailabilityProduct(product);
+            })
+            .catch(error => console.error("No fue posible cargar el producto principal del Menú del Día:", error));
+
+        return () => { cancelled = true; };
+    }, [restaurantId, dailyMenuProduct?.id]);
 
 
     useEffect(() => {
@@ -876,6 +896,13 @@ export default function DailyMenuEditor({
 
             </Button>
 
+
+            {availabilityProduct && (
+                <DailyMenuAvailabilitySettings
+                    product={availabilityProduct}
+                    onSaved={setAvailabilityProduct}
+                />
+            )}
 
             <Card
 

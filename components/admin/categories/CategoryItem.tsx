@@ -3,6 +3,7 @@
 import { ChevronRight, Pencil, Trash2 } from "lucide-react";
 
 import type { Category } from "@/types/category";
+import CategoryIcon from "@/components/categories/CategoryIcon";
 
 interface CategoryItemProps {
     category: Category;
@@ -45,7 +46,7 @@ export default function CategoryItem({
                 <div className="flex min-w-0 items-center gap-4">
 
                     <div className="text-2xl">
-                        {category.emoji}
+                        <CategoryIcon category={category} size={32} />
                     </div>
 
                     <div className="min-w-0">

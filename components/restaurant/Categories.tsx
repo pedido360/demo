@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 
 import { Category } from "@/types/category";
+import CategoryIcon from "@/components/categories/CategoryIcon";
 
 interface CategoriesProps {
     categories: Category[];
@@ -83,7 +84,7 @@ export default function Categories({
                                         : "bg-white hover:shadow-lg"
                                     }`}
                             >
-                                {category.emoji}
+                                <CategoryIcon category={category} size={42} />
                             </div>
 
                             <span

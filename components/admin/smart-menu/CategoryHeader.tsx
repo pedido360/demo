@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { Category } from "@/types/category";
+import CategoryIcon from "@/components/categories/CategoryIcon";
 
 interface CategoryHeaderProps {
     category: Category;
@@ -37,7 +38,7 @@ export default function CategoryHeader({
             >
 
                 <span className="text-2xl">
-                    {category.emoji}
+                    <CategoryIcon category={category} size={32} />
                 </span>
 
                 <div>

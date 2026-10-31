@@ -23,6 +23,7 @@ import { Product } from "@/types/product";
 import { Restaurant } from "@/types/restaurant";
 import { RestaurantHour } from "@/types/restaurant-hour";
 import { generateSlug } from "@/lib/utils/slug";
+import { optimizeRestaurantBanner } from "@/lib/utils/optimize-restaurant-banner";
 
 
 import {
@@ -226,6 +227,17 @@ export default function RestaurantEditor({
 
             if (isEditMode) {
 
+                if (bannerFile) {
+                    const optimizedBanner =
+                        await optimizeRestaurantBanner(bannerFile);
+
+                    restaurant.banner =
+                        await uploadImage(
+                            optimizedBanner,
+                            `restaurants/${restaurant.slug}/banner.jpg`
+                        );
+                }
+
                 await updateRestaurant(
                     restaurant.id,
                     restaurant
@@ -270,19 +282,14 @@ export default function RestaurantEditor({
                 }
 
                 if (bannerFile) {
-
-                    const extension =
-                        bannerFile.name
-                            .split(".")
-                            .pop()
-                            ?.toLowerCase() ?? "jpg";
+                    const optimizedBanner =
+                        await optimizeRestaurantBanner(bannerFile);
 
                     restaurant.banner =
                         await uploadImage(
-                            bannerFile,
-                            `restaurants/${slug}/banner.${extension}`
+                            optimizedBanner,
+                            `restaurants/${slug}/banner.jpg`
                         );
-
                 }
 
                 const result =

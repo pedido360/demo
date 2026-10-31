@@ -14,7 +14,7 @@ export const size = {
     height: 630,
 };
 
-export const contentType = "image/png";
+export const contentType = "image/jpeg";
 
 interface OpenGraphImageProps {
     params: Promise<{
@@ -107,7 +107,7 @@ export default async function OpenGraphImage({
         ),
     ]);
 
-    return new ImageResponse(
+    const response = new ImageResponse(
         (
             <div
                 style={{
@@ -220,4 +220,34 @@ export default async function OpenGraphImage({
             height: 630,
         }
     );
+
+    const pngBuffer = Buffer.from(await response.arrayBuffer());
+
+    let width = 1200;
+    let height = 630;
+    let jpegBuffer = await sharp(pngBuffer)
+        .jpeg({ quality: 82, mozjpeg: true })
+        .toBuffer();
+
+    while (jpegBuffer.length > 300 * 1024 && width > 600) {
+        width = Math.round(width * 0.9);
+        height = Math.round(height * 0.9);
+
+        jpegBuffer = await sharp(pngBuffer)
+            .resize(width, height, { fit: "fill" })
+            .jpeg({ quality: 75, mozjpeg: true })
+            .toBuffer();
+    }
+
+    if (jpegBuffer.length > 300 * 1024) {
+        throw new Error("La imagen Open Graph supera el límite de 300 KB.");
+    }
+
+    return new Response(new Uint8Array(jpegBuffer), {
+        headers: {
+            "Content-Type": "image/jpeg",
+            "Content-Length": String(jpegBuffer.length),
+            "Cache-Control": "public, max-age=0, must-revalidate",
+        },
+    });
 }

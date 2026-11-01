@@ -306,7 +306,7 @@ export default function SmartMenu({
         try {
 
             const updated =
-                await saveCompleteProduct(product);
+                await saveCompleteProduct(product, restaurantId);
 
             setProductList(previous =>
                 previous.map(item =>

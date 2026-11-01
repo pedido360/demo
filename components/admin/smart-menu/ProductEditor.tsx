@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/Button";
+import ImageUploader from "@/components/ui/ImageUploader";
 import IngredientSection from "./IngredientSection";
 import ExtraSection from "./ExtraSection";
 
@@ -203,6 +204,17 @@ export default function ProductEditor({
                     <h2 className="mb-6 text-lg font-semibold">
                         📝 Información General
                     </h2>
+
+                    <div className="mb-6 max-w-sm">
+                        <ImageUploader
+                            label="Imagen del producto"
+                            value={editableProduct.image}
+                            onChange={(file) => {
+                                if (!file) return;
+                                updateField("imageFile", file);
+                            }}
+                        />
+                    </div>
 
                     <div className="grid gap-6 md:grid-cols-2">
 

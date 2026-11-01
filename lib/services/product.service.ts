@@ -287,8 +287,26 @@ export async function createCompleteProduct(
 }
 
 export async function saveCompleteProduct(
-    product: Product
+    product: Product,
+    restaurantId?: string
 ): Promise<Product> {
+
+    if (product.imageFile) {
+        if (!restaurantId) {
+            throw new Error("Falta el identificador del restaurante para subir la imagen.");
+        }
+        const extension =
+            product.imageFile.name
+                .split(".")
+                .pop()
+                ?.toLowerCase() ?? "webp";
+
+        product.image =
+            await uploadImage(
+                product.imageFile,
+                `restaurants/${restaurantId}/products/${crypto.randomUUID()}.${extension}`
+            );
+    }
 
     const updatedProduct =
         await updateProduct(product);

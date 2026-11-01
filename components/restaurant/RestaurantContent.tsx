@@ -32,6 +32,13 @@ export default function RestaurantContent({
     const [selectedCategory, setSelectedCategory] =
         useState("");
 
+    function handleSelectCategory(categoryId: string) {
+        setSelectedCategory(categoryId);
+        requestAnimationFrame(() => {
+            document.getElementById("menu-del-dia-demo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }
+
     const [cartOpen, setCartOpen] =
         useState(false);
 
@@ -388,7 +395,7 @@ export default function RestaurantContent({
                 <Categories
                     categories={data.categories}
                     selectedCategory={selectedCategory}
-                    onSelectCategory={setSelectedCategory}
+                    onSelectCategory={handleSelectCategory}
                 />
             </section>
 

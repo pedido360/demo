@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 
 import { Category } from "@/types/category";
@@ -19,47 +18,11 @@ export default function Categories({
 }: CategoriesProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    function scroll(direction: "left" | "right") {
-        scrollRef.current?.scrollBy({
-            left: direction === "left" ? -220 : 220,
-            behavior: "smooth",
-        });
-    }
-
     return (
-        <section
-            id="menu"
-            className="w-full px-4 py-5"
-        >
-            <div className="mb-4 flex items-center justify-between">
-
-                <button
-                    type="button"
-                    onClick={() => scroll("left")}
-                    className="hidden h-9 w-9 items-center justify-center rounded-full bg-white shadow md:flex"
-                    aria-label="Categorías anteriores"
-                >
-                    <ChevronLeft size={18} />
-                </button>
-
-                <h2 className="text-lg font-bold">
-                    Categorías
-                </h2>
-
-                <button
-                    type="button"
-                    onClick={() => scroll("right")}
-                    className="hidden h-9 w-9 items-center justify-center rounded-full bg-white shadow md:flex"
-                    aria-label="Más categorías"
-                >
-                    <ChevronRight size={18} />
-                </button>
-
-            </div>
-
+        <section id="menu" className="w-full px-3 py-3">
             <div
                 ref={scrollRef}
-                className="flex gap-4 overflow-x-auto pb-3"
+                className="flex items-center gap-2 overflow-x-auto pb-1"
                 style={{
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
@@ -76,24 +39,28 @@ export default function Categories({
                             onClick={() =>
                                 onSelectCategory(category.id)
                             }
-                            className="flex w-24 shrink-0 flex-col items-center"
+                            className={`flex w-[76px] shrink-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 transition-all duration-200 ${
+                                active
+                                    ? "bg-red-50 text-red-600"
+                                    : "bg-white text-gray-700 hover:bg-gray-50"
+                            }`}
+                            aria-pressed={active}
+                            title={category.name}
                         >
-                            <div
-                                className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-2xl shadow transition-all duration-300 ${active
-                                        ? "bg-red-600 text-white"
-                                        : "bg-white hover:shadow-lg"
-                                    }`}
-                            >
-                                <CategoryIcon category={category} size={42} />
-                            </div>
-
                             <span
-                                className={`mt-2 w-full truncate text-center text-sm ${active
-                                        ? "font-semibold text-red-600"
-                                        : "text-gray-700"
-                                    }`}
-                                title={category.name}
+                                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-sm ${
+                                    active
+                                        ? "bg-red-600 text-white"
+                                        : "bg-gray-100"
+                                }`}
                             >
+                                <CategoryIcon
+                                    category={category}
+                                    size={30}
+                                />
+                            </span>
+
+                            <span className="w-full text-center text-[11px] font-semibold leading-tight">
                                 {category.name}
                             </span>
                         </button>

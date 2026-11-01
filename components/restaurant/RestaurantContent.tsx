@@ -384,7 +384,7 @@ export default function RestaurantContent({
 
             </section>
 
-            <section id="menu-del-dia-demo">
+            <section id="menu-del-dia-demo" className="sticky top-0 z-40 bg-white/95 shadow-sm backdrop-blur-md">
                 <Categories
                     categories={data.categories}
                     selectedCategory={selectedCategory}

@@ -32,26 +32,18 @@ export async function getRestaurantHours(
     restaurantId: string
 ): Promise<RestaurantHour[]> {
 
-    const response = await fetch(
-        `/api/restaurants/${restaurantId}/hours`,
-        {
-            method: "GET",
-            cache: "no-store",
-            credentials: "same-origin",
-        }
-    );
+    const { data, error } = await supabase
+        .from("restaurant_hours")
+        .select("*")
+        .eq("restaurant_id", restaurantId)
+        .order("day_of_week", { ascending: true });
 
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-        throw new Error(
-            result.message || "No fue posible consultar los horarios."
-        );
+    if (error) {
+        console.error("SUPABASE ERROR:", error);
+        throw new Error(error.message);
     }
 
-    const data = result.hours ?? [];
-
-    return data.map((hour: any) => ({
+    return (data ?? []).map((hour: any) => ({
         id: hour.id,
         restaurantId: hour.restaurant_id,
         dayOfWeek: hour.day_of_week,

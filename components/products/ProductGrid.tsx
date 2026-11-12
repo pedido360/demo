@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Product } from "@/types/product";
+import { Product, ProductSelection } from "@/types/product";
 import { DailyMenuClient } from "@/types/daily-menu";
 
 import ProductCard from "./ProductCard";
@@ -29,6 +29,8 @@ interface ProductGridProps {
         open: boolean
     ) => void;
 
+    onSelectionAdd?: (selection: ProductSelection) => void;
+
     dailyMenu?: DailyMenuClient | null;
 
 }
@@ -43,6 +45,8 @@ export default function ProductGrid({
     searchActive = false,
 
     onDrawerChange,
+
+    onSelectionAdd,
 
     dailyMenu,
 
@@ -237,9 +241,11 @@ export default function ProductGrid({
                         }
 
 
-                        addToCart(
-                            selection
-                        );
+                        if (onSelectionAdd) {
+                            onSelectionAdd(selection);
+                        } else {
+                            addToCart(selection);
+                        }
 
                         handleCloseDrawer();
 
@@ -296,7 +302,7 @@ export default function ProductGrid({
                         }
 
 
-                        addToCart({
+                        const productSelection: ProductSelection = {
 
                             product:
                                 dailyMenuProduct,
@@ -344,8 +350,13 @@ export default function ProductGrid({
 
                             },
 
-                        });
+                        };
 
+                        if (onSelectionAdd) {
+                            onSelectionAdd(productSelection);
+                        } else {
+                            addToCart(productSelection);
+                        }
 
                         handleCloseDailyMenu();
 

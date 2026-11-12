@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { Product, ProductAvailableHour } from "@/types/product";
 
@@ -97,12 +98,13 @@ function mapVariant(data: any): ProductVariant {
         sortOrder: data.sort_order,
     };
 }
-export async function getProducts(
+export async function getProductsWithClient(
+    client: SupabaseClient,
     restaurantId: string
 ): Promise<Product[]> {
 
     const { data, error } =
-        await supabase
+        await client
             .from("products")
             .select("*")
             .eq(
@@ -169,7 +171,7 @@ export async function getProducts(
         availableHoursResults,
     ] = await Promise.all([
 
-        supabase
+        client
             .from("ingredients")
             .select("*")
             .in(
@@ -183,7 +185,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("extras")
             .select("*")
             .in(
@@ -197,7 +199,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("product_extra_groups")
             .select("product_id, group_id, sort_order")
             .in(
@@ -211,7 +213,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("extra_group_items")
             .select("group_id, extra_id, sort_order")
             .order(
@@ -221,7 +223,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("extra_catalog")
             .select("*")
             .eq(
@@ -235,7 +237,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("product_extra_selection_groups")
             .select("*")
             .in(
@@ -249,7 +251,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("product_extra_selection_group_items")
             .select("*")
             .order(
@@ -259,7 +261,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("product_variants")
             .select("*")
             .in(
@@ -273,7 +275,7 @@ export async function getProducts(
                 }
             ),
 
-        supabase
+        client
             .from("product_available_days")
             .select(
                 "product_id, day_of_week"
@@ -283,7 +285,7 @@ export async function getProducts(
                 productIds
             ),
 
-        supabase
+        client
             .from("product_available_hours")
             .select(
                 "id, product_id, day_of_week, start_time, end_time"
@@ -856,6 +858,13 @@ export async function getProducts(
 
     return products;
 
+}
+
+
+export async function getProducts(
+    restaurantId: string
+): Promise<Product[]> {
+    return getProductsWithClient(supabase, restaurantId);
 }
 
 export async function createProduct(

@@ -31,6 +31,7 @@ function mapRestaurant(data: any): Restaurant {
         pauseReason: data.pause_reason,
 
         pausedAt: data.paused_at,
+        maxTables: data.max_tables ?? 6,
     };
 }
 
@@ -80,36 +81,42 @@ export async function createRestaurant(
 }
 
 export async function getRestaurants(): Promise<Restaurant[]> {
+    const response = await fetch("/api/restaurants", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+    });
 
-    const { data, error } = await supabase
-        .from("restaurants")
-        .select("*")
-        .order("created_at", { ascending: false });
+    const result = await response.json();
 
-    if (error) {
-        console.error("SUPABASE ERROR:", error);
-        throw new Error(error.message);
+    if (!response.ok || !result.success) {
+        throw new Error(
+            result.message || "No fue posible consultar los restaurantes."
+        );
     }
 
-    return (data ?? []).map(mapRestaurant);
+    return (result.restaurants ?? []).map(mapRestaurant);
 }
 
 export async function getRestaurantById(
     id: string
 ): Promise<Restaurant> {
 
-    const { data, error } = await supabase
-        .from("restaurants")
-        .select("*")
-        .eq("id", id)
-        .single();
+    const response = await fetch(`/api/restaurants/${id}`, {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+    });
 
-    if (error) {
-        console.error("SUPABASE ERROR:", error);
-        throw new Error(error.message);
+    const result = await response.json();
+
+    if (!response.ok || !result.success || !result.restaurant) {
+        throw new Error(
+            result.message || "No fue posible consultar el restaurante."
+        );
     }
 
-    return mapRestaurant(data);
+    return mapRestaurant(result.restaurant);
 }
 
 export async function getRestaurantBySlug(

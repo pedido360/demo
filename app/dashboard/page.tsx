@@ -3,6 +3,7 @@ import { Store, Plus } from "lucide-react";
 import Card from "@/components/ui/Card";
 import LinkButton from "@/components/ui/LinkButton";
 
+import SuperAdminWaiterManagement from "@/components/admin/waiters/SuperAdminWaiterManagement";
 import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { getRestaurantMetrics } from "@/lib/repositories/restaurant-metrics.repository";
 import { getPendingOrders } from "@/lib/repositories/order.repository";
@@ -249,6 +250,15 @@ export default async function DashboardPage({
                             </div>
                         </details>
                     </div>
+                </Card>
+            )}
+
+            {profile?.role === "super_admin" && (
+                <Card
+                    title="Equipo de meseros"
+                    description="Administra los usuarios y el acceso de los meseros de cada restaurante."
+                >
+                    <SuperAdminWaiterManagement />
                 </Card>
             )}
 

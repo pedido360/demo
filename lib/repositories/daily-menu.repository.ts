@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
     DailyMenu,
@@ -146,11 +147,12 @@ function mapDailyMenu(
  * Obtiene los componentes de un menú.
  */
 async function getDailyMenuItems(
-    dailyMenuId: string
+    dailyMenuId: string,
+    client: SupabaseClient = supabase
 ): Promise<DailyMenuItem[]> {
 
     const { data, error } =
-        await supabase
+        await client
             .from("daily_menu_items")
             .select("*")
             .eq(
@@ -185,11 +187,12 @@ async function getDailyMenuItems(
  * Obtiene los tamaños de un menú.
  */
 async function getDailyMenuSizes(
-    dailyMenuId: string
+    dailyMenuId: string,
+    client: SupabaseClient = supabase
 ): Promise<DailyMenuSize[]> {
 
     const { data, error } =
-        await supabase
+        await client
             .from("daily_menu_sizes")
             .select("*")
             .eq(
@@ -221,11 +224,12 @@ async function getDailyMenuSizes(
  * Obtiene los precios por proteína de un menú.
  */
 async function getDailyMenuSizeProteinPrices(
-    dailyMenuId: string
+    dailyMenuId: string,
+    client: SupabaseClient = supabase
 ): Promise<DailyMenuSizeProteinPrice[]> {
 
     const { data, error } =
-        await supabase
+        await client
             .from(
                 "daily_menu_size_protein_prices"
             )
@@ -391,13 +395,14 @@ export async function getDailyMenuById(
 /**
  * Obtiene el menú publicado para una fecha.
  */
-export async function getPublishedDailyMenu(
+export async function getPublishedDailyMenuWithClient(
+    client: SupabaseClient,
     restaurantId: string,
     menuDate: string
 ): Promise<DailyMenu | null> {
 
     const { data, error } =
-        await supabase
+        await client
             .from("daily_menus")
             .select("*")
             .eq(
@@ -437,15 +442,18 @@ export async function getPublishedDailyMenu(
     ] = await Promise.all([
 
         getDailyMenuItems(
-            data.id
+            data.id,
+            client
         ),
 
         getDailyMenuSizes(
-            data.id
+            data.id,
+            client
         ),
 
         getDailyMenuSizeProteinPrices(
-            data.id
+            data.id,
+            client
         ),
 
     ]);
@@ -459,6 +467,11 @@ export async function getPublishedDailyMenu(
 
 }
 
+
+
+export async function getPublishedDailyMenu(restaurantId: string, menuDate: string): Promise<DailyMenu | null> {
+    return getPublishedDailyMenuWithClient(supabase, restaurantId, menuDate);
+}
 
 /**
  * Crea un menú para una fecha.

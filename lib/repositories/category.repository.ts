@@ -21,20 +21,24 @@ function mapCategory(data: any): Category {
 export async function getCategories(
     restaurantId: string
 ): Promise<Category[]> {
-    const { data, error } = await supabase
-        .from("categories")
-        .select("*")
-        .eq("restaurant_id", restaurantId)
-        .order("sort_order", {
-            ascending: true,
-        });
+    const response = await fetch(
+        `/api/restaurants/${restaurantId}/categories`,
+        {
+            method: "GET",
+            cache: "no-store",
+            credentials: "same-origin",
+        }
+    );
 
-    if (error) {
-        console.error("SUPABASE ERROR:", error);
-        throw new Error(error.message);
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(
+            result.message || "No fue posible consultar las categorías."
+        );
     }
 
-    return (data ?? []).map(mapCategory);
+    return (result.categories ?? []).map(mapCategory);
 }
 
 export async function createCategory(

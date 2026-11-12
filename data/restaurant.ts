@@ -39,4 +39,5 @@ export const restaurant: Restaurant = {
     pauseReason: null,
 
     pausedAt: null,
+    maxTables: 6,
 };

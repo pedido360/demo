@@ -59,20 +59,31 @@ export default function LoginForm() {
             return;
         }
 
-        // Redireccionar según el rol
-        if (profile.role === "super_admin") {
+        // El perfil autenticado determina el acceso según su rol.
+        if (profile.role === "waiter") {
+            const response = await fetch("/api/waiters/session", {
+                method: "GET",
+                cache: "no-store",
+            });
+            const validation = await response.json().catch(() => null);
 
-            router.push("/dashboard");
+            if (!response.ok || !validation?.success) {
+                await supabase.auth.signOut();
+                setErrorMessage(
+                    validation?.message || "La cuenta de mesero no está activa o autorizada."
+                );
+                return;
+            }
 
+            router.replace("/mesero");
+        } else if (profile.role === "super_admin") {
+            router.replace("/dashboard");
         } else if (profile.role === "restaurant_admin") {
-
-            router.push("/restaurant");
-
+            router.replace("/restaurant");
         } else {
-
-            setErrorMessage("Rol no reconocido.");
+            await supabase.auth.signOut();
+            setErrorMessage("El perfil no tiene un rol autorizado para ingresar.");
             return;
-
         }
 
         router.refresh();

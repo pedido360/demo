@@ -31,4 +31,7 @@ export interface Restaurant {
 
     // Fecha de suspensión (opcional)
     pausedAt: string | null;
+
+    // Máximo de mesas autorizado para el restaurante
+    maxTables: number;
 }

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
     DailyMenuOption,
@@ -42,12 +43,13 @@ function mapDailyMenuOption(
  * Obtiene todas las opciones
  * de un restaurante.
  */
-export async function getDailyMenuOptions(
+export async function getDailyMenuOptionsWithClient(
+    client: SupabaseClient,
     restaurantId: string
 ): Promise<DailyMenuOption[]> {
 
     const { data, error } =
-        await supabase
+        await client
             .from("daily_menu_options")
             .select("*")
             .eq(
@@ -81,6 +83,11 @@ export async function getDailyMenuOptions(
 
 }
 
+
+
+export async function getDailyMenuOptions(restaurantId: string): Promise<DailyMenuOption[]> {
+    return getDailyMenuOptionsWithClient(supabase, restaurantId);
+}
 
 /**
  * Obtiene las opciones de una sección.

@@ -61,7 +61,11 @@ export async function proxy(request: NextRequest) {
 
     // Solo necesitamos validar/refrescar la sesión
     // en las rutas protegidas del dashboard.
-    if (pathname.startsWith("/dashboard")) {
+    if (
+        pathname.startsWith("/dashboard") ||
+        pathname.startsWith("/mesero") ||
+        pathname.startsWith("/api/waiters")
+    ) {
         return await updateSession(request);
     }
 

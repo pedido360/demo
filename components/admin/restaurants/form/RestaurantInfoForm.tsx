@@ -151,16 +151,9 @@ export default function RestaurantInfoForm({
                         label="Logo"
                         value={restaurant.logo}
                         onChange={(file) => {
-
                             if (!file) return;
 
                             setLogoFile(file);
-
-                            setRestaurant((prev) => ({
-                                ...prev,
-                                logo: URL.createObjectURL(file),
-                            }));
-
                         }}
                     />
 

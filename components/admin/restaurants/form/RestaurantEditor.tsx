@@ -143,6 +143,7 @@ export default function RestaurantEditor({
         status: "active",
         pauseReason: null,
         pausedAt: null,
+        maxTables: 6,
     });
 
     const [categories, setCategories] = useState<Category[]>([]);
@@ -185,8 +186,24 @@ export default function RestaurantEditor({
             const categoriesData =
                 await getCategories(restaurantId!);
 
-            const productsData =
-                await getProducts(restaurantId!);
+            const productsResponse = await fetch(
+                `/api/restaurants/${restaurantId}/products`,
+                {
+                    method: "GET",
+                    cache: "no-store",
+                    credentials: "same-origin",
+                }
+            );
+
+            const productsResult = await productsResponse.json();
+
+            if (!productsResponse.ok || !productsResult.success) {
+                throw new Error(
+                    productsResult.message || "No fue posible cargar los productos."
+                );
+            }
+
+            const productsData: Product[] = productsResult.products ?? [];
 
             setRestaurant(restaurantData);
 
@@ -226,6 +243,20 @@ export default function RestaurantEditor({
             setLoading(true);
 
             if (isEditMode) {
+
+                if (logoFile) {
+                    const extension =
+                        logoFile.name
+                            .split(".")
+                            .pop()
+                            ?.toLowerCase() ?? "jpg";
+
+                    restaurant.logo =
+                        await uploadImage(
+                            logoFile,
+                            `restaurants/${restaurant.slug}/logo.${extension}`
+                        );
+                }
 
                 if (bannerFile) {
                     const optimizedBanner =

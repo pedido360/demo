@@ -28,6 +28,29 @@ export default function Categories({
                     msOverflowStyle: "none",
                 }}
             >
+                <button
+                    type="button"
+                    onClick={() => onSelectCategory("all")}
+                    className={`flex w-[76px] shrink-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 transition-all duration-200 ${
+                        selectedCategory === "all"
+                            ? "bg-red-50 text-red-600"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                    aria-pressed={selectedCategory === "all"}
+                    title="Todas las categorías"
+                >
+                    <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-sm ${
+                        selectedCategory === "all"
+                            ? "bg-red-600 text-white"
+                            : "bg-gray-100"
+                    }`}>
+                        <span className="text-2xl" aria-hidden="true">▦</span>
+                    </span>
+                    <span className="w-full text-center text-[11px] font-semibold leading-tight">
+                        Todas
+                    </span>
+                </button>
+
                 {categories.map((category) => {
                     const active =
                         selectedCategory === category.id;

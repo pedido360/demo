@@ -11,13 +11,71 @@ import {
     getDailyMenuById,
     getDailyMenus,
     getPublishedDailyMenu,
+    getPublishedDailyMenuWithClient,
     saveDailyMenu,
     setDailyMenuPublished,
 } from "@/lib/repositories/daily-menu.repository";
 
 import {
     getDailyMenuOptions,
+    getDailyMenuOptionsWithClient,
 } from "@/lib/repositories/daily-menu-option.repository";
+
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+
+/**
+ * Obtiene el menú diario usando el cliente autenticado del servidor.
+ */
+export async function getRestaurantDailyMenuClientWithSupabase(
+    client: SupabaseClient,
+    restaurantId: string,
+    menuDate: string
+): Promise<DailyMenuClient | null> {
+    const menu = await getPublishedDailyMenuWithClient(
+        client, restaurantId, menuDate
+    );
+
+    if (!menu) return null;
+
+    const options = await getDailyMenuOptionsWithClient(
+        client, restaurantId
+    );
+
+    const optionsById = new Map(
+        options.map(option => [option.id, option])
+    );
+
+    const clientOptions = menu.items
+        .map(item => {
+            const option = optionsById.get(item.optionId);
+            if (!option) return null;
+            return {
+                id: option.id,
+                section: item.section,
+                name: option.name,
+                sortOrder: item.sortOrder,
+            };
+        })
+        .filter((option): option is {
+            id: string;
+            section: DailyMenuSection;
+            name: string;
+            sortOrder: number;
+        } => option !== null);
+
+    return {
+        id: menu.id,
+        restaurantId: menu.restaurantId,
+        menuProductId: menu.menuProductId,
+        menuDate: menu.menuDate,
+        isPublished: menu.isPublished,
+        image: menu.image,
+        sizes: menu.sizes,
+        sizeProteinPrices: menu.sizeProteinPrices,
+        options: clientOptions,
+    };
+}
 
 
 /**

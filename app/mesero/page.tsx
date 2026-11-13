@@ -50,7 +50,7 @@ export default async function WaiterPage() {
     }
 
     const [restaurant, categories, allProducts, dailyMenu] = await Promise.all([
-        supabase
+        supabaseAdmin
             .from("restaurants")
             .select("*")
             .eq("id", account.restaurant_id)
@@ -59,7 +59,7 @@ export default async function WaiterPage() {
                 if (error) throw error;
                 return data;
             }),
-        supabase
+        supabaseAdmin
             .from("categories")
             .select("*")
             .eq("restaurant_id", account.restaurant_id)
@@ -72,8 +72,8 @@ export default async function WaiterPage() {
                     emoji: category.emoji || "🍽️",
                 }));
             }),
-        getProductsWithClient(supabase, account.restaurant_id),
-        getRestaurantDailyMenuClientWithSupabase(supabase, account.restaurant_id, getColombiaDate()),
+        getProductsWithClient(supabaseAdmin, account.restaurant_id),
+        getRestaurantDailyMenuClientWithSupabase(supabaseAdmin, account.restaurant_id, getColombiaDate()),
     ]);
 
     console.log("[MESERO] Productos recibidos:", allProducts.length);

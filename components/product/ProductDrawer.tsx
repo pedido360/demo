@@ -328,6 +328,18 @@ export default function ProductDrawer({
                     <div className="h-1.5 w-14 rounded-full bg-gray-300" />
                 </div>
 
+                <div className="px-6 pb-2">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Volver al menú"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                        <span aria-hidden="true">←</span>
+                        Volver al menú
+                    </button>
+                </div>
+
                 <div className="flex max-h-[85vh] flex-col">
 
                     <div className="flex-1 overflow-y-auto px-6 pb-6">

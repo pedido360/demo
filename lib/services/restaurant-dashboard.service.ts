@@ -1,9 +1,35 @@
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getProductsWithClient } from "@/lib/repositories/product.repository";
 import { getCategoryEmoji } from "@/lib/getCategoryEmoji";
 
 export async function loadRestaurantDashboard(restaurantId: string) {
-    const supabase = await createClient();
+    const sessionClient = await createClient();
+
+    const {
+        data: { user },
+        error: authError,
+    } = await sessionClient.auth.getUser();
+
+    if (authError || !user) {
+        throw new Error("Sesión no válida.");
+    }
+
+    const { data: profile, error: profileError } = await sessionClient
+        .from("profiles")
+        .select("role, restaurant_id")
+        .eq("id", user.id)
+        .single();
+
+    if (
+        profileError ||
+        profile?.role !== "restaurant_admin" ||
+        profile?.restaurant_id !== restaurantId
+    ) {
+        throw new Error("No tienes autorización para consultar este restaurante.");
+    }
+
+    const supabase = supabaseAdmin;
 
     const [restaurantResult, hoursResult, categoriesResult, products] =
         await Promise.all([

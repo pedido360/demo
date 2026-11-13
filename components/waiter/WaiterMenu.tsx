@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CartProvider } from "@/context/CartContext";
 import ProductGrid from "@/components/products/ProductGrid";
 import Categories from "@/components/restaurant/Categories";
@@ -192,6 +192,7 @@ function WaiterMenuContent({
     const [paymentMessage, setPaymentMessage] = useState("");
     const [pendingPayment, setPendingPayment] = useState<PendingWaiterPayment | null>(null);
     const [closingSession, setClosingSession] = useState(false);
+    const tablesRequestInFlight = useRef(false);
 
     useEffect(() => {
         let active = true;
@@ -290,6 +291,14 @@ function WaiterMenuContent({
 
     useEffect(() => {
         void loadTables();
+
+        const interval = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                void loadTables(false);
+            }
+        }, 5000);
+
+        return () => window.clearInterval(interval);
     }, []);
 
     async function loadIndependentOrders() {
@@ -364,9 +373,15 @@ function WaiterMenuContent({
         return () => window.clearInterval(interval);
     }, []);
 
-    async function loadTables() {
-        setLoadingTables(true);
-        setOrderMessage("");
+    async function loadTables(showLoading = true) {
+        if (tablesRequestInFlight.current) return;
+
+        tablesRequestInFlight.current = true;
+
+        if (showLoading) {
+            setLoadingTables(true);
+            setOrderMessage("");
+        }
 
         try {
             const response = await fetch("/api/waiters/tables", {
@@ -384,7 +399,8 @@ function WaiterMenuContent({
         } catch (error) {
             setOrderMessage(error instanceof Error ? error.message : "Error cargando mesas.");
         } finally {
-            setLoadingTables(false);
+            tablesRequestInFlight.current = false;
+            if (showLoading) setLoadingTables(false);
         }
     }
 
@@ -1133,7 +1149,7 @@ function WaiterMenuContent({
                                 Selecciona una mesa para iniciar o continuar el servicio.
                             </p>
                         </div>
-                        <button type="button" onClick={loadTables}
+                        <button type="button" onClick={() => void loadTables()}
                             disabled={loadingTables}
                             className="rounded-lg border bg-white px-4 py-2 text-sm font-semibold disabled:opacity-50">
                             {loadingTables ? "Actualizando..." : "Actualizar"}

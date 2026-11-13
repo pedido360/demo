@@ -77,6 +77,7 @@ export interface PrintJobPayload {
   order_created_at?: string;
   order_type?: "dine_in" | "takeaway";
   waiter_name?: string;
+  customer_name?: string;
   ticket_type: "CASHIER_CONTROL" | "KITCHEN_ORDER";
   title: string;
   warning?: string;

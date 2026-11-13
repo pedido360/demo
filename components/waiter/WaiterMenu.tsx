@@ -22,6 +22,7 @@ interface PendingWaiterOrder {
     orderType: "dine_in" | "takeaway";
     tableSessionId: string | null;
     selectedTableId: string;
+    customerName: string;
     items: ProductSelection[];
     notes: null;
 }
@@ -88,6 +89,7 @@ interface IndependentTakeawayOrder {
 
 interface IndependentTakeawayHistoryOrder {
     id: string;
+    customer_name: string | null;
     order_number: number | string | null;
     order_type: string;
     status: string;
@@ -144,6 +146,7 @@ function WaiterMenuContent({
     const [selectedCategory, setSelectedCategory] = useState(data.categories.find(category => category.isActive)?.id ?? "all");
     const [items, setItems] = useState<ProductSelection[]>([]);
     const [orderType, setOrderType] = useState<"dine_in" | "takeaway">("takeaway");
+    const [customerName, setCustomerName] = useState("");
     const [tables, setTables] = useState<Array<{
         id: string;
         table_number: number;
@@ -219,6 +222,7 @@ function WaiterMenuContent({
                     setItems(parsed.items);
                     setOrderType(parsed.orderType);
                     setSelectedTableId(parsed.selectedTableId);
+                    setCustomerName(typeof parsed.customerName === "string" ? parsed.customerName : "");
                     setOrderMessage(
                         "Se recuperó una confirmación pendiente. Reintenta con el mismo pedido para verificar su resultado."
                     );
@@ -711,6 +715,11 @@ function WaiterMenuContent({
             return;
         }
 
+        if (!pendingOrder && orderType === "takeaway" && !selectedTableId && !customerName.trim()) {
+            setOrderMessage("Escribe el nombre del cliente para el pedido independiente.");
+            return;
+        }
+
         setSubmitting(true);
         setOrderMessage("");
         setConfirmedOrder("");
@@ -730,6 +739,7 @@ function WaiterMenuContent({
                     orderType,
                     tableSessionId,
                     selectedTableId,
+                    customerName: !tableSessionId && orderType === "takeaway" ? customerName.trim() : "",
                     items: structuredClone(items),
                     notes: null,
                 };
@@ -748,6 +758,7 @@ function WaiterMenuContent({
                     body: JSON.stringify({
                         orderType: request.orderType,
                         tableSessionId: request.tableSessionId,
+                        customerName: request.customerName,
                         idempotencyKey: request.idempotencyKey,
                         items: request.items,
                         notes: request.notes,
@@ -1179,6 +1190,7 @@ function WaiterMenuContent({
                             <button type="button"
                                 onClick={() => {
                                     setSelectedTableId("");
+                                    setCustomerName("");
                                     setOrderType("takeaway");
                                     setWorkflowStep("catalog");
                                 }}
@@ -1251,6 +1263,11 @@ function WaiterMenuContent({
                                                     <p className="font-bold text-gray-900">
                                                         Pedido #{order.order_number ?? "—"}
                                                     </p>
+                                                    {order.customer_name && (
+                                                        <p className="text-sm font-medium text-orange-700">
+                                                            Cliente: {order.customer_name}
+                                                        </p>
+                                                    )}
                                                     <p className="text-xs text-gray-500">
                                                         {new Date(order.created_at).toLocaleString("es-CO")}
                                                     </p>
@@ -1549,6 +1566,23 @@ function WaiterMenuContent({
                             {orderPanelOpen ? "Cerrar ▲" : "Ver pedido ▼"}
                         </span>
                     </button>
+
+                    {orderType === "takeaway" && !selectedTableId && (
+                        <div className="mt-3">
+                            <label htmlFor="independent-customer-name" className="mb-1 block text-sm font-semibold text-gray-800">Nombre del cliente *</label>
+                            <input
+                                id="independent-customer-name"
+                                type="text"
+                                maxLength={80}
+                                required
+                                value={customerName}
+                                onChange={event => setCustomerName(event.target.value)}
+                                disabled={Boolean(pendingOrder) || submitting}
+                                placeholder="Nombre de quien recoge el pedido"
+                                className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                            />
+                        </div>
+                    )}
 
                     {items.length > 0 && (
                         <button

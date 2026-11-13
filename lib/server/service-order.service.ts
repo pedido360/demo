@@ -7,6 +7,7 @@ export type ServiceOrderType = "dine_in" | "takeaway";
 export interface ServiceOrderRequest {
     orderType: ServiceOrderType;
     tableSessionId: string | null;
+    customerName: string | null;
     idempotencyKey: string;
     items: unknown[];
     notes?: string | null;
@@ -151,6 +152,17 @@ export function validateServiceOrderRequest(
             ? requiredId(input.tableSessionId, "La cuenta de la mesa")
             : null;
 
+    const customerName =
+        input.orderType === "takeaway" && tableSessionId === null
+            ? typeof input.customerName === "string"
+                ? input.customerName.trim().slice(0, 80)
+                : ""
+            : null;
+
+    if (input.orderType === "takeaway" && tableSessionId === null && !customerName) {
+        fail("El nombre del cliente es obligatorio para pedidos independientes.");
+    }
+
     const idempotencyKey = requiredId(
         input.idempotencyKey,
         "La clave de confirmación"
@@ -174,6 +186,7 @@ export function validateServiceOrderRequest(
     return {
         orderType: input.orderType,
         tableSessionId,
+        customerName,
         idempotencyKey,
         items: input.items,
         notes,
@@ -864,6 +877,7 @@ export async function confirmWaiterServiceOrder(
         subtotal,
         total: subtotal,
         notes: request.notes,
+        customer_name: request.customerName,
     };
 
     const kitchenPayload = {
@@ -873,6 +887,7 @@ export async function confirmWaiterServiceOrder(
             : "PEDIDO PARA LLEVAR",
         items: validatedItems,
         notes: request.notes,
+        customer_name: request.customerName,
     };
 
     const { data, error } = await supabaseAdmin.rpc(
@@ -882,6 +897,7 @@ export async function confirmWaiterServiceOrder(
             p_waiter_id: waiterId,
             p_order_type: request.orderType,
             p_table_session_id: request.tableSessionId,
+            p_customer_name: request.customerName,
             p_items: validatedItems,
             p_subtotal: subtotal,
             p_total: subtotal,

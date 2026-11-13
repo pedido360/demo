@@ -139,7 +139,7 @@ export async function GET() {
         if (journey) {
             const { data: journeyOrders, error: journeyOrdersError } = await supabaseAdmin
                 .from("service_orders")
-                .select("id, order_number, order_type, table_session_id, waiter_id, status, items, subtotal, total, notes, created_at")
+                .select("id, order_number, order_type, table_session_id, waiter_id, status, items, subtotal, total, notes, customer_name, created_at")
                 .eq("restaurant_id", context.restaurantId)
                 .eq("sales_journey_id", journey.id)
                 .order("created_at", { ascending: true });

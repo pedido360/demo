@@ -442,6 +442,11 @@ export default function RestaurantAccounts() {
                                         </span>
                                         <span className="font-bold">{money(Number(order.total || 0))}</span>
                                     </div>
+                                    {order.customer_name && (
+                                        <p className="mt-1 text-sm font-medium text-orange-700">
+                                            Cliente: {order.customer_name}
+                                        </p>
+                                    )}
                                     <p className="text-xs text-gray-500">
                                         {new Date(order.created_at).toLocaleString("es-CO")} ·
                                         {" "}{order.order_type === "dine_in" ? "En mesa" : "Para llevar"} ·
@@ -611,11 +616,24 @@ export default function RestaurantAccounts() {
                                                 {(order.items ?? []).map((item, index) => {
                                                     const product = item.product ?? {};
                                                     const daily = item.dailyMenu ?? {};
+                                                    const productName = product.name ?? item.name ?? item.product_name ?? item.title ?? "Producto";
+                                                    const quantity = Number(item.quantity ?? daily.quantity ?? 1);
+                                                    const unitPrice = Number(item.unitPrice ?? 0);
+                                                    const lineTotal = Number(item.total ?? unitPrice * quantity);
+
                                                     return (
-                                                        <div key={`${order.id}-${index}`} className="border-b border-gray-100 py-2 last:border-0">
-                                                            <p className="font-semibold text-gray-900">
-                                                                {item.quantity ?? daily.quantity ?? 1} × {product.name ?? "Producto"}
-                                                            </p>
+                                                        <div key={`${order.id}-${index}`} className="border-b border-gray-100 py-3 last:border-0">
+                                                            <div className="flex flex-wrap justify-between gap-2">
+                                                                <p className="font-semibold text-gray-900">
+                                                                    {quantity} × {productName}
+                                                                </p>
+                                                                <strong className="text-gray-900">{money(lineTotal)}</strong>
+                                                            </div>
+                                                            {unitPrice > 0 && (
+                                                                <p className="text-xs text-gray-500">
+                                                                    Precio unitario: {money(unitPrice)}
+                                                                </p>
+                                                            )}
                                                             {daily.size?.label && <p className="text-sm text-gray-600">Tamaño: {daily.size.label}</p>}
                                                             {daily.soup?.name && <p className="text-sm text-gray-600">Sopa: {daily.soup.name}</p>}
                                                             {daily.secos?.length > 0 && <p className="text-sm text-gray-600">Secos: {daily.secos.map((x: any) => x.name).join(", ")}</p>}
@@ -623,9 +641,9 @@ export default function RestaurantAccounts() {
                                                             {daily.protein?.name && <p className="text-sm text-gray-600">Proteína: {daily.protein.name}</p>}
                                                             {daily.drink?.name && <p className="text-sm text-gray-600">Bebida: {daily.drink.name}</p>}
                                                             {daily.dessert?.name && <p className="text-sm text-gray-600">Postre: {daily.dessert.name}</p>}
-                                                            {item.variant?.label && <p className="text-sm text-gray-600">Variante: {item.variant.label}</p>}
-                                                            {item.ingredients?.length > 0 && <p className="text-sm text-gray-600">Ingredientes: {item.ingredients.map((x: any) => x.name).join(", ")}</p>}
-                                                            {item.extras?.length > 0 && <p className="text-sm text-gray-600">Extras: {item.extras.map((x: any) => x.name).join(", ")}</p>}
+                                                            {(item.variant?.label || item.variant?.name) && <p className="text-sm text-gray-600">Variante: {item.variant.label ?? item.variant.name}</p>}
+                                                            {item.ingredients?.length > 0 && <p className="text-sm text-gray-600">Ingredientes: {item.ingredients.map((x: any) => x.name).filter(Boolean).join(", ")}</p>}
+                                                            {item.extras?.length > 0 && <p className="text-sm text-gray-600">Extras: {item.extras.map((x: any) => x.name).filter(Boolean).join(", ")}</p>}
                                                             {(item.notes || daily.notes) && <p className="text-sm text-gray-600">Nota: {item.notes || daily.notes}</p>}
                                                         </div>
                                                     );

@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
         if (request.nextUrl.searchParams.get("independentOrders") === "1") {
             const { data: orders, error: ordersError } = await supabaseAdmin
                 .from("service_orders")
-                .select("id, order_number, order_type, table_session_id, total, subtotal, status, items, notes, created_at")
+                .select("id, order_number, order_type, table_session_id, customer_name, total, subtotal, status, items, notes, created_at")
                 .eq("restaurant_id", context.profile.restaurant_id)
                 .eq("waiter_id", context.waiter.waiterId)
                 .eq("order_type", "takeaway")

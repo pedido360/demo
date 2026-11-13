@@ -121,6 +121,7 @@ export function formatTicket(
   }
 
   if (payload.waiter_name) lines.push(`Mesero: ${payload.waiter_name}`);
+  if (payload.customer_name?.trim()) lines.push(`CLIENTE: ${payload.customer_name.trim()}`);
 
   if (!isKitchen && payload.warning) {
     lines.push("");

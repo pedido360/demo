@@ -5,8 +5,10 @@ import LinkButton from "@/components/ui/LinkButton";
 
 import SuperAdminWaiterManagement from "@/components/admin/waiters/SuperAdminWaiterManagement";
 import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
-import { getRestaurantMetrics } from "@/lib/repositories/restaurant-metrics.repository";
-import { getPendingOrders } from "@/lib/repositories/order.repository";
+import {
+    getRestaurantMetricsForDashboard,
+    getPendingOrdersCountForDashboard,
+} from "@/lib/repositories/dashboard-server.repository";
 import { getGuideMetrics } from "@/lib/repositories/guide-metrics-server.repository";
 
 export default async function DashboardPage({
@@ -31,19 +33,15 @@ export default async function DashboardPage({
     const profile = await getCurrentProfile();
 
     const metrics = profile?.restaurant_id
-        ? await getRestaurantMetrics(
-            profile.restaurant_id
-        )
+        ? await getRestaurantMetricsForDashboard(profile.restaurant_id)
         : {
             menuViews: 0,
             whatsappOrders: 0,
         };
 
     const pendingOrders = profile?.restaurant_id
-        ? await getPendingOrders(
-            profile.restaurant_id
-        )
-        : [];
+        ? await getPendingOrdersCountForDashboard(profile.restaurant_id)
+        : 0;
 
     const guideMetrics =
         profile?.role === "super_admin"
@@ -84,7 +82,7 @@ export default async function DashboardPage({
                     description="Pedidos recibidos y pendientes de confirmación."
                 >
                     <p className="text-3xl font-bold text-gray-900">
-                        {pendingOrders.length}
+                        {pendingOrders}
                     </p>
                 </Card>
             )}

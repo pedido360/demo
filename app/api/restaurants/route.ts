@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET() {
     try {
@@ -30,7 +31,7 @@ export async function GET() {
             );
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from("restaurants")
             .select("*")
             .order("created_at", { ascending: false });

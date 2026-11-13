@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getProductsWithClient } from "@/lib/repositories/product.repository";
 
 interface RouteContext {
@@ -39,7 +40,7 @@ export async function GET(
             );
         }
 
-        const products = await getProductsWithClient(supabase, id);
+        const products = await getProductsWithClient(supabaseAdmin, id);
 
         return NextResponse.json(
             { success: true, products },

@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
-import { getActiveWaiter } from "@/lib/server/service-order.service";
 
 export const runtime = "nodejs";
 
@@ -55,54 +53,10 @@ export async function POST(
             );
         }
 
-        const waiter = await getActiveWaiter(
-            user.id,
-            profile.restaurant_id
+        const { data, error: sessionError } = await supabase.rpc(
+            "open_waiter_table_session",
+            { p_table_id: tableId }
         );
-
-        const { data: table, error: tableError } = await supabaseAdmin
-            .from("restaurant_tables")
-            .select("id, table_number, label, temporary_until")
-            .eq("id", tableId)
-            .eq("restaurant_id", profile.restaurant_id)
-            .eq("is_active", true)
-            .maybeSingle();
-
-        if (tableError) {
-            throw new Error(tableError.message);
-        }
-
-        if (!table) {
-            return NextResponse.json(
-                { success: false, message: "La mesa no existe o está inactiva." },
-                { status: 404 }
-            );
-        }
-
-        const today = new Intl.DateTimeFormat("en-CA", {
-            timeZone: "America/Bogota",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-        }).format(new Date());
-
-        if (table.temporary_until && table.temporary_until < today) {
-            return NextResponse.json(
-                { success: false, message: "Esta mesa temporal ya venció y no puede recibir nuevas cuentas." },
-                { status: 409 }
-            );
-        }
-
-        const { data: session, error: sessionError } = await supabaseAdmin
-            .from("table_sessions")
-            .insert({
-                restaurant_id: profile.restaurant_id,
-                restaurant_table_id: table.id,
-                opened_by_waiter_id: waiter.waiterId,
-                status: "open",
-            })
-            .select("id, restaurant_table_id, status, opened_at")
-            .single();
 
         if (sessionError) {
             if (sessionError.code === "23505") {
@@ -112,7 +66,21 @@ export async function POST(
                 );
             }
 
-            throw new Error(sessionError.message);
+            const status =
+                sessionError.code === "P0002" ? 404 :
+                sessionError.code === "23514" ? 409 :
+                sessionError.code === "42501" ? 403 : 500;
+
+            return NextResponse.json(
+                { success: false, message: sessionError.message },
+                { status }
+            );
+        }
+
+        const session = Array.isArray(data) ? data[0] : data;
+
+        if (!session?.id) {
+            throw new Error("No se recibió la confirmación de apertura de la cuenta.");
         }
 
         return NextResponse.json(

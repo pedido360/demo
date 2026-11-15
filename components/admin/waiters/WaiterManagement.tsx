@@ -20,12 +20,14 @@ interface Props {
     restaurants: RestaurantOption[];
     initialRestaurantId?: string | null;
     isSuperAdmin: boolean;
+    view?: "all" | "create" | "list";
 }
 
 export default function WaiterManagement({
     restaurants,
     initialRestaurantId,
     isSuperAdmin,
+    view = "all",
 }: Props) {
     const [restaurantId, setRestaurantId] = useState(
         initialRestaurantId || ""
@@ -171,7 +173,7 @@ export default function WaiterManagement({
                 </div>
             )}
 
-            {restaurantId ? (
+            {restaurantId && view !== "list" ? (
                 <form
                     onSubmit={createWaiter}
                     className="space-y-4 rounded-xl border bg-white p-6"
@@ -246,7 +248,7 @@ export default function WaiterManagement({
                 </p>
             )}
 
-            {restaurantId && (
+            {restaurantId && view !== "create" && (
                 <section className="rounded-xl border bg-white p-6">
                     <div className="mb-5 flex items-center justify-between">
                         <h2 className="text-xl font-bold">Equipo de meseros</h2>

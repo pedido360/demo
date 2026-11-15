@@ -4,10 +4,8 @@ import { redirect } from "next/navigation";
 
 import SmartMenu from "@/components/admin/smart-menu/SmartMenu";
 import RestaurantHoursPanel from "@/components/restaurant/RestaurantHoursPanel";
-import PendingOrders from "@/components/restaurant/PendingOrders";
+import RestaurantDashboardOperations from "@/components/restaurant/RestaurantDashboardOperations";
 
-import WaiterManagement from "@/components/admin/waiters/WaiterManagement";
-import RestaurantAccounts from "@/components/restaurant/RestaurantAccounts";
 import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import PrintingSettings from "@/components/admin/printing/PrintingSettings";
 
@@ -34,7 +32,7 @@ export default async function RestaurantPage() {
 
     return (
 
-        <div className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 bg-gray-50 p-6">
+        <div className="flex min-h-screen w-full flex-col gap-6 bg-gray-50 px-4 py-5 sm:px-6 lg:px-8">
 
             <SmartHeader
                 restaurant={restaurant}
@@ -43,20 +41,10 @@ export default async function RestaurantPage() {
                 adminEmail={profile?.email}
             />
 
-            <PendingOrders
+            <RestaurantDashboardOperations
                 restaurantId={restaurant.id}
                 restaurantName={restaurant.name}
             />
-
-            <section className="mt-8">
-                <WaiterManagement
-                    restaurants={[{ id: restaurant.id, name: restaurant.name }]}
-                    initialRestaurantId={restaurant.id}
-                    isSuperAdmin={false}
-                />
-            </section>
-
-            <RestaurantAccounts />
 
             <SmartMenu
                 restaurantId={restaurant.id}

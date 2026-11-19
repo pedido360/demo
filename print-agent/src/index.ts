@@ -3,11 +3,13 @@ import { loadSettings } from "./config/settings.js";
 import {
   printText,
   listPrinters,
-  extractCupsRequestId,
-  waitForCupsCompletion,
-  CupsSubmissionUncertainError,
-} from "./printer/cups.js";
+  extractRequestId,
+  waitForCompletion,
+  SubmissionUncertainError,
+} from "./printer/index.js";
 import { formatTicket } from "./printer/formatter.js";
+
+const printSystem = process.platform === "win32" ? "Windows" : "CUPS";
 
 const wait = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,16 +21,29 @@ async function main() {
     throw new Error("No existe configuración del agente.");
   }
 
-  const printers = await listPrinters();
+  const client = new Pedidos360Client(settings);
+  let auth: Awaited<ReturnType<Pedidos360Client["authenticate"]>>;
 
-  for (const name of [settings.kitchenPrinterName, settings.cashierPrinterName]) {
-    if (!printers.some((printer) => printer.name === name)) {
-      throw new Error(`Impresora no disponible: ${name}`);
+  while (true) {
+    try {
+      const printers = await listPrinters();
+
+      for (const name of [settings.kitchenPrinterName, settings.cashierPrinterName]) {
+        if (!printers.some((printer) => printer.name === name)) {
+          throw new Error(`Impresora no disponible: ${name}`);
+        }
+      }
+
+      auth = await client.authenticate();
+      break;
+    } catch (error) {
+      console.error(
+        "Servidor o impresoras no disponibles. Nuevo intento en 10 segundos:",
+        error
+      );
+      await wait(10000);
     }
   }
-
-  const client = new Pedidos360Client(settings);
-  const auth = await client.authenticate();
 
   console.log(`Agente conectado: ${auth.agent.name}`);
   console.log(`Impresora cocina: ${settings.kitchenPrinterName}`);
@@ -36,6 +51,14 @@ async function main() {
 
   while (true) {
     try {
+      const printers = await listPrinters();
+
+      for (const name of [settings.kitchenPrinterName, settings.cashierPrinterName]) {
+        if (!printers.some((printer) => printer.name === name)) {
+          throw new Error(`Impresora no disponible: ${name}. No se reclamarán trabajos.`);
+        }
+      }
+
       const jobs = await client.claimJobs();
 
       for (const job of jobs) {
@@ -48,19 +71,19 @@ async function main() {
 
         try {
           const ticket = formatTicket(job.payload, job.destination);
-          const lpOutput = await printText(printerName, ticket);
-          const requestId = extractCupsRequestId(printerName, lpOutput);
+          const printOutput = await printText(printerName, ticket);
+          const requestId = extractRequestId(printerName, printOutput);
 
           if (!requestId) {
             finalStatus = "submitted";
             errorMessage =
-              "CUPS recibió respuesta de lp, pero no se pudo identificar el trabajo. IMPRESIÓN SIN CONFIRMAR.";
+              `El sistema ${printSystem} recibió respuesta, pero no se pudo identificar el trabajo. IMPRESIÓN SIN CONFIRMAR.`;
             console.warn(errorMessage, job.job_id);
           } else {
-            console.log(`Trabajo ${job.job_id} aceptado por CUPS: ${requestId}`);
+            console.log(`Trabajo ${job.job_id} aceptado por ${printSystem}: ${requestId}`);
 
             try {
-              const completed = await waitForCupsCompletion(
+              const completed = await waitForCompletion(
                 printerName,
                 requestId,
                 120000,
@@ -71,18 +94,18 @@ async function main() {
 
               if (!completed) {
                 errorMessage =
-                  `CUPS no confirmó la finalización de ${requestId}. IMPRESIÓN SIN CONFIRMAR.`;
+                  `${printSystem} no confirmó la finalización de ${requestId}. IMPRESIÓN SIN CONFIRMAR.`;
               }
             } catch (error) {
               finalStatus = "submitted";
               errorMessage =
-                `No se pudo consultar el estado de CUPS: ${
+                `No se pudo consultar el estado de ${printSystem}: ${
                   error instanceof Error ? error.message : "Error desconocido"
                 }. IMPRESIÓN SIN CONFIRMAR.`;
             }
           }
         } catch (error) {
-          if (error instanceof CupsSubmissionUncertainError) {
+          if (error instanceof SubmissionUncertainError) {
             finalStatus = "submitted";
             errorMessage = `${error.message} IMPRESIÓN SIN CONFIRMAR.`;
           } else {

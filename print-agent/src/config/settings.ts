@@ -9,7 +9,10 @@ export interface AgentSettings {
   cashierPrinterName: string;
 }
 
-const configDirectory = join(homedir(), ".pedidos360");
+const configDirectory = process.platform === "win32"
+  ? join(process.env.ProgramData ?? "C:\\ProgramData", "Pedidos360")
+  : join(homedir(), ".pedidos360");
+
 const configPath = join(configDirectory, "agent.json");
 
 export async function saveSettings(
@@ -38,7 +41,9 @@ export async function saveSettings(
     }
   );
 
-  await chmod(configPath, 0o600);
+  if (process.platform !== "win32") {
+    await chmod(configPath, 0o600);
+  }
 }
 
 export async function loadSettings(): Promise<AgentSettings | null> {
@@ -52,8 +57,12 @@ export async function loadSettings(): Promise<AgentSettings | null> {
       cashierPrinterName: saved.cashierPrinterName ?? saved.printerName,
     };
 
-    if (!settings.serverUrl || !settings.token ||
-        !settings.kitchenPrinterName || !settings.cashierPrinterName) {
+    if (
+      !settings.serverUrl ||
+      !settings.token ||
+      !settings.kitchenPrinterName ||
+      !settings.cashierPrinterName
+    ) {
       throw new Error("La configuración guardada está incompleta.");
     }
 

@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import { saveSettings } from "./settings.js";
-import { listPrinters } from "../printer/cups.js";
+import { listPrinters } from "../printer/index.js";
 import { Pedidos360Client } from "../api/client.js";
 
 async function readHidden(prompt: string): Promise<string> {

@@ -99,6 +99,23 @@ export default function PrintingSettings() {
 
             {isOpen && (
                 <div className="space-y-4 border-t border-gray-200 p-5">
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <h3 className="font-semibold text-blue-950">Instalador para Windows 10 y 11</h3>
+                        <p className="mt-1 text-sm text-blue-900">
+                            Descarga el paquete para configurar el agente de impresión en el computador del restaurante.
+                        </p>
+                        <a
+                            href="/downloads/pedidos360-print-agent-windows.zip"
+                            download
+                            className="mt-3 inline-flex rounded-lg bg-blue-700 px-4 py-3 font-semibold text-white hover:bg-blue-800"
+                        >
+                            Descargar agente Windows
+                        </a>
+                        <p className="mt-2 text-xs text-blue-900">
+                            Registra el computador y guarda su clave antes de ejecutar el instalador.
+                        </p>
+                    </div>
+
                     <div className="rounded-lg border border-gray-200 p-4">
                         <h3 className="font-semibold text-gray-900">Equipos registrados</h3>
                         {agentsLoading && <p className="mt-2 text-sm text-gray-500">Consultando equipos...</p>}

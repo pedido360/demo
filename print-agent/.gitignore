@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.log
+/print-agent@1.0.0
+/tsc

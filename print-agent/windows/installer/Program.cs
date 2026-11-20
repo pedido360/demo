@@ -544,73 +544,23 @@ if ($remaining.Count -gt 0) {{
 
     private static void RegisterStartupTask(string runnerPath)
     {
-        string taskXmlPath = Path.Combine(
-            Path.GetTempPath(),
-            $"pedidos360-task-{Guid.NewGuid():N}.xml");
+        string command = Path.Combine(
+            Environment.SystemDirectory,
+            "cmd.exe");
 
-        string escapedInstallDir = SecurityElement.Escape(InstallDir)!;
-        string escapedRunnerPath = SecurityElement.Escape(runnerPath)!;
-        string escapedCommand = SecurityElement.Escape(@"C:\Windows\System32\cmd.exe")!;
-        string arguments = $"/d /c \"\"{escapedRunnerPath}\"\"";
+        string taskCommand = $"\"{command}\" /d /c \"\"{runnerPath}\"\"";
 
-        string xml = $@"<?xml version=""1.0"" encoding=""UTF-16""?>
-<Task version=""1.4"" xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task"">
-  <RegistrationInfo>
-    <Description>Agente de impresión de Pedidos360.</Description>
-  </RegistrationInfo>
-  <Triggers>
-    <BootTrigger>
-      <Enabled>true</Enabled>
-      <Delay>PT20S</Delay>
-    </BootTrigger>
-  </Triggers>
-  <Principals>
-    <Principal id=""Author"">
-      <UserId>S-1-5-18</UserId>
-      <LogonType>ServiceAccount</LogonType>
-      <RunLevel>HighestAvailable</RunLevel>
-    </Principal>
-  </Principals>
-  <Settings>
-    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
-    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
-    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
-    <AllowHardTerminate>true</AllowHardTerminate>
-    <StartWhenAvailable>true</StartWhenAvailable>
-    <RestartOnFailure>
-      <Interval>PT1M</Interval>
-      <Count>999</Count>
-    </RestartOnFailure>
-    <ExecutionTimeLimit>PT0S</ExecutionTimeLimit>
-    <Enabled>true</Enabled>
-    <Hidden>false</Hidden>
-    <WakeToRun>false</WakeToRun>
-    <Priority>7</Priority>
-  </Settings>
-  <Actions Context=""Author"">
-    <Exec>
-      <Command>{escapedCommand}</Command>
-      <Arguments>{SecurityElement.Escape(arguments)}</Arguments>
-      <WorkingDirectory>{escapedInstallDir}</WorkingDirectory>
-    </Exec>
-  </Actions>
-</Task>";
-
-        try
+        Run("schtasks.exe", new[]
         {
-            File.WriteAllText(taskXmlPath, xml, Encoding.Unicode);
-            Run("schtasks.exe", new[]
-            {
-                "/Create", "/TN", TaskName,
-                "/XML", taskXmlPath,
-                "/F"
-            });
-        }
-        finally
-        {
-            if (File.Exists(taskXmlPath))
-                File.Delete(taskXmlPath);
-        }
+            "/Create",
+            "/TN", TaskName,
+            "/SC", "ONSTART",
+            "/DELAY", "0000:20",
+            "/TR", taskCommand,
+            "/RU", "SYSTEM",
+            "/RL", "HIGHEST",
+            "/F"
+        });
     }
 
     private static bool WaitForAgentConnection(string logPath, TimeSpan timeout)

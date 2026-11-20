@@ -158,7 +158,8 @@ internal sealed class SetupForm : Form
 
         try
         {
-            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(20) };
+            using var handler = new HttpClientHandler { UseProxy = false };
+            using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(60) };
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token.Text.Trim());
 

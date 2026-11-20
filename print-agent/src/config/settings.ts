@@ -10,7 +10,7 @@ export interface AgentSettings {
 }
 
 const configDirectory = process.platform === "win32"
-  ? join(process.env.ProgramData ?? "C:\\ProgramData", "Pedidos360")
+  ? join(process.env.ProgramData ?? "C:\\ProgramData", "Pedidos360Agent")
   : join(homedir(), ".pedidos360");
 
 const configPath = join(configDirectory, "agent.json");

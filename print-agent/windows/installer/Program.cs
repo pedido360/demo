@@ -316,6 +316,7 @@ internal sealed class SetupForm : Form
         Directory.CreateDirectory(ConfigDir);
 
         ConfigureSecureConfigDirectory();
+        ConfigureWindowsPrintLogging();
 
         string logsDir = Path.Combine(ConfigDir, "logs");
         Directory.CreateDirectory(logsDir);
@@ -393,6 +394,26 @@ internal sealed class SetupForm : Form
             if (Directory.Exists(stagingDir))
                 Directory.Delete(stagingDir, true);
         }
+    }
+
+    private static void ConfigureWindowsPrintLogging()
+    {
+        Run("wevtutil.exe", new[]
+        {
+            "sl",
+            "Microsoft-Windows-PrintService/Operational",
+            "/e:true"
+        });
+
+        Run("reg.exe", new[]
+        {
+            "add",
+            @"HKLM\Software\Policies\Microsoft\Windows NT\Printers",
+            "/v", "ShowJobTitleInEventLogs",
+            "/t", "REG_DWORD",
+            "/d", "1",
+            "/f"
+        });
     }
 
     private static void ConfigureSecureConfigDirectory()

@@ -224,7 +224,7 @@ export function extractWindowsRequestId(
 export async function waitForWindowsCompletion(
   printerName: string,
   requestId: string,
-  timeoutMs = 120000,
+  timeoutMs = 30000,
   pollIntervalMs = 1500
 ): Promise<boolean> {
   if (!printerName.trim() || !/^Pedidos360-[a-f0-9-]+$/i.test(requestId)) {
@@ -236,32 +236,29 @@ export async function waitForWindowsCompletion(
   while (Date.now() < deadline) {
     const script = `
 $ErrorActionPreference = 'Stop'
-$jobs = @(Get-PrintJob -PrinterName ${psQuote(printerName)} -ErrorAction Stop |
-  Where-Object { $_.JobName -eq ${psQuote(requestId)} })
-if ($jobs.Count -eq 0) {
-  Write-Output '{"found":false}'
+$events = @(Get-WinEvent -FilterHashtable @{
+    LogName = 'Microsoft-Windows-PrintService/Operational'
+    Id = 307
+    StartTime = (Get-Date).AddMinutes(-10)
+} -MaxEvents 500 -ErrorAction SilentlyContinue)
+
+$match = $events | Where-Object {
+    $_.Properties.Count -ge 5 -and
+    [string]$_.Properties[1].Value -eq ${psQuote(requestId)} -and
+    [string]$_.Properties[4].Value -eq ${psQuote(printerName)}
+} | Select-Object -First 1
+
+if ($null -ne $match) {
+    Write-Output '{"completed":true}'
 } else {
-  $job = $jobs[0]
-  @{ found = $true; status = [string]$job.JobStatus } |
-    ConvertTo-Json -Compress
+    Write-Output '{"completed":false}'
 }
 `;
 
     const output = await runPowerShell(script, 15000);
-    const result = JSON.parse(output) as {
-      found: boolean;
-      status?: string;
-    };
+    const result = JSON.parse(output) as { completed: boolean };
 
-    if (result.found && result.status) {
-      const status = result.status.toLowerCase();
-
-      if (/error|offline|paperout|blocked|userintervention/.test(status)) {
-        throw new Error(`Windows reportó un problema: ${result.status}`);
-      }
-
-      if (/printed|completed/.test(status)) return true;
-    }
+    if (result.completed) return true;
 
     await wait(Math.min(pollIntervalMs, Math.max(0, deadline - Date.now())));
   }

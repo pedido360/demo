@@ -86,7 +86,7 @@ async function main() {
               const completed = await waitForCompletion(
                 printerName,
                 requestId,
-                120000,
+                30000,
                 1500
               );
 

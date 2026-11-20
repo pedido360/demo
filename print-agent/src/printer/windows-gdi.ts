@@ -153,7 +153,7 @@ public static class Pedidos360GdiPrinter {
                     e.Graphics.MeasureString(
                         remaining,
                         font,
-                        (int)bounds.Width,
+                        bounds.Size,
                         format,
                         out fitted,
                         out lines

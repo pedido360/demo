@@ -571,7 +571,13 @@ if ($remaining.Count -gt 0) {{
         {
             if (File.Exists(logPath))
             {
-                string content = File.ReadAllText(logPath);
+                using var logStream = new FileStream(
+                    logPath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete);
+                using var reader = new StreamReader(logStream);
+                string content = reader.ReadToEnd();
                 if (content.Contains("Agente conectado:", StringComparison.Ordinal))
                     return true;
             }

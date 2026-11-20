@@ -19,7 +19,8 @@ export default function RestaurantDashboardOperations({
     const [tablesPanelOpen, setTablesPanelOpen] = useState(false);
 
     return (
-        <section className="grid grid-cols-1 gap-5 lg:h-[calc(100vh-190px)] lg:min-h-[620px] lg:grid-cols-2 lg:items-stretch">
+        <>
+        <section className="grid grid-cols-1 gap-5 lg:h-[calc(100vh-130px)] lg:min-h-[620px] lg:grid-cols-2 lg:items-stretch">
             <div className="min-h-0 overflow-y-auto rounded-2xl">
                 <PendingOrders
                     restaurantId={restaurantId}
@@ -39,9 +40,15 @@ export default function RestaurantDashboardOperations({
 
                 <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl">
                     <RestaurantAccounts />
-                </div>
 
-                <div className="shrink-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                </div>
+            </div>
+        </section>
+
+        <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div />
+            <div className="space-y-4">
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <h2 className="mb-3 text-lg font-bold text-gray-900">
                         Gestión de meseros
                     </h2>
@@ -92,7 +99,7 @@ export default function RestaurantDashboardOperations({
                     )}
                 </div>
 
-                <div className="shrink-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <h2 className="text-lg font-bold text-gray-900">
@@ -121,5 +128,6 @@ export default function RestaurantDashboardOperations({
                 </div>
             </div>
         </section>
+        </>
     );
 }

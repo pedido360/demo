@@ -272,7 +272,7 @@ export default function RestaurantAccounts() {
     }
 
     return (
-        <section className="space-y-5 rounded-xl border bg-white p-5">
+        <section className="min-h-full space-y-5 rounded-xl border bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold">Cuentas abiertas</h2>

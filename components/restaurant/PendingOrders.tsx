@@ -200,7 +200,7 @@ export default function PendingOrders({
     );
 
     return (
-        <section className="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-sm">
+        <section className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-sm">
             <div className="border-b border-amber-600 bg-amber-600 px-5 py-5">
                 <h2 className="text-2xl font-extrabold tracking-wide text-white">
                     🛎️ MÓDULO PEDIDOS
@@ -242,7 +242,7 @@ export default function PendingOrders({
                 </div>
             </div>
 
-            <div className="p-5">
+            <div className="min-h-0 flex-1 overflow-y-auto p-5">
                 {errorMessage && (
                     <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                         {errorMessage}

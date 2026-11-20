@@ -232,6 +232,13 @@ internal sealed class SetupForm : Form
                 Directory.CreateDirectory(InstallDir);
                 Directory.CreateDirectory(ConfigDir);
 
+                Run("icacls.exe", new[] {
+                    ConfigDir, "/inheritance:r",
+                    "/grant:r", "*S-1-5-18:(OI)(CI)F",
+                    "*S-1-5-32-544:(OI)(CI)F", "/T"
+                });
+
+
                 using Stream resource = Assembly.GetExecutingAssembly()
                     .GetManifestResourceStream("Pedidos360Setup.agent-bundle.zip")
                     ?? throw new InvalidOperationException("No se encontró el paquete del agente dentro del instalador.");
@@ -261,12 +268,6 @@ internal sealed class SetupForm : Form
 
                 if (!File.Exists(nodeExe) || !File.Exists(entryPoint))
                     throw new FileNotFoundException("El paquete del agente está incompleto.");
-
-                Run("icacls.exe", new[] {
-                    ConfigDir, "/inheritance:r",
-                    "/grant:r", "*S-1-5-18:(OI)(CI)F",
-                    "*S-1-5-32-544:(OI)(CI)F", "/T"
-                });
 
                 Run("schtasks.exe", new[] {
                     "/Create", "/TN", TaskName,

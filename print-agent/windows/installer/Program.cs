@@ -189,7 +189,8 @@ internal sealed class SetupForm : Form
         }
         catch (Exception ex)
         {
-            status.Text = "No se pudo validar: " + ex.Message;
+            status.Text = "Falló la conexión. Consulta el detalle.";
+            MessageBox.Show(ex.ToString(), "Diagnóstico de conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
         {

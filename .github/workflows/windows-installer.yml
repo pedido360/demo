@@ -1,0 +1,64 @@
+name: Build Pedidos360 Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'print-agent/**'
+      - '.github/workflows/windows-installer.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: print-agent/package-lock.json
+
+      - name: Compilar agente
+        working-directory: print-agent
+        shell: pwsh
+        run: |
+          npm ci
+          npm run build
+          npm prune --omit=dev
+
+      - name: Preparar paquete Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $url = "https://nodejs.org/dist/v24.22.3/node-v24.22.3-win-x64.zip"
+          Invoke-WebRequest $url -OutFile node.zip
+          Expand-Archive node.zip runtime
+          New-Item -ItemType Directory -Force bundle | Out-Null
+          Copy-Item print-agent/dist bundle/dist -Recurse
+          Copy-Item print-agent/node_modules bundle/node_modules -Recurse
+          Copy-Item print-agent/package.json bundle/package.json
+          Copy-Item runtime/node-v24.22.3-win-x64/node.exe bundle/node.exe
+          Compress-Archive bundle/* agent-bundle.zip
+
+      - name: Publicar paquete del agente
+        uses: actions/upload-artifact@v4
+        with:
+          name: pedidos360-agent-windows
+          path: agent-bundle.zip
+
+      - name: Compilar asistente gráfico
+        shell: pwsh
+        run: |
+          dotnet publish print-agent/windows/installer/Pedidos360Setup.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o installer-output
+
+      - name: Publicar instalador gráfico
+        uses: actions/upload-artifact@v4
+        with:
+          name: pedidos360-installer-windows
+          path: installer-output/Pedidos360Setup.exe

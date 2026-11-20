@@ -141,16 +141,49 @@ internal sealed class SetupForm : Form
         }
     }
 
+    private static bool TryNormalizeAgentToken(string raw, out string normalized)
+    {
+        string value = raw.Trim();
+
+        if (value.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            value = value.Substring(7).Trim();
+
+        var compact = new StringBuilder(value.Length);
+        foreach (char c in value)
+        {
+            if (!char.IsWhiteSpace(c))
+                compact.Append(c);
+        }
+
+        normalized = compact.ToString();
+
+        if (normalized.Length != 64)
+            return false;
+
+        foreach (char c in normalized)
+        {
+            bool hex = (c >= '0' && c <= '9') ||
+                       (c >= 'a' && c <= 'f') ||
+                       (c >= 'A' && c <= 'F');
+            if (!hex)
+                return false;
+        }
+
+        return true;
+    }
+
     private async Task ValidateToken()
     {
         authenticated = false;
         install.Enabled = false;
 
-        if (string.IsNullOrWhiteSpace(token.Text))
+        if (!TryNormalizeAgentToken(token.Text, out string normalizedToken))
         {
-            status.Text = "Introduce el token del agente.";
+            status.Text = "El token debe contener 64 caracteres hexadecimales. Revisa que hayas pegado la credencial completa.";
             return;
         }
+
+        token.Text = normalizedToken;
 
         if (kitchen.SelectedItem is null || cashier.SelectedItem is null)
         {
@@ -166,7 +199,7 @@ internal sealed class SetupForm : Form
             using var handler = new HttpClientHandler { UseProxy = false };
             using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(60) };
             client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token.Text.Trim());
+                new AuthenticationHeaderValue("Bearer", normalizedToken);
 
             using var response = await client.PostAsync(
                 $"{ServerUrl}/api/restaurant/printing/auth",

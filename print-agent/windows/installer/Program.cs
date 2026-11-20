@@ -399,25 +399,14 @@ internal sealed class SetupForm : Form
     {
         Run("icacls.exe", new[]
         {
-            ConfigDir, "/setowner", AdministratorsSid, "/T"
-        });
-
-        Run("icacls.exe", new[]
-        {
-            ConfigDir, "/reset", "/T"
-        });
-
-        Run("icacls.exe", new[]
-        {
-            ConfigDir, "/inheritance:r", "/T"
+            ConfigDir, "/inheritance:r"
         });
 
         Run("icacls.exe", new[]
         {
             ConfigDir, "/grant:r",
             $"{SystemSid}:(OI)(CI)F",
-            $"{AdministratorsSid}:(OI)(CI)F",
-            "/T"
+            $"{AdministratorsSid}:(OI)(CI)F"
         });
 
         string probePath = Path.Combine(ConfigDir, ".pedidos360-write-test");

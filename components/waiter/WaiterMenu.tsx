@@ -318,7 +318,23 @@ function WaiterMenuContent({
                 );
             }
 
-            setIndependentOrders(result.orders ?? []);
+            const refreshedOrders = result.orders ?? [];
+            setIndependentOrders(refreshedOrders);
+            setIndependentOrder(current => {
+                if (!current) return current;
+                const refreshed = refreshedOrders.find(
+                    (order: IndependentTakeawayHistoryOrder) => order.id === current.id
+                );
+                if (!refreshed) return current;
+                return {
+                    ...current,
+                    total: Number(refreshed.total),
+                    balanceDue: Number(refreshed.balanceDue),
+                    netPaid: Number(refreshed.netPaid),
+                    verifiedTotal: Number(refreshed.verifiedTotal),
+                    canDeliver: Boolean(refreshed.canDeliver),
+                };
+            });
         } catch (error) {
             setIndependentOrdersMessage(
                 error instanceof Error

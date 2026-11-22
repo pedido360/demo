@@ -156,7 +156,8 @@ export async function GET() {
                 { data: independentVerifications, error: independentVerificationError },
                 { data: tableVerifications, error: tableVerificationError },
                 { data: tablePayments, error: tablePaymentError },
-                { data: reportWaiters, error: reportWaiterError }
+                { data: reportWaiters, error: reportWaiterError },
+                { data: deliveries, error: deliveriesError }
             ] = await Promise.all([
                 orderIds.length
                     ? supabaseAdmin.from("independent_order_payment_transactions")
@@ -182,6 +183,11 @@ export async function GET() {
                     ? supabaseAdmin.from("waiter_accounts")
                         .select("id, profile_id")
                         .in("id", reportWaiterIds)
+                    : Promise.resolve({ data: [], error: null }),
+                orderIds.length
+                    ? supabaseAdmin.from("independent_order_deliveries")
+                        .select("order_id, delivered_at")
+                        .in("order_id", orderIds)
                     : Promise.resolve({ data: [], error: null })
             ]);
 
@@ -190,6 +196,7 @@ export async function GET() {
             if (tableVerificationError) throw tableVerificationError;
             if (tablePaymentError) throw tablePaymentError;
             if (reportWaiterError) throw reportWaiterError;
+            if (deliveriesError) throw deliveriesError;
 
             const reportProfileIds = [...new Set((reportWaiters ?? []).map(w => w.profile_id))];
             const { data: reportProfiles, error: reportProfilesError } = await supabaseAdmin
@@ -387,6 +394,7 @@ export async function GET() {
                 ],
 
                 orders: orders.map(order => {
+                    const delivery = (deliveries ?? []).find(item => item.order_id === order.id) ?? null;
                     const orderPayments = independentLedger
                         .filter(payment => payment.order_id === order.id)
                         .map(payment => ({
@@ -409,8 +417,21 @@ export async function GET() {
                                 : 0
                         ), 0);
 
+                    const pendingVerification = orderPayments.filter(payment =>
+                        payment.transaction_type === "payment" &&
+                        !payment.verification
+                    ).length;
+                    const legacyDelivered =
+                        order.status === "confirmed" &&
+                        Number(order.total || 0) > 0 &&
+                        netPaid >= Number(order.total || 0) &&
+                        verifiedTotal >= netPaid &&
+                        pendingVerification === 0;
+
                     return {
                         ...order,
+                        delivered: Boolean(delivery) || legacyDelivered,
+                        deliveredAt: delivery?.delivered_at ?? null,
                         waiterName: waiterNames.get(order.waiter_id) ?? "Mesero",
                         payments: orderPayments,
                         netPaid,

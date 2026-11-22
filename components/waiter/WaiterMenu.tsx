@@ -320,14 +320,29 @@ function WaiterMenuContent({
 
             const refreshedOrders = result.orders ?? [];
             setIndependentOrders(refreshedOrders);
-            setIndependentOrder(current => {
-                if (!current) return current;
-                const refreshed = refreshedOrders.find(
-                    (order: IndependentTakeawayHistoryOrder) => order.id === current.id
+
+            const recoverableOrder =
+                refreshedOrders.find(
+                    (order: IndependentTakeawayHistoryOrder) =>
+                        order.status === "confirmed" && Number(order.balanceDue) > 0
+                ) ??
+                refreshedOrders.find(
+                    (order: IndependentTakeawayHistoryOrder) =>
+                        order.status === "confirmed" && !order.canDeliver
                 );
+
+            setIndependentOrder(current => {
+                const refreshed = current
+                    ? refreshedOrders.find(
+                        (order: IndependentTakeawayHistoryOrder) => order.id === current.id
+                    )
+                    : recoverableOrder;
+
                 if (!refreshed) return current;
+
                 return {
-                    ...current,
+                    id: refreshed.id,
+                    orderNumber: refreshed.order_number ?? null,
                     total: Number(refreshed.total),
                     balanceDue: Number(refreshed.balanceDue),
                     netPaid: Number(refreshed.netPaid),
@@ -344,6 +359,31 @@ function WaiterMenuContent({
         } finally {
             setLoadingIndependentOrders(false);
         }
+    }
+
+    function continueIndependentOrder(order: IndependentTakeawayHistoryOrder) {
+        if (submitting || pendingOrder || items.length > 0) {
+            window.alert("Termina o descarta el pedido en preparación antes de continuar otro pedido independiente.");
+            return;
+        }
+
+        setIndependentOrder({
+            id: order.id,
+            orderNumber: order.order_number ?? null,
+            total: Number(order.total),
+            balanceDue: Number(order.balanceDue),
+            netPaid: Number(order.netPaid),
+            verifiedTotal: Number(order.verifiedTotal),
+            canDeliver: Boolean(order.canDeliver),
+        });
+        setIndependentPaymentAmount("");
+        setIndependentPaymentReference("");
+        setIndependentPaymentMessage("");
+        setOrderType("takeaway");
+        setSelectedTableId("");
+        setWorkflowStep("catalog");
+        setOrderPanelOpen(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     async function retryPrintJob(orderId: string, jobId: string) {
@@ -1158,6 +1198,25 @@ function WaiterMenuContent({
 
             {workflowStep === "tables" && (
                 <section className="mx-auto max-w-5xl space-y-5 p-4">
+                    {independentOrder && !independentOrder.canDeliver && (
+                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4">
+                            <div>
+                                <p className="font-bold text-blue-900">
+                                    Pedido independiente pendiente #{independentOrder.orderNumber ?? "—"}
+                                </p>
+                                <p className="text-sm text-blue-800">
+                                    Saldo pendiente: {formatPrice(independentOrder.balanceDue)}. Puedes atender mesas y retomarlo cuando quieras.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setWorkflowStep("catalog")}
+                                className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white"
+                            >
+                                Continuar pedido
+                            </button>
+                        </div>
+                    )}
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <h2 className="text-2xl font-bold text-gray-900">Mis mesas</h2>
@@ -1316,6 +1375,15 @@ function WaiterMenuContent({
                                             </summary>
 
                                             <div className="space-y-4 border-t border-gray-100 p-4">
+                                                {order.status === "confirmed" && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => continueIndependentOrder(order)}
+                                                        className="w-full rounded-lg bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-800"
+                                                    >
+                                                        {order.canDeliver ? "Ver pedido autorizado" : "Continuar pedido"}
+                                                    </button>
+                                                )}
                                                 <div>
                                                     <h4 className="mb-2 text-sm font-bold text-gray-800">
                                                         Productos

@@ -88,7 +88,8 @@ export async function GET(request: NextRequest) {
             const [
                 { data: transactions, error: transactionsError },
                 { data: verifications, error: verificationsError },
-                { data: printJobs, error: printJobsError }
+                { data: printJobs, error: printJobsError },
+                { data: deliveries, error: deliveriesError }
             ] = await Promise.all([
                 supabaseAdmin.from("independent_order_payment_transactions")
                     .select("id, transaction_type, payment_method, amount, reference, reason, related_transaction_id, created_at")
@@ -101,12 +102,16 @@ export async function GET(request: NextRequest) {
                     .select("id, service_order_id, destination, status, attempt_count, last_error, created_at, updated_at, printed_at, verified_by_waiter_id, verified_at")
                     .eq("service_order_id", orderId)
                     .eq("restaurant_id", context.profile.restaurant_id)
-                    .order("created_at", { ascending: true })
+                    .order("created_at", { ascending: true }),
+                supabaseAdmin.from("independent_order_deliveries")
+                    .select("order_id, delivered_at")
+                    .eq("order_id", orderId)
             ]);
 
             if (transactionsError) throw transactionsError;
             if (verificationsError) throw verificationsError;
             if (printJobsError) throw printJobsError;
+            if (deliveriesError) throw deliveriesError;
 
             const payments = transactions ?? [];
             const jobs = printJobs ?? [];
@@ -165,7 +170,8 @@ export async function GET(request: NextRequest) {
             const [
                 { data: transactions, error: transactionsError },
                 { data: verifications, error: verificationsError },
-                { data: printJobs, error: printJobsError }
+                { data: printJobs, error: printJobsError },
+                { data: deliveries, error: deliveriesError }
             ] = await Promise.all([
                 supabaseAdmin.from("independent_order_payment_transactions")
                     .select("id, order_id, transaction_type, payment_method, amount, reference, reason, related_transaction_id, created_at")
@@ -177,17 +183,22 @@ export async function GET(request: NextRequest) {
                 supabaseAdmin.from("print_jobs")
                     .select("id, service_order_id, destination, status, attempt_count, last_error, created_at, updated_at, printed_at, verified_by_waiter_id, verified_at")
                     .in("service_order_id", orderIds)
-                    .order("created_at", { ascending: true })
+                    .order("created_at", { ascending: true }),
+                supabaseAdmin.from("independent_order_deliveries")
+                    .select("order_id, delivered_at")
+                    .in("order_id", orderIds)
             ]);
 
             if (transactionsError) throw transactionsError;
             if (verificationsError) throw verificationsError;
             if (printJobsError) throw printJobsError;
+            if (deliveriesError) throw deliveriesError;
 
             const resultOrders = (orders ?? []).map(order => {
                 const payments = (transactions ?? []).filter(item => item.order_id === order.id);
                 const verified = (verifications ?? []).filter(item => item.order_id === order.id);
                 const jobs = (printJobs ?? []).filter(item => item.service_order_id === order.id);
+                const delivery = (deliveries ?? []).find(item => item.order_id === order.id) ?? null;
                 const netPaid = payments.reduce((sum, item) =>
                     sum + (item.transaction_type === "payment" ? Number(item.amount) : -Number(item.amount)), 0);
                 const verifiedTotal = verified.reduce((sum, item) => sum + Number(item.verified_amount), 0);
@@ -195,6 +206,8 @@ export async function GET(request: NextRequest) {
 
                 return {
                     ...order,
+                    delivered: Boolean(delivery),
+                    deliveredAt: delivery?.delivered_at ?? null,
                     payments: payments.map(item => ({
                         ...item,
                         verification: verified.find(v => v.transaction_id === item.id) ?? null
@@ -203,7 +216,7 @@ export async function GET(request: NextRequest) {
                     netPaid,
                     balanceDue: Math.max(0, total - netPaid),
                     verifiedTotal,
-                    canDeliver: order.status === "confirmed" &&
+                    canDeliver: !delivery && order.status === "confirmed" &&
                         total > 0 && netPaid >= total && verifiedTotal >= netPaid &&
                         jobs.length === 2 &&
                         ["cashier", "kitchen"].every(destination =>

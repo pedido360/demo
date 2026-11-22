@@ -56,16 +56,18 @@ export default function RestaurantAccounts() {
     const [message, setMessage] = useState("");
     const [selected, setSelected] = useState<string | null>(null);
     const [productsExpanded, setProductsExpanded] = useState<string | null>(null);
+    const [pendingPaymentOrderExpanded, setPendingPaymentOrderExpanded] = useState<string | null>(null);
     const [paymentId, setPaymentId] = useState("");
     const [amount, setAmount] = useState("");
     const [reason, setReason] = useState("");
     const [submitting, setSubmitting] = useState(false);
-    const [closeReason, setCloseReason] = useState("");
+    const [closeReasons, setCloseReasons] = useState<Record<string, string>>({});
     const [journey, setJourney] = useState<any>(null);
     const [salesReport, setSalesReport] = useState<any>(null);
     const [showReport, setShowReport] = useState(false);
     const [showMovements, setShowMovements] = useState(false);
     const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+    const [priorityIndependentOrderId, setPriorityIndependentOrderId] = useState<string | null>(null);
     const previousIndependentOrderIds = useRef<Set<string> | null>(null);
     const [newIndependentOrderAlert, setNewIndependentOrderAlert] = useState(false);
 
@@ -82,7 +84,8 @@ export default function RestaurantAccounts() {
                 (order: any) =>
                     order.order_type === "takeaway" &&
                     !order.table_session_id &&
-                    order.status === "confirmed"
+                    order.status === "confirmed" &&
+            !order.delivered
             );
 
             const currentIds = new Set<string>(
@@ -271,6 +274,31 @@ export default function RestaurantAccounts() {
         }
     }
 
+    const pendingAccountPayments = accounts.flatMap(account =>
+        account.paymentHistory
+            .filter(transaction => transaction.type === "payment" && !transaction.verification)
+            .map(transaction => ({ account, transaction }))
+    );
+    const pendingCloseAccounts = accounts.filter(
+        account => account.closeRequest?.status === "pending"
+    );
+
+    const pendingIndependentOrders = (salesReport?.orders ?? []).filter(
+        (order: any) =>
+            order.order_type === "takeaway" &&
+            !order.table_session_id &&
+            order.status === "confirmed" &&
+            !order.delivered
+    );
+
+    const pendingIndependentPayments = pendingIndependentOrders.flatMap((order: any) =>
+        (order.payments ?? [])
+            .filter((payment: any) =>
+                payment.transaction_type === "payment" && !payment.verification
+            )
+            .map((payment: any) => ({ order, payment }))
+    );
+
     return (
         <section className="min-h-full space-y-5 rounded-xl border bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -295,6 +323,305 @@ export default function RestaurantAccounts() {
             )}
             {message && (
                 <p className="rounded-lg bg-green-50 p-3 text-sm text-green-700">{message}</p>
+            )}
+
+            {(pendingAccountPayments.length > 0 || pendingCloseAccounts.length > 0 || pendingIndependentOrders.length > 0) && (
+                <section className="space-y-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h3 className="text-lg font-extrabold text-amber-950">
+                            Atención de Caja
+                        </h3>
+                        <div className="flex flex-wrap gap-2 text-xs font-bold">
+                            {pendingAccountPayments.length > 0 && (
+                                <span className="rounded-full bg-amber-200 px-3 py-1 text-amber-950">
+                                    {pendingAccountPayments.length} pagos pendientes
+                                </span>
+                            )}
+                            {pendingIndependentPayments.length > 0 && (
+                                <span className="rounded-full bg-amber-200 px-3 py-1 text-amber-950">
+                                    {pendingIndependentPayments.length} pagos independientes por verificar
+                                </span>
+                            )}
+                            {pendingCloseAccounts.length > 0 && (
+                                <span className="rounded-full bg-rose-200 px-3 py-1 text-rose-950">
+                                    {pendingCloseAccounts.length} cierres pendientes
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    {pendingAccountPayments.length > 0 && (
+                        <div className="space-y-2">
+                            <h4 className="font-bold text-amber-900">Pagos por verificar</h4>
+                            {pendingAccountPayments.map(({ account, transaction }) => (
+                                <article
+                                    key={`${account.sessionId}-${transaction.id}`}
+                                    className="animate-pulse rounded-xl border-2 border-amber-300 bg-white p-3 shadow-sm"
+                                >
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                            <p className="font-extrabold text-amber-950">
+                                                {account.table?.label || `Mesa ${account.table?.table_number ?? "—"}`}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                {account.waiter?.fullName ?? "Mesero no disponible"} ·
+                                                {" "}{transaction.method === "cash" ? "Efectivo" : "Transferencia"}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                {new Date(transaction.createdAt).toLocaleString("es-CO")}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <strong className="text-lg text-amber-900">
+                                                {money(transaction.amount)}
+                                            </strong>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPendingPaymentOrderExpanded(
+                                                    pendingPaymentOrderExpanded === account.sessionId ? null : account.sessionId
+                                                )}
+                                                className="rounded-lg border border-orange-300 px-4 py-2 text-sm font-bold text-orange-800 hover:bg-orange-50"
+                                            >
+                                                VER PEDIDO
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => void cashierAction(account, "verify_payment", { transactionId: transaction.id })}
+                                                disabled={submitting}
+                                                className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50"
+                                            >
+                                                VERIFICAR PAGO
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {pendingPaymentOrderExpanded === account.sessionId && (
+                                        <div className="mt-3 space-y-3 rounded-lg border border-orange-200 bg-orange-50 p-3">
+                                            <h5 className="font-bold text-orange-900">Pedido de esta mesa</h5>
+                                            {!account.orders?.length ? (
+                                                <p className="text-sm text-gray-600">No hay pedidos asociados a esta cuenta.</p>
+                                            ) : account.orders.map(order => (
+                                                <div key={order.id} className="space-y-2 rounded-lg border bg-white p-3">
+                                                    <div className="flex flex-wrap justify-between gap-2 border-b pb-2">
+                                                        <strong>Pedido {order.order_number ?? ""}</strong>
+                                                        <span className="text-xs text-gray-500">
+                                                            {new Date(order.created_at).toLocaleString("es-CO")}
+                                                        </span>
+                                                    </div>
+                                                    {(order.items ?? []).map((item, index) => {
+                                                        const product = item.product ?? {};
+                                                        const daily = item.dailyMenu ?? {};
+                                                        const productName = product.name ?? item.name ?? item.product_name ?? item.title ?? "Producto";
+                                                        const quantity = Number(item.quantity ?? daily.quantity ?? 1);
+                                                        const unitPrice = Number(item.unitPrice ?? 0);
+                                                        const lineTotal = Number(item.total ?? unitPrice * quantity);
+
+                                                        return (
+                                                            <div key={`${order.id}-${index}`} className="border-b border-gray-100 py-2 last:border-0">
+                                                                <div className="flex flex-wrap justify-between gap-2">
+                                                                    <p className="font-semibold">{quantity} × {productName}</p>
+                                                                    <strong>{money(lineTotal)}</strong>
+                                                                </div>
+                                                                {unitPrice > 0 && <p className="text-xs text-gray-500">Precio unitario: {money(unitPrice)}</p>}
+                                                                {daily.size?.label && <p className="text-sm text-gray-600">Tamaño: {daily.size.label}</p>}
+                                                                {daily.soup?.name && <p className="text-sm text-gray-600">Sopa: {daily.soup.name}</p>}
+                                                                {daily.secos?.length > 0 && <p className="text-sm text-gray-600">Secos: {daily.secos.map((x: any) => x.name).join(", ")}</p>}
+                                                                {daily.principle?.name && <p className="text-sm text-gray-600">Principio: {daily.principle.name}</p>}
+                                                                {daily.protein?.name && <p className="text-sm text-gray-600">Proteína: {daily.protein.name}</p>}
+                                                                {daily.drink?.name && <p className="text-sm text-gray-600">Bebida: {daily.drink.name}</p>}
+                                                                {daily.dessert?.name && <p className="text-sm text-gray-600">Postre: {daily.dessert.name}</p>}
+                                                                {(item.variant?.label || item.variant?.name) && <p className="text-sm text-gray-600">Variante: {item.variant.label ?? item.variant.name}</p>}
+                                                                {item.ingredients?.length > 0 && <p className="text-sm text-gray-600">Ingredientes: {item.ingredients.map((x: any) => x.name).filter(Boolean).join(", ")}</p>}
+                                                                {item.extras?.length > 0 && <p className="text-sm text-gray-600">Extras: {item.extras.map((x: any) => x.name).filter(Boolean).join(", ")}</p>}
+                                                                {(item.notes || daily.notes) && <p className="text-sm text-gray-600">Nota: {item.notes || daily.notes}</p>}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                    {order.notes && <p className="text-sm text-blue-800">Observaciones: {order.notes}</p>}
+                                                    <p className="text-right font-bold">{money(Number(order.total ?? 0))}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </article>
+                            ))}
+                        </div>
+                    )}
+
+                    {pendingIndependentOrders.length > 0 && (
+                        <div className="space-y-2">
+                            <h4 className="font-bold text-blue-900">Pedidos independientes para llevar</h4>
+                            {pendingIndependentOrders.map((order: any) => {
+                                const pendingPayments = (order.payments ?? []).filter(
+                                    (payment: any) =>
+                                        payment.transaction_type === "payment" &&
+                                        !payment.verification
+                                );
+                    
+                                return (
+                                    <article
+                                        key={order.id}
+                                        className="rounded-xl border-2 border-blue-300 bg-blue-50 p-3 shadow-sm"
+                                    >
+                                        <div className="flex flex-wrap items-center justify-between gap-3">
+                                            <div>
+                                                <p className="font-extrabold text-blue-950">
+                                                    Pedido #{order.order_number ?? "—"} · Para llevar
+                                                </p>
+                                                <p className="text-sm text-gray-700">
+                                                    Mesero: {order.waiterName ?? "No disponible"}
+                                                </p>
+                                                {order.customer_name && (
+                                                    <p className="text-sm font-medium text-blue-800">
+                                                        Cliente: {order.customer_name}
+                                                    </p>
+                                                )}
+                                                <p className="text-xs text-gray-500">
+                                                    {new Date(order.created_at).toLocaleString("es-CO")}
+                                                </p>
+                                            </div>
+                    
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <strong className="text-lg text-blue-900">
+                                                    {money(Number(order.total ?? 0))}
+                                                </strong>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setPriorityIndependentOrderId(
+                                                        current => current === order.id ? null : order.id
+                                                    )}
+                                                    className="rounded-lg border border-blue-400 bg-white px-4 py-2 text-sm font-bold text-blue-800 hover:bg-blue-100"
+                                                >
+                                                    {priorityIndependentOrderId === order.id
+                                                        ? "OCULTAR PEDIDO"
+                                                        : "VER PEDIDO"}
+                                                </button>
+                                            </div>
+                                        </div>
+                    
+                                        {priorityIndependentOrderId === order.id && (
+                                            <div className="mt-3 space-y-2 rounded-lg border border-blue-200 bg-white p-3">
+                                                <h5 className="font-bold text-blue-900">Productos del pedido</h5>
+                                                {(order.items ?? []).length === 0 ? (
+                                                    <p className="text-sm text-gray-500">No hay productos detallados.</p>
+                                                ) : (order.items ?? []).map((item: any, index: number) => (
+                                                    <div
+                                                        key={`${order.id}-${index}`}
+                                                        className="border-b border-gray-100 py-2 last:border-0"
+                                                    >
+                                                        <div className="flex flex-wrap justify-between gap-2">
+                                                            <span className="font-semibold">
+                                                                {item.quantity ?? 1} × {item.product?.name ?? item.name ?? item.product_name ?? item.title ?? "Producto"}
+                                                            </span>
+                                                            <strong>
+                                                                {money(Number(item.total ?? (
+                                                                    Number(item.unitPrice ?? item.unit_price ?? 0) *
+                                                                    Number(item.quantity ?? 1)
+                                                                )))}
+                                                            </strong>
+                                                        </div>
+                                                        {item.notes && (
+                                                            <p className="text-xs text-gray-600">Nota: {item.notes}</p>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                {order.notes && (
+                                                    <p className="border-t pt-2 text-sm text-blue-800">
+                                                        Observaciones: {order.notes}
+                                                    </p>
+                                                )}
+                                                <p className="text-right font-bold text-blue-950">
+                                                    Total: {money(Number(order.total ?? 0))}
+                                                </p>
+                                            </div>
+                                        )}
+                    
+                                        {pendingPayments.length > 0 && (
+                                            <div className="mt-3 space-y-2 border-t border-blue-200 pt-3">
+                                                {pendingPayments.map((payment: any) => (
+                                                    <div
+                                                        key={payment.id}
+                                                        className="flex flex-wrap items-center justify-between gap-3"
+                                                    >
+                                                        <div>
+                                                            <p className="text-sm font-semibold text-blue-900">
+                                                                Pago pendiente · {payment.payment_method === "cash" ? "Efectivo" : "Transferencia"}
+                                                            </p>
+                                                            <p className="text-xs text-gray-600">
+                                                                {new Date(payment.created_at).toLocaleString("es-CO")}
+                                                            </p>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => void verifyTakeawayPayment(order.id, payment.id)}
+                                                            disabled={submitting}
+                                                            className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-50"
+                                                        >
+                                                            VERIFICAR PAGO
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    {pendingCloseAccounts.length > 0 && (
+                        <div className="space-y-2">
+                            <h4 className="font-bold text-rose-900">Solicitudes para liberar mesas</h4>
+                            {pendingCloseAccounts.map(account => (
+                                <article
+                                    key={account.sessionId}
+                                    className="animate-pulse rounded-xl border-2 border-rose-300 bg-white p-3 shadow-sm"
+                                >
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                            <p className="font-extrabold text-rose-950">
+                                                {account.table?.label || `Mesa ${account.table?.table_number ?? "—"}`}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                Responsable: {account.waiter?.fullName ?? "No disponible"}
+                                            </p>
+                                            {account.closeRequest?.reason && (
+                                                <p className="mt-1 text-sm text-gray-700">
+                                                    Motivo: {account.closeRequest.reason}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => void cashierAction(account, "approve_close")}
+                                            disabled={submitting}
+                                            className="rounded-lg bg-rose-700 px-4 py-2 text-sm font-bold text-white hover:bg-rose-800 disabled:opacity-50"
+                                        >
+                                            AUTORIZAR Y LIBERAR MESA
+                                        </button>
+                                    </div>
+                                    <div className="mt-3 space-y-2">
+                                        <textarea
+                                            value={closeReasons[account.sessionId] ?? ""}
+                                            onChange={event => setCloseReasons(current => ({ ...current, [account.sessionId]: event.target.value }))}
+                                            rows={2}
+                                            maxLength={500}
+                                            placeholder="Motivo para devolver la solicitud a revisión"
+                                            className="w-full rounded-lg border bg-white p-2 text-sm"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => void cashierAction(account, "return_close", { reason: (closeReasons[account.sessionId] ?? "").trim() }).then(() => setCloseReasons(current => ({ ...current, [account.sessionId]: "" })))}
+                                            disabled={submitting || !(closeReasons[account.sessionId] ?? "").trim()}
+                                            className="rounded-lg border border-rose-400 px-4 py-2 text-sm font-semibold text-rose-800 hover:bg-rose-50 disabled:opacity-50"
+                                        >
+                                            DEVOLVER A REVISIÓN
+                                        </button>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </section>
             )}
 
             <div className="space-y-4 rounded-xl border border-orange-200 bg-orange-50/50 p-4">
@@ -548,7 +875,7 @@ export default function RestaurantAccounts() {
                             `Mesa ${account.table?.table_number ?? "—"}`;
 
                         return (
-                            <article key={account.sessionId} className="rounded-xl border p-4">
+                            <article id={`account-${account.sessionId}`} key={account.sessionId} className="scroll-mt-4 rounded-xl border p-4">
                                 <div className="flex flex-wrap items-start justify-between gap-3">
                                     <div>
                                         <h3 className="text-lg font-bold">{tableName}</h3>
@@ -690,8 +1017,8 @@ export default function RestaurantAccounts() {
                                                             Autorizar cierre y liberar mesa
                                                         </button>
                                                         <textarea
-                                                            value={closeReason}
-                                                            onChange={event => setCloseReason(event.target.value)}
+                                                            value={closeReasons[account.sessionId] ?? ""}
+                                                            onChange={event => setCloseReasons(current => ({ ...current, [account.sessionId]: event.target.value }))}
                                                             rows={2}
                                                             maxLength={500}
                                                             placeholder="Motivo para devolver la solicitud"
@@ -699,8 +1026,8 @@ export default function RestaurantAccounts() {
                                                         />
                                                         <button
                                                             type="button"
-                                                            onClick={() => void cashierAction(account, "return_close", { reason: closeReason.trim() }).then(() => setCloseReason(""))}
-                                                            disabled={submitting || !closeReason.trim()}
+                                                            onClick={() => void cashierAction(account, "return_close", { reason: (closeReasons[account.sessionId] ?? "").trim() }).then(() => setCloseReasons(current => ({ ...current, [account.sessionId]: "" })))}
+                                                            disabled={submitting || !(closeReasons[account.sessionId] ?? "").trim()}
                                                             className="rounded-lg border border-amber-700 px-4 py-2 text-sm font-semibold text-amber-900 disabled:opacity-50"
                                                         >
                                                             Devolver a revisión

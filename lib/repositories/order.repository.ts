@@ -92,6 +92,8 @@ export async function getPendingOrders(
         .select("*")
         .eq("restaurant_id", restaurantId)
         .eq("status", "pending")
+        .eq("source", "whatsapp")
+        .is("archived_at", null)
         .order("created_at", {
             ascending: false,
         });
@@ -106,6 +108,31 @@ export async function getPendingOrders(
     }
 
     return data ?? [];
+}
+
+export async function archiveOrder(
+    orderId: string,
+    restaurantId: string
+) {
+    const { data, error } = await supabase
+        .from("orders")
+        .update({
+            archived_at: new Date().toISOString(),
+        })
+        .eq("id", orderId)
+        .eq("restaurant_id", restaurantId)
+        .eq("source", "whatsapp")
+        .eq("status", "pending")
+        .is("archived_at", null)
+        .select("id")
+        .single();
+
+    if (error) {
+        console.error("SUPABASE ERROR:", error);
+        throw new Error(error.message);
+    }
+
+    return data;
 }
 
 export async function getConfirmedOrders(

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search } from "lucide-react";
 
 import {
+    archiveOrder,
     confirmOrder,
     getConfirmedOrders,
     getPendingOrders,
@@ -115,6 +116,9 @@ export default function PendingOrders({
     const [confirmingOrderId, setConfirmingOrderId] = useState<string | null>(
         null
     );
+    const [archivingOrderId, setArchivingOrderId] = useState<string | null>(
+        null
+    );
     const [errorMessage, setErrorMessage] = useState("");
 
     async function loadOrders(showRefreshState = false) {
@@ -183,6 +187,34 @@ export default function PendingOrders({
                 "No fue posible confirmar el pedido."
             );
             setConfirmingOrderId(null);
+        }
+    }
+
+    async function handleArchiveOrder(order: PendingOrder) {
+        if (confirmingOrderId || archivingOrderId) return;
+
+        const confirmed = window.confirm(
+            `¿Archivar el pedido de ${order.customer_name}? El pedido se conservará en el historial y dejará de aparecer en Pendientes.`
+        );
+
+        if (!confirmed) return;
+
+        setArchivingOrderId(order.id);
+        setErrorMessage("");
+
+        try {
+            await archiveOrder(order.id, restaurantId);
+            setOrders((current) =>
+                current.filter((item) => item.id !== order.id)
+            );
+            setExpandedOrderId(null);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage(
+                "No fue posible archivar el pedido. Intenta actualizar la lista."
+            );
+        } finally {
+            setArchivingOrderId(null);
         }
     }
 
@@ -498,24 +530,41 @@ export default function PendingOrders({
                                                     </p>
                                                 </div>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        void handleConfirmAndPrint(
-                                                            order
-                                                        )
-                                                    }
-                                                    disabled={
-                                                        confirmingOrderId !==
-                                                            null
-                                                    }
-                                                    className="rounded-xl bg-green-600 px-5 py-3 font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
-                                                >
-                                                    {confirmingOrderId ===
-                                                    order.id
-                                                        ? "Confirmando..."
-                                                        : "✓ Confirmar e imprimir"}
-                                                </button>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            void handleArchiveOrder(order)
+                                                        }
+                                                        disabled={
+                                                            confirmingOrderId !== null ||
+                                                            archivingOrderId !== null
+                                                        }
+                                                        className="rounded-xl border border-red-300 bg-white px-4 py-3 font-bold text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                                    >
+                                                        {archivingOrderId === order.id
+                                                            ? "Archivando..."
+                                                            : "Archivar pedido"}
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            void handleConfirmAndPrint(
+                                                                order
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            confirmingOrderId !== null ||
+                                                            archivingOrderId !== null
+                                                        }
+                                                        className="rounded-xl bg-green-600 px-5 py-3 font-bold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                                    >
+                                                        {confirmingOrderId === order.id
+                                                            ? "Confirmando..."
+                                                            : "✓ Confirmar e imprimir"}
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <div className="print-only">

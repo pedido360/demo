@@ -139,7 +139,7 @@ public static class Pedidos360GdiPrinter {
 
             doc.DefaultPageSettings.Margins = new Margins(5, 5, 5, 5);
 
-            using (Font font = new Font("Consolas", 9))
+            using (Font font = new Font("Consolas", 11))
             using (StringFormat format =
                 new StringFormat(StringFormat.GenericTypographic)) {
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PendingOrders from "@/components/restaurant/PendingOrders";
 import RestaurantAccounts from "@/components/restaurant/RestaurantAccounts";
+import RestaurantJourneyHistory from "@/components/restaurant/RestaurantJourneyHistory";
 import WaiterManagement from "@/components/admin/waiters/WaiterManagement";
 import FixedTableManagement from "@/components/restaurant/FixedTableManagement";
 
@@ -43,6 +44,10 @@ export default function RestaurantDashboardOperations({
 
                 </div>
             </div>
+        </section>
+
+        <section className="mt-5">
+            <RestaurantJourneyHistory />
         </section>
 
         <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">

@@ -325,6 +325,7 @@ export default function RestaurantAccounts() {
                 <p className="rounded-lg bg-green-50 p-3 text-sm text-green-700">{message}</p>
             )}
 
+
             {(pendingAccountPayments.length > 0 || pendingCloseAccounts.length > 0 || pendingIndependentOrders.length > 0) && (
                 <section className="space-y-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">

@@ -57,6 +57,9 @@ export default function RestaurantAccounts() {
     const [selected, setSelected] = useState<string | null>(null);
     const [productsExpanded, setProductsExpanded] = useState<string | null>(null);
     const [pendingPaymentOrderExpanded, setPendingPaymentOrderExpanded] = useState<string | null>(null);
+    const [changeCalculatorPaymentId, setChangeCalculatorPaymentId] = useState<string | null>(null);
+    const [cashReceivedAmount, setCashReceivedAmount] = useState("");
+
     const [paymentId, setPaymentId] = useState("");
     const [amount, setAmount] = useState("");
     const [reason, setReason] = useState("");
@@ -393,8 +396,84 @@ export default function RestaurantAccounts() {
                                             >
                                                 VERIFICAR PAGO
                                             </button>
+                                            {transaction.method === "cash" && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (changeCalculatorPaymentId === transaction.id) {
+                                                            setChangeCalculatorPaymentId(null);
+                                                            setCashReceivedAmount("");
+                                                        } else {
+                                                            setChangeCalculatorPaymentId(transaction.id);
+                                                            setCashReceivedAmount("");
+                                                        }
+                                                    }}
+                                                    className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-800 hover:bg-emerald-100"
+                                                >
+                                                    🧮 {changeCalculatorPaymentId === transaction.id
+                                                        ? "Cerrar calculadora"
+                                                        : "Calcular vueltas"}
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
+                                    {transaction.method === "cash" &&
+                                        changeCalculatorPaymentId === transaction.id && (
+                                            <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+                                                <div className="grid gap-3 sm:grid-cols-2">
+                                                    <div className="rounded-lg bg-white p-3">
+                                                        <p className="text-xs font-semibold text-gray-500">
+                                                            VALOR DEL PAGO
+                                                        </p>
+                                                        <p className="mt-1 text-xl font-extrabold text-gray-900">
+                                                            {money(Number(transaction.amount))}
+                                                        </p>
+                                                    </div>
+
+                                                    <label className="rounded-lg bg-white p-3">
+                                                        <span className="text-xs font-semibold text-gray-500">
+                                                            DINERO RECIBIDO
+                                                        </span>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="1"
+                                                            inputMode="numeric"
+                                                            value={cashReceivedAmount}
+                                                            onChange={(event) => setCashReceivedAmount(event.target.value)}
+                                                            placeholder="Ej. 50000"
+                                                            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-lg font-bold text-gray-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                        />
+                                                    </label>
+                                                </div>
+
+                                                {cashReceivedAmount.trim() !== "" &&
+                                                    Number.isFinite(Number(cashReceivedAmount)) &&
+                                                    Number(cashReceivedAmount) >= 0 && (
+                                                        <div className="mt-3 rounded-lg border border-emerald-200 bg-white p-3">
+                                                            {Number(cashReceivedAmount) < Number(transaction.amount) ? (
+                                                                <>
+                                                                    <p className="text-xs font-bold text-amber-700">
+                                                                        DINERO INSUFICIENTE
+                                                                    </p>
+                                                                    <p className="mt-1 text-lg font-extrabold text-amber-800">
+                                                                        Faltan {money(Number(transaction.amount) - Number(cashReceivedAmount))}
+                                                                    </p>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <p className="text-xs font-bold text-emerald-700">
+                                                                        VUELTAS POR DEVOLVER
+                                                                    </p>
+                                                                    <p className="mt-1 text-2xl font-extrabold text-emerald-800">
+                                                                        {money(Number(cashReceivedAmount) - Number(transaction.amount))}
+                                                                    </p>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        )}
                                     {pendingPaymentOrderExpanded === account.sessionId && (
                                         <div className="mt-3 space-y-3 rounded-lg border border-orange-200 bg-orange-50 p-3">
                                             <h5 className="font-bold text-orange-900">Pedido de esta mesa</h5>

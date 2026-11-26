@@ -11,7 +11,7 @@ export interface CreateOrderInput {
 
     address: string;
 
-    paymentMethod: string;
+    paymentMethod: "Efectivo" | "Transferencia";
 
     cashChange: string;
 
@@ -29,6 +29,13 @@ export interface CreateOrderInput {
 export async function createOrder(
     input: CreateOrderInput
 ) {
+    if (
+        input.paymentMethod !== "Efectivo" &&
+        input.paymentMethod !== "Transferencia"
+    ) {
+        throw new Error("Método de pago no permitido.");
+    }
+
     const { data, error } = await supabase
         .from("orders")
         .insert({

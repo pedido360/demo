@@ -34,12 +34,9 @@ type DeliveryMethod =
     | "Domicilio"
     | "Recoger";
 
-const paymentMethods = [
+const paymentMethods: Array<"Efectivo" | "Transferencia"> = [
     "Efectivo",
-    "Nequi",
-    "Bre-B",
     "Transferencia",
-    "Datáfono",
 ];
 
 export default function CartDrawer({
@@ -72,7 +69,7 @@ export default function CartDrawer({
         useState<DeliveryMethod>("Domicilio");
 
     const [paymentMethod, setPaymentMethod] =
-        useState("Efectivo");
+        useState<"Efectivo" | "Transferencia">("Efectivo");
 
     const [cashChange, setCashChange] =
         useState("");

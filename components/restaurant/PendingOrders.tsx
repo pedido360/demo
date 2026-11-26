@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RefreshCw, Search } from "lucide-react";
 
 import {
@@ -120,41 +120,62 @@ export default function PendingOrders({
         null
     );
     const [errorMessage, setErrorMessage] = useState("");
+    const loadingOrdersRef = useRef(false);
 
-    async function loadOrders(showRefreshState = false) {
-        if (showRefreshState) {
-            setRefreshing(true);
-        } else {
-            setLoading(true);
-        }
+    const loadOrders = useCallback(
+        async (showRefreshState = false, silent = false) => {
+            if (loadingOrdersRef.current) return;
 
-        setErrorMessage("");
+            loadingOrdersRef.current = true;
 
-        try {
-            const [pendingData, confirmedData] =
-                await Promise.all([
+            if (showRefreshState) {
+                setRefreshing(true);
+            } else if (!silent) {
+                setLoading(true);
+            }
+
+            if (!silent) setErrorMessage("");
+
+            try {
+                const [pendingData, confirmedData] = await Promise.all([
                     getPendingOrders(restaurantId),
                     getConfirmedOrders(restaurantId),
                 ]);
 
-            setOrders(pendingData as PendingOrder[]);
-            setConfirmedOrders(
-                confirmedData as PendingOrder[]
-            );
-        } catch (error) {
-            console.error(error);
-            setErrorMessage(
-                "No fue posible cargar los pedidos pendientes."
-            );
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    }
+                setOrders(pendingData as PendingOrder[]);
+                setConfirmedOrders(confirmedData as PendingOrder[]);
+            } catch (error) {
+                console.error(error);
+                if (!silent) {
+                    setErrorMessage(
+                        "No fue posible cargar los pedidos pendientes."
+                    );
+                }
+            } finally {
+                loadingOrdersRef.current = false;
+                setLoading(false);
+                setRefreshing(false);
+            }
+        },
+        [restaurantId]
+    );
 
     useEffect(() => {
-        void loadOrders();
-    }, [restaurantId]);
+        const initialLoad = window.setTimeout(() => {
+            void loadOrders();
+        }, 0);
+
+        const interval = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                void loadOrders(false, true);
+            }
+        }, 15000);
+
+        return () => {
+            window.clearTimeout(initialLoad);
+            window.clearInterval(interval);
+        };
+    }, [loadOrders]);
 
     async function handleConfirmAndPrint(order: PendingOrder) {
         if (confirmingOrderId) return;
@@ -165,21 +186,31 @@ export default function PendingOrders({
         try {
             await confirmOrder(order.id);
 
-            const removeAfterPrint = () => {
+            let printFinished = false;
+
+            const finishPrint = () => {
+                if (printFinished) return;
+                printFinished = true;
+
+                window.removeEventListener("afterprint", finishPrint);
+
+                setConfirmingOrderId(null);
                 setOrders((current) =>
                     current.filter((item) => item.id !== order.id)
                 );
                 setExpandedOrderId(null);
-                window.removeEventListener(
-                    "afterprint",
-                    removeAfterPrint
-                );
+
+                void loadOrders(true);
             };
 
-            window.addEventListener("afterprint", removeAfterPrint);
+            window.addEventListener("afterprint", finishPrint);
 
             window.setTimeout(() => {
-                window.print();
+                try {
+                    window.print();
+                } finally {
+                    finishPrint();
+                }
             }, 100);
         } catch (error) {
             console.error(error);

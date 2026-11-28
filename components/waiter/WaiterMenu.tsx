@@ -1180,7 +1180,7 @@ function WaiterMenuContent({
                                     }
                                     setWorkflowStep("tables");
                                 }}
-                                className="flex min-h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-[#FF6900] px-5 py-3 text-base font-extrabold tracking-wide text-white shadow-lg transition hover:bg-[#E85F00] active:scale-95 sm:w-auto"
+                                className="fixed right-4 top-3 z-50 flex min-h-12 w-auto items-center justify-center whitespace-nowrap rounded-xl bg-[#FF6900] px-5 py-3 text-base font-extrabold tracking-wide text-white shadow-lg transition hover:bg-[#E85F00] active:scale-95"
                             >
                                 <span className="inline-flex items-center gap-2">
                                     <span aria-hidden="true">▦</span>

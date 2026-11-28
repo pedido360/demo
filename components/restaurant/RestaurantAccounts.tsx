@@ -618,26 +618,109 @@ export default function RestaurantAccounts() {
                                         {pendingPayments.length > 0 && (
                                             <div className="mt-3 space-y-2 border-t border-blue-200 pt-3">
                                                 {pendingPayments.map((payment: any) => (
-                                                    <div
-                                                        key={payment.id}
-                                                        className="flex flex-wrap items-center justify-between gap-3"
-                                                    >
-                                                        <div>
-                                                            <p className="text-sm font-semibold text-blue-900">
-                                                                Pago pendiente · {payment.payment_method === "cash" ? "Efectivo" : "Transferencia"}
-                                                            </p>
-                                                            <p className="text-xs text-gray-600">
-                                                                {new Date(payment.created_at).toLocaleString("es-CO")}
-                                                            </p>
+                                                    <div key={payment.id} className="space-y-3">
+                                                        <div className="flex flex-wrap items-center justify-between gap-3">
+                                                            <div>
+                                                                <p className="text-sm font-semibold text-blue-900">
+                                                                    Pago pendiente · {payment.payment_method === "cash" ? "Efectivo" : "Transferencia"}
+                                                                </p>
+                                                                <p className="text-xs text-gray-600">
+                                                                    {new Date(payment.created_at).toLocaleString("es-CO")}
+                                                                </p>
+                                                                <p className="text-sm font-bold text-blue-900">
+                                                                    {money(Number(payment.amount ?? 0))}
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => void verifyTakeawayPayment(order.id, payment.id)}
+                                                                    disabled={submitting}
+                                                                    className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-50"
+                                                                >
+                                                                    VERIFICAR PAGO
+                                                                </button>
+
+                                                                {payment.payment_method === "cash" && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (changeCalculatorPaymentId === payment.id) {
+                                                                                setChangeCalculatorPaymentId(null);
+                                                                                setCashReceivedAmount("");
+                                                                            } else {
+                                                                                setChangeCalculatorPaymentId(payment.id);
+                                                                                setCashReceivedAmount("");
+                                                                            }
+                                                                        }}
+                                                                        className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-800 hover:bg-emerald-100"
+                                                                    >
+                                                                        🧮 {changeCalculatorPaymentId === payment.id
+                                                                            ? "Cerrar calculadora"
+                                                                            : "Calcular vueltas"}
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                         </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => void verifyTakeawayPayment(order.id, payment.id)}
-                                                            disabled={submitting}
-                                                            className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-50"
-                                                        >
-                                                            VERIFICAR PAGO
-                                                        </button>
+
+                                                        {payment.payment_method === "cash" &&
+                                                            changeCalculatorPaymentId === payment.id && (
+                                                                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+                                                                    <div className="grid gap-3 sm:grid-cols-2">
+                                                                        <div className="rounded-lg bg-white p-3">
+                                                                            <p className="text-xs font-semibold text-gray-500">
+                                                                                VALOR DEL PAGO
+                                                                            </p>
+                                                                            <p className="mt-1 text-xl font-extrabold text-gray-900">
+                                                                                {money(Number(payment.amount ?? 0))}
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <label className="rounded-lg bg-white p-3">
+                                                                            <span className="text-xs font-semibold text-gray-500">
+                                                                                DINERO RECIBIDO
+                                                                            </span>
+                                                                            <input
+                                                                                type="number"
+                                                                                min="0"
+                                                                                step="1"
+                                                                                inputMode="numeric"
+                                                                                value={cashReceivedAmount}
+                                                                                onChange={(event) => setCashReceivedAmount(event.target.value)}
+                                                                                placeholder="Ej. 50000"
+                                                                                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-lg font-bold text-gray-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                                            />
+                                                                        </label>
+                                                                    </div>
+
+                                                                    {cashReceivedAmount.trim() !== "" &&
+                                                                        Number.isFinite(Number(cashReceivedAmount)) &&
+                                                                        Number(cashReceivedAmount) >= 0 && (
+                                                                            <div className="mt-3 rounded-lg border border-emerald-200 bg-white p-3">
+                                                                                {Number(cashReceivedAmount) < Number(payment.amount ?? 0) ? (
+                                                                                    <>
+                                                                                        <p className="text-xs font-bold text-amber-700">
+                                                                                            DINERO INSUFICIENTE
+                                                                                        </p>
+                                                                                        <p className="mt-1 text-lg font-extrabold text-amber-800">
+                                                                                            Faltan {money(Number(payment.amount ?? 0) - Number(cashReceivedAmount))}
+                                                                                        </p>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        <p className="text-xs font-bold text-emerald-700">
+                                                                                            VUELTAS POR DEVOLVER
+                                                                                        </p>
+                                                                                        <p className="mt-1 text-2xl font-extrabold text-emerald-800">
+                                                                                            {money(Number(cashReceivedAmount) - Number(payment.amount ?? 0))}
+                                                                                        </p>
+                                                                                    </>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                </div>
+                                                            )}
                                                     </div>
                                                 ))}
                                             </div>

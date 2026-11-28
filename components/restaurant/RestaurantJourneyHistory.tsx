@@ -10,13 +10,19 @@ export default function RestaurantJourneyHistory() {
     const [expandedHistoryJourneyId, setExpandedHistoryJourneyId] = useState<string | null>(null);
 
     return (
-            <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
-                <div>
-                    <h2 className="text-lg font-semibold text-slate-900">Historial de jornadas</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+            <section className="overflow-hidden rounded-xl border border-green-200 bg-white shadow-sm">
+                <div className="mb-4 border-b border-green-200 bg-green-50 px-4 py-4">
+                    <span className="mb-2 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-extrabold text-green-800">
+                        MÓDULO MESEROS
+                    </span>
+                    <h2 className="text-lg font-extrabold text-green-800">
+                        HISTORIAL DE JORNADAS MESEROS
+                    </h2>
+                    <p className="mt-1 text-sm text-green-700">
                         Consulta jornadas cerradas, sus ventas y el detalle de cada pedido.
                     </p>
                 </div>
+                <div className="space-y-4 p-4">
 
                 <div className="flex flex-wrap items-end gap-3">
                     <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
@@ -191,6 +197,7 @@ export default function RestaurantJourneyHistory() {
                             </article>
                         );
                     })}
+                </div>
                 </div>
             </section>
     );

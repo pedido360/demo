@@ -150,6 +150,7 @@ export async function getConfirmedOrders(
         .select("*")
         .eq("restaurant_id", restaurantId)
         .eq("status", "confirmed")
+        .eq("source", "whatsapp")
         .order("created_at", {
             ascending: false,
         });

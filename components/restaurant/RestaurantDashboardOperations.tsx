@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import PendingOrders from "@/components/restaurant/PendingOrders";
+import PendingOrders, { type PendingOrder } from "@/components/restaurant/PendingOrders";
+import OrdersConsolidated from "@/components/restaurant/OrdersConsolidated";
 import RestaurantAccounts from "@/components/restaurant/RestaurantAccounts";
 import RestaurantJourneyHistory from "@/components/restaurant/RestaurantJourneyHistory";
 import WaiterManagement from "@/components/admin/waiters/WaiterManagement";
@@ -18,6 +19,7 @@ export default function RestaurantDashboardOperations({
 }: Props) {
     const [waiterPanel, setWaiterPanel] = useState<"create" | "list" | null>(null);
     const [tablesPanelOpen, setTablesPanelOpen] = useState(false);
+    const [confirmedOrders, setConfirmedOrders] = useState<PendingOrder[]>([]);
 
     return (
         <>
@@ -26,6 +28,8 @@ export default function RestaurantDashboardOperations({
                 <PendingOrders
                     restaurantId={restaurantId}
                     restaurantName={restaurantName}
+                    showConsolidated={false}
+                    onConfirmedOrdersChange={setConfirmedOrders}
                 />
             </div>
 
@@ -46,8 +50,24 @@ export default function RestaurantDashboardOperations({
             </div>
         </section>
 
-        <section className="mt-5">
-            <RestaurantJourneyHistory />
+        <section className="mt-8 rounded-2xl border border-green-200 bg-white p-5 shadow-sm">
+            <div className="mb-6 border-b border-green-100 pb-4 text-center">
+                <h2 className="text-2xl font-extrabold tracking-wide text-green-800">
+                    INFORMES Y CONSULTAS
+                </h2>
+                <p className="mt-1 text-sm text-green-700">
+                    Historial de ventas y movimientos del restaurante
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
+                <div className="min-w-0">
+                    <OrdersConsolidated orders={confirmedOrders} />
+                </div>
+                <div className="min-w-0">
+                    <RestaurantJourneyHistory />
+                </div>
+            </div>
         </section>
 
         <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">

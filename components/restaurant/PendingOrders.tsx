@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RefreshCw, Search } from "lucide-react";
 
+import OrdersConsolidated from "./OrdersConsolidated";
+
 import {
     archiveOrder,
     confirmOrder,
@@ -30,7 +32,7 @@ interface OrderItem {
     notes?: string;
 }
 
-interface PendingOrder {
+export interface PendingOrder {
     id: string;
     order_number?: number | null;
     customer_name: string;
@@ -49,6 +51,8 @@ interface PendingOrder {
 interface PendingOrdersProps {
     restaurantId: string;
     restaurantName: string;
+    showConsolidated?: boolean;
+    onConfirmedOrdersChange?: (orders: PendingOrder[]) => void;
 }
 
 function formatCurrency(value: number) {
@@ -102,6 +106,8 @@ function matchesSearch(order: PendingOrder, value: string) {
 export default function PendingOrders({
     restaurantId,
     restaurantName,
+    showConsolidated = true,
+    onConfirmedOrdersChange,
 }: PendingOrdersProps) {
     const [orders, setOrders] = useState<PendingOrder[]>([]);
     const [confirmedOrders, setConfirmedOrders] =
@@ -144,6 +150,7 @@ export default function PendingOrders({
 
                 setOrders(pendingData as PendingOrder[]);
                 setConfirmedOrders(confirmedData as PendingOrder[]);
+                onConfirmedOrdersChange?.(confirmedData as PendingOrder[]);
             } catch (error) {
                 console.error(error);
                 if (!silent) {
@@ -157,7 +164,7 @@ export default function PendingOrders({
                 setRefreshing(false);
             }
         },
-        [restaurantId]
+        [restaurantId, onConfirmedOrdersChange]
     );
 
     useEffect(() => {
@@ -186,6 +193,114 @@ export default function PendingOrders({
         try {
             await confirmOrder(order.id);
 
+            const printNode = Array.from(
+                document.querySelectorAll<HTMLElement>(".print-only")
+            ).find((node) => node.dataset.orderPrintId === order.id);
+
+            if (!printNode) {
+                throw new Error("No se encontró el ticket del pedido.");
+            }
+
+            const printContent =
+                printNode.querySelector<HTMLElement>(".order-print");
+
+            if (!printContent) {
+                throw new Error("No se encontró el contenido del ticket.");
+            }
+
+            const measureStyle = document.createElement("style");
+            measureStyle.textContent = `
+                .orders-print-measure {
+                    display: block !important;
+                    position: fixed !important;
+                    left: -10000px !important;
+                    top: 0 !important;
+                    width: 80mm !important;
+                    visibility: hidden !important;
+                }
+                .orders-print-measure .order-print {
+                    box-sizing: border-box;
+                    width: 100%;
+                    padding: 0 5mm 1mm;
+                    font-family: "Courier New", Courier, monospace;
+                    font-size: 11px;
+                    line-height: 1.35;
+                    color: #000;
+                    background: #fff;
+                }
+                .orders-print-measure .print-center { text-align: center; }
+                .orders-print-measure .print-title {
+                    font-size: 11px;
+                    font-weight: 700;
+                }
+                .orders-print-measure .print-restaurant-name {
+                    margin-top: 2px;
+                    font-size: 16px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                }
+                .orders-print-measure .print-subtitle {
+                    margin-top: 2px;
+                    font-size: 14px;
+                    font-weight: 700;
+                }
+                .orders-print-measure .print-divider {
+                    margin: 7px 0;
+                    border-top: 1px dashed #000;
+                }
+                .orders-print-measure .print-row {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 10px;
+                }
+                .orders-print-measure .print-section-title {
+                    margin-bottom: 5px;
+                    font-weight: 700;
+                }
+                .orders-print-measure .print-item { margin-bottom: 8px; }
+                .orders-print-measure .print-total {
+                    font-size: 14px;
+                    font-weight: 700;
+                }
+            `;
+
+            document.head.appendChild(measureStyle);
+            printNode.classList.add("orders-print-measure");
+
+            const measuredHeightPx =
+                printContent.getBoundingClientRect().height;
+
+            printNode.classList.remove("orders-print-measure");
+            measureStyle.remove();
+
+            if (!Number.isFinite(measuredHeightPx) || measuredHeightPx <= 0) {
+                throw new Error("No fue posible medir la altura del ticket.");
+            }
+
+            const pageHeightMm = Math.max(
+                10,
+                Math.ceil((measuredHeightPx * 25.4) / 96 + 1)
+            );
+
+            const pageStyle = document.createElement("style");
+            pageStyle.id = "orders-pending-print-page-size";
+            pageStyle.textContent =
+                `@page { size: 80mm ${pageHeightMm}mm; margin: 0; }`;
+
+            document.getElementById(pageStyle.id)?.remove();
+            document.head.appendChild(pageStyle);
+
+            const originalParent = printNode.parentNode;
+            const originalNextSibling = printNode.nextSibling;
+
+            if (!originalParent) {
+                pageStyle.remove();
+                throw new Error("No se encontró el contenedor original del ticket.");
+            }
+
+            document.body.appendChild(printNode);
+            printNode.classList.add("print-target");
+
             let printFinished = false;
 
             const finishPrint = () => {
@@ -193,6 +308,15 @@ export default function PendingOrders({
                 printFinished = true;
 
                 window.removeEventListener("afterprint", finishPrint);
+                window.clearTimeout(printCleanupTimeout);
+                printNode.classList.remove("print-target");
+                pageStyle.remove();
+
+                if (originalNextSibling && originalNextSibling.parentNode === originalParent) {
+                    originalParent.insertBefore(printNode, originalNextSibling);
+                } else {
+                    originalParent.appendChild(printNode);
+                }
 
                 setConfirmingOrderId(null);
                 setOrders((current) =>
@@ -205,10 +329,13 @@ export default function PendingOrders({
 
             window.addEventListener("afterprint", finishPrint);
 
+            const printCleanupTimeout = window.setTimeout(finishPrint, 60000);
+
             window.setTimeout(() => {
                 try {
                     window.print();
-                } finally {
+                } catch (printError) {
+                    console.error("Error al abrir la impresión del pedido:", printError);
                     finishPrint();
                 }
             }, 100);
@@ -598,7 +725,7 @@ export default function PendingOrders({
                                                 </div>
                                             </div>
 
-                                            <div className="print-only">
+                                            <div className="print-only" data-order-print-id={order.id}>
                                                 <div className="order-print">
                                                     <div className="print-center print-title">
                                                         PEDIDOS360
@@ -908,6 +1035,10 @@ export default function PendingOrders({
                         )}
                     </div>
                 </div>
+
+                {showConsolidated && (
+                    <OrdersConsolidated orders={confirmedOrders} />
+                )}
             </div>
         </section>
     );
